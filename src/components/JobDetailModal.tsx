@@ -1354,8 +1354,8 @@ export default function JobDetailModal({
                   </div>
                 </div>
               ) : taskStatus === 'success' ? (
-                // Success State View
-                <div className="bg-white p-8 rounded-2xl border border-slate-100 shadow-lg text-center space-y-4 animate-scale-up">
+                  // Success State View
+                  <div className="bg-white p-8 rounded-2xl border border-slate-100 shadow-lg text-center space-y-4 animate-scale-up">
                   <div className="w-16 h-16 rounded-full bg-emerald-50 text-emerald-500 flex items-center justify-center mx-auto shadow-inner animate-bounce">
                     <Icons.CheckCircle className="w-10 h-10" />
                   </div>
@@ -1388,7 +1388,10 @@ export default function JobDetailModal({
                       setExtractedLeads(null);
                       setBuyerName('');
                       setBuyerAddress('');
-                      setActiveSubTaskId(null); // Return to directory list
+                      // Cycle to a random subtask for variety
+                      const currentIndex = subTasks.findIndex(st => st.id === activeSubTaskId);
+                      const nextIndex = (currentIndex + 1) % subTasks.length;
+                      setActiveSubTaskId(subTasks[nextIndex]?.id || null);
                     }}
                     className="bg-slate-900 text-white font-bold px-6 py-2.5 rounded-xl text-xs hover:bg-slate-800 transition-all active:scale-95 cursor-pointer"
                   >
@@ -1398,15 +1401,9 @@ export default function JobDetailModal({
               ) : (
                 // Active Workspace Form Elements depending on ID
                 <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm space-y-4">
-                  {/* Back button and Contract Header */}
+                  {/* Contract Header */}
                   <div className="flex items-center justify-between border-b border-slate-100 pb-3.5 mb-1 flex-wrap gap-2">
-                    <button
-                      onClick={() => setActiveSubTaskId(null)}
-                      className="text-xs font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1 transition-all cursor-pointer"
-                    >
-                      <Icons.ChevronLeft className="w-4 h-4" />
-                      {lang === 'bn' ? 'কাজের তালিকায় ফিরুন' : 'Back to Contracts'}
-                    </button>
+                    <div />
                     <div className="flex items-center gap-2">
                       <span className="text-[10px] bg-slate-900 text-white font-extrabold px-2.5 py-1 rounded uppercase tracking-wide flex items-center gap-1">
                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />

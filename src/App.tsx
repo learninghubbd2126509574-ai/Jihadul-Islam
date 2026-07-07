@@ -367,8 +367,6 @@ export default function App() {
         {/* 3. SHOP TAB */}
         {currentTab === 'shop' && (
           <ShopTab
-            shopItems={shopItems}
-            setShopItems={setShopItems}
             profile={profile}
             updateProfile={handleUpdateProfile}
             lang={lang}
