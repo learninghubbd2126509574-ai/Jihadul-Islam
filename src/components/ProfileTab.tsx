@@ -30,21 +30,10 @@ export default function ProfileTab({ profile, updateProfile, addLog, taskLogs, l
         if (prev >= 100) {
           clearInterval(interval);
           
-          // Trigger actual file download
-          try {
-            const blobContent = "Unity Earning App Installer Package\n\nVersion: 2.4.0\nRelease: Premium Custom Build\nStatus: Verified\n\nNote: This is a secure application package installer stub. For custom white-labeled versions or official APK installation keys, please contact support in the support tab.";
-            const blob = new Blob([blobContent], { type: 'application/vnd.android.package-archive' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'Unity_Earning_v2.4.0.apk';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
-          } catch (e) {
-            console.error("Failed to execute native browser download:", e);
-          }
+          // Instead of downloading a fake broken APK, we instruct the user to use Add to Home Screen
+          setTimeout(() => {
+            alert(lang === 'bn' ? 'পুরো অ্যাপটি আপনার ফোনে ইনস্টল করতে ব্রাউজারের মেনু (⋮) থেকে "Add to Home screen" বা "Install App" এ ক্লিক করুন।' : 'To install the full app on your phone, click "Add to Home screen" or "Install App" from your browser menu (⋮).');
+          }, 500);
           
           return 100;
         }
