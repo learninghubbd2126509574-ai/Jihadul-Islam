@@ -1,0 +1,6 @@
+{
+  "name": "Unity Earning",
+  "description": "A highly polished, professional micro-job training and task simulation platform featuring interactive demos for typing, form fill-up, marketing, and lead generation.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
