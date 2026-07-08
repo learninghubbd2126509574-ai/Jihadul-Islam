@@ -22,6 +22,7 @@ import BottomNav from './components/BottomNav';
 import JobCard from './components/JobCard';
 import JobDetailModal from './components/JobDetailModal';
 import ProfileTab from './components/ProfileTab';
+import RankingTab from './components/RankingTab';
 import ShopTab from './components/ShopTab';
 import MicroTab from './components/MicroTab';
 import QuizTab from './components/QuizTab';
@@ -369,6 +370,13 @@ export default function App() {
           <ShopTab
             profile={profile}
             updateProfile={handleUpdateProfile}
+            lang={lang}
+          />
+        )}
+
+        {/* 3.5 RANKING TAB */}
+        {currentTab === 'ranking' && (
+          <RankingTab
             lang={lang}
           />
         )}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home as HomeIcon, Briefcase, ShoppingBag, Zap, User, Trophy } from 'lucide-react';
+import { Home as HomeIcon, Briefcase, ShoppingBag, Zap, User, Trophy, Award } from 'lucide-react';
 
 interface BottomNavProps {
   currentTab: string;
@@ -12,6 +12,7 @@ export default function BottomNav({ currentTab, setCurrentTab, lang }: BottomNav
     { id: 'home', labelBn: 'হোম', labelEn: 'Home', icon: HomeIcon },
     { id: 'work', labelBn: 'আমার কাজ', labelEn: 'My Work', icon: Briefcase },
     { id: 'quiz', labelBn: 'কুইজ', labelEn: 'Quiz', icon: Trophy },
+    { id: 'ranking', labelBn: 'র‍্যাঙ্কিং', labelEn: 'Ranking', icon: Award },
     { id: 'micro', labelBn: 'মাইক্রো টাস্ক', labelEn: 'Micro Job', icon: Zap },
     { id: 'shop', labelBn: 'শপ', labelEn: 'Shop', icon: ShoppingBag },
     { id: 'profile', labelBn: 'প্রোফাইল', labelEn: 'Profile', icon: User },
