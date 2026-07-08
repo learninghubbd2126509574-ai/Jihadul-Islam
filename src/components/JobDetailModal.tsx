@@ -141,7 +141,8 @@ export default function JobDetailModal({
   const [startTime, setStartTime] = useState<number | null>(null);
 
   // 2. Email Marketing States
-  const [emailEntries, setEmailEntries] = useState(Array(10).fill({ account: '', password: '' }));
+  const [emailAccount, setEmailAccount] = useState('');
+  const [emailPassword, setEmailPassword] = useState('');
 
   // 3. Facebook Marketing States
   const [fbCaption, setFbCaption] = useState('');
@@ -405,7 +406,8 @@ export default function JobDetailModal({
       setAccuracy(100);
       setTypingStarted(false);
       setStartTime(null);
-      setEmailEntries(Array(10).fill({ account: '', password: '' }));
+      setEmailAccount('');
+      setEmailPassword('');
       setFbCaption('');
       setExtractedLeads(null);
       setBuyerName('');
@@ -432,7 +434,8 @@ export default function JobDetailModal({
     if (activeSubTaskId.startsWith('typing-')) {
       setTypedText('');
     } else if (activeSubTaskId.startsWith('email-')) {
-      setEmailEntries(Array(10).fill({ account: '', password: '' }));
+      setEmailAccount('');
+      setEmailPassword('');
     } else if (activeSubTaskId.startsWith('fb-')) {
       const subObj = subTasks.find(s => s.id === activeSubTaskId);
       setFbCaption(subObj ? (lang === 'bn' ? `${subObj.titleBn} - স্পেশাল প্রমোশন কপি` : `${subObj.titleEn} - Official Campaign Pitch`) : '');
@@ -633,23 +636,13 @@ export default function JobDetailModal({
   // Handle Email Marketing Campaign Submission
   const handleEmailSubmit = () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    
-    // Validate all entries
-    for (const entry of emailEntries) {
-      if (entry.account.trim() && !emailRegex.test(entry.account.trim())) {
-         setErrorMessage(lang === 'bn' ? 'দয়া করে একটি সঠিক সচল ইমেইল অ্যাড্রেস লিখুন!' : 'Please enter a valid active email address!');
-         return;
-      }
-      if (entry.account.trim() && (!entry.password.trim() || entry.password.trim().length < 4)) {
-         setErrorMessage(lang === 'bn' ? 'দয়া করে ইমেইলের সঠিক পাসওয়ার্ডটি টাইপ করুন (কমপক্ষে ৪ অক্ষর)!' : 'Please enter the correct password (at least 4 characters)!');
-         return;
-      }
+    if (!emailAccount.trim() || !emailRegex.test(emailAccount.trim())) {
+      setErrorMessage(lang === 'bn' ? 'দয়া করে একটি সঠিক সচল ইমেইল অ্যাড্রেস লিখুন!' : 'Please enter a valid active email address!');
+      return;
     }
-    
-    // Check if at least one is entered
-    if (emailEntries.every(e => !e.account.trim())) {
-        setErrorMessage(lang === 'bn' ? 'দয়া করে কমপক্ষে একটি ইমেইল আইডি লিখুন!' : 'Please enter at least one email address!');
-        return;
+    if (!emailPassword.trim() || emailPassword.trim().length < 4) {
+      setErrorMessage(lang === 'bn' ? 'দয়া করে ইমেইলের সঠিক পাসওয়ার্ডটি টাইপ করুন (কমপক্ষে ৪ অক্ষর)!' : 'Please enter the correct password (at least 4 characters)!');
+      return;
     }
 
     setErrorMessage('');
@@ -1389,7 +1382,8 @@ export default function JobDetailModal({
                     onClick={() => {
                       setTaskStatus('idle');
                       setTypedText('');
-                      setEmailEntries(Array(10).fill({ account: '', password: '' }));
+                      setEmailAccount('');
+                      setEmailPassword('');
                       setFbCaption('');
                       setExtractedLeads(null);
                       setBuyerName('');
@@ -1501,33 +1495,34 @@ export default function JobDetailModal({
                       </div>
 
                       {/* Input fields */}
-                      <div className="space-y-3.5 max-h-[300px] overflow-y-auto pr-2">
-                        {emailEntries.map((entry, index) => (
-                          <div key={index} className="grid grid-cols-2 gap-3">
-                            <input
-                              type="email"
-                              value={entry.account}
-                              onChange={(e) => {
-                                const next = [...emailEntries];
-                                next[index] = { ...next[index], account: e.target.value };
-                                setEmailEntries(next);
-                              }}
-                              placeholder={`${lang === 'bn' ? 'ইমেইল' : 'Email'} ${index + 1}`}
-                              className="w-full border border-slate-200 rounded-xl p-3 text-slate-700 text-xs focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 outline-none"
-                            />
-                            <input
-                              type="password"
-                              value={entry.password}
-                              onChange={(e) => {
-                                const next = [...emailEntries];
-                                next[index] = { ...next[index], password: e.target.value };
-                                setEmailEntries(next);
-                              }}
-                              placeholder={lang === 'bn' ? 'পাসওয়ার্ড' : 'Password'}
-                              className="w-full border border-slate-200 rounded-xl p-3 text-slate-700 text-xs focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 outline-none"
-                            />
-                          </div>
-                        ))}
+                      <div className="space-y-3.5">
+                        <div className="space-y-1">
+                          <label className="text-xs font-bold text-slate-700 block flex items-center gap-1.5">
+                            <Icons.Mail className="w-4 h-4 text-slate-500" />
+                            {lang === 'bn' ? 'ইমেইল অ্যাড্রেস লিখুন:' : 'Email Address:'}
+                          </label>
+                          <input
+                            type="email"
+                            value={emailAccount}
+                            onChange={(e) => setEmailAccount(e.target.value)}
+                            placeholder="example@gmail.com"
+                            className="w-full border border-slate-200 rounded-xl p-3 text-slate-700 text-xs md:text-sm focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 outline-none"
+                          />
+                        </div>
+
+                        <div className="space-y-1">
+                          <label className="text-xs font-bold text-slate-700 block flex items-center gap-1.5">
+                            <Icons.Lock className="w-4 h-4 text-slate-500" />
+                            {lang === 'bn' ? 'ইমেইলের পাসওয়ার্ড:' : 'Password:'}
+                          </label>
+                          <input
+                            type="password"
+                            value={emailPassword}
+                            onChange={(e) => setEmailPassword(e.target.value)}
+                            placeholder={lang === 'bn' ? 'পাসওয়ার্ড টাইপ করুন' : 'Enter email password'}
+                            className="w-full border border-slate-200 rounded-xl p-3 text-slate-700 text-xs md:text-sm focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 outline-none"
+                          />
+                        </div>
                       </div>
 
                       {/* Submit button */}
