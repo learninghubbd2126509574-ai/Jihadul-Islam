@@ -13,82 +13,98 @@ export default function JobCard({ job, onClick, lang }: JobCardProps) {
   // Resolve icon component dynamically from lucide-react names
   const IconComponent = (Icons as any)[job.iconName] || Icons.Briefcase;
 
-  // Resolve left border color based on job ID for Geometric Balance theme
-  const getBorderLeftClass = (id: string) => {
+  // Resolve card color based on job ID
+  const getCardStyleClass = (id: string) => {
     switch (id) {
       case 'typing-job':
-        return 'border-l-4 border-l-blue-500 hover:border-blue-400';
+        return 'bg-blue-50 hover:bg-blue-100/80 border-blue-200 hover:border-blue-300';
       case 'email-marketing':
-        return 'border-l-4 border-l-indigo-500 hover:border-indigo-400';
+        return 'bg-indigo-50 hover:bg-indigo-100/80 border-indigo-200 hover:border-indigo-300';
       case 'facebook-marketing':
-        return 'border-l-4 border-l-sky-500 hover:border-sky-400';
+        return 'bg-sky-50 hover:bg-sky-100/80 border-sky-200 hover:border-sky-300';
       case 'lead-generation':
-        return 'border-l-4 border-l-emerald-500 hover:border-emerald-400';
+        return 'bg-emerald-50 hover:bg-emerald-100/80 border-emerald-200 hover:border-emerald-300';
       case 'form-fillup-work':
-        return 'border-l-4 border-l-pink-500 hover:border-pink-400';
+        return 'bg-pink-50 hover:bg-pink-100/80 border-pink-200 hover:border-pink-300';
       case 'data-entry-work':
-        return 'border-l-4 border-l-amber-500 hover:border-amber-400';
+        return 'bg-amber-50 hover:bg-amber-100/80 border-amber-200 hover:border-amber-300';
       case 'video-submit-work':
-        return 'border-l-4 border-l-rose-500 hover:border-rose-400';
+        return 'bg-rose-50 hover:bg-rose-100/80 border-rose-200 hover:border-rose-300';
       case 'product-selling-work':
-        return 'border-l-4 border-l-violet-500 hover:border-violet-400';
+        return 'bg-violet-50 hover:bg-violet-100/80 border-violet-200 hover:border-violet-300';
       case 'photo-editing':
-        return 'border-l-4 border-l-teal-500 hover:border-teal-400';
+        return 'bg-teal-50 hover:bg-teal-100/80 border-teal-200 hover:border-teal-300';
       case 'video-editing':
-        return 'border-l-4 border-l-orange-500 hover:border-orange-400';
+        return 'bg-orange-50 hover:bg-orange-100/80 border-orange-200 hover:border-orange-300';
       case 'computer-training':
-        return 'border-l-4 border-l-purple-500 hover:border-purple-400';
+        return 'bg-purple-50 hover:bg-purple-100/80 border-purple-200 hover:border-purple-300';
       case 'code-entry':
-        return 'border-l-4 border-l-indigo-600 hover:border-indigo-500';
+        return 'bg-indigo-50 hover:bg-indigo-100/80 border-indigo-200 hover:border-indigo-300';
+      case 'daily-work':
+        return 'bg-orange-50 hover:bg-orange-100/80 border-orange-200 hover:border-orange-300';
       default:
-        return 'border border-slate-200 hover:border-blue-400';
+        return 'bg-blue-50 hover:bg-blue-100/80 border-blue-200 hover:border-blue-300';
+    }
+  };
+
+  const getTitleColorClass = (id: string) => {
+    switch (id) {
+      case 'typing-job':
+        return 'text-blue-700';
+      case 'email-marketing':
+        return 'text-indigo-700';
+      case 'facebook-marketing':
+        return 'text-sky-700';
+      case 'lead-generation':
+        return 'text-emerald-700';
+      case 'form-fillup-work':
+        return 'text-pink-700';
+      case 'data-entry-work':
+        return 'text-amber-700';
+      case 'video-submit-work':
+        return 'text-rose-700';
+      case 'product-selling-work':
+        return 'text-violet-700';
+      case 'photo-editing':
+        return 'text-teal-700';
+      case 'video-editing':
+        return 'text-orange-700';
+      case 'computer-training':
+        return 'text-purple-700';
+      case 'code-entry':
+        return 'text-indigo-800';
+      case 'daily-work':
+        return 'text-orange-700';
+      default:
+        return 'text-blue-700';
     }
   };
 
   return (
     <div
       onClick={onClick}
-      className={`bg-white rounded-2xl border border-slate-200 p-6 flex items-center justify-between cursor-pointer shadow-sm transition-all duration-300 active:scale-[0.98] group ${getBorderLeftClass(job.id)}`}
+      className={`rounded-2xl border p-6 flex items-center justify-between cursor-pointer shadow-sm transition-all duration-300 active:scale-[0.98] group ${getCardStyleClass(job.id)}`}
       id={`job-card-${job.id}`}
     >
       <div className="flex items-center gap-4 flex-1 min-w-0">
         {/* Icon container */}
-        <div className={`w-14 h-14 rounded-2xl ${job.bgColor} flex items-center justify-center flex-shrink-0 transition-all duration-300 group-hover:scale-105`}>
+        <div className="w-14 h-14 rounded-2xl bg-white shadow-sm flex items-center justify-center flex-shrink-0 transition-all duration-300 group-hover:scale-105">
           <IconComponent className={`w-7 h-7 ${job.iconColor}`} />
         </div>
 
         {/* Info */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap mb-1.5">
-            <h3 className="font-extrabold text-slate-800 text-base md:text-lg leading-tight truncate">
+            <h3 className={`font-extrabold text-base md:text-lg leading-tight truncate ${getTitleColorClass(job.id)}`}>
               {lang === 'bn' ? job.titleBn : job.titleEn}
             </h3>
-            {job.tag && (
-              <span className={`text-[9px] px-1.5 py-0.5 rounded font-black tracking-wider ${
-                job.tag === 'POPULAR' ? 'bg-amber-100 text-amber-700' :
-                job.tag === 'HIGH PAY' ? 'bg-rose-100 text-rose-700' :
-                job.tag === 'NEW' ? 'bg-emerald-100 text-emerald-700' :
-                'bg-slate-100 text-slate-600'
-              }`}>
-                {job.tag}
-              </span>
-            )}
           </div>
           
           {/* COMMISSION PAYMENT BADGE */}
-          <div className="mb-2">
-            <span className="text-[9px] md:text-[10px] font-black text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-lg border border-emerald-200/60 inline-flex items-center gap-1">
-              <Icons.Banknote className="w-3 h-3 text-emerald-600" />
+          <div>
+            <span className="text-[10px] md:text-xs font-black text-emerald-700 bg-emerald-50 px-2 py-1 rounded-lg border border-emerald-200/60 inline-flex items-center gap-1">
+              <Icons.Banknote className="w-4 h-4 text-emerald-600" />
               {lang === 'bn' ? `কমিশন: ${job.rewardBn}` : `Commission: ${job.rewardEn}`}
-            </span>
-          </div>
-
-          <div className="flex items-center gap-2 text-[10px] md:text-xs text-slate-500 font-semibold">
-            <span className="bg-slate-100 px-2 py-0.5 rounded text-slate-600">
-              {lang === 'bn' ? `সময়: ${job.estimatedTimeBn}` : `Time: ${job.estimatedTimeEn}`}
-            </span>
-            <span className="bg-slate-100 px-2 py-0.5 rounded text-slate-600">
-              {lang === 'bn' ? `ট্যাপ করে কাজ শুরু করুন` : `Tap to start work`}
             </span>
           </div>
         </div>

@@ -1135,155 +1135,96 @@ export default function JobDetailModal({
     <div className="fixed inset-0 bg-slate-900 flex items-center justify-center z-50 md:p-4 overflow-y-auto animate-fade-in">
       <div className="bg-white w-full h-full md:h-auto md:max-w-4xl md:rounded-3xl shadow-2xl flex flex-col md:max-h-[95vh] overflow-hidden border border-slate-100 animate-slide-up" id="job-detail-container">
         {/* Modal Header */}
-        <div className="bg-slate-900 text-white p-5 flex items-center justify-between border-b border-slate-800">
+        <div className="bg-slate-900 text-white p-5 flex items-center justify-between border-b border-slate-800 relative">
           <div className="flex items-center gap-3">
             <div className={`w-10 h-10 rounded-xl ${job.bgColor} flex items-center justify-center`}>
               <IconComponent className={`w-6 h-6 ${job.iconColor}`} />
             </div>
             <div>
-              <h2 className="font-bold text-lg leading-tight">
+              <h2 className="font-bold text-lg leading-tight flex items-center gap-2">
                 {lang === 'bn' ? job.titleBn : job.titleEn}
+                <span className="flex items-center gap-1 bg-rose-500/20 text-rose-500 border border-rose-500/30 px-2 py-0.5 rounded text-[10px] uppercase font-black tracking-wider animate-pulse">
+                  <span className="w-1.5 h-1.5 bg-rose-500 rounded-full"></span>
+                  LIVE
+                </span>
               </h2>
-              <span className="text-xs text-amber-400 font-medium tracking-wide">
-                {lang === 'bn' ? 'সরাসরি কাজের পোর্টাল' : 'Active Workspace'}
-              </span>
+              <div className="flex items-center gap-3 mt-1.5 text-[11px] md:text-xs text-slate-300 font-medium">
+                <span className="flex items-center gap-1 font-mono text-emerald-400">
+                  <Icons.Banknote className="w-3.5 h-3.5" /> 
+                  {lang === 'bn' ? job.rewardBn : job.rewardEn}
+                </span>
+                <span className="flex items-center gap-1 text-blue-300">
+                  <Icons.Clock className="w-3.5 h-3.5" /> 
+                  {lang === 'bn' ? job.estimatedTimeBn : job.estimatedTimeEn}
+                </span>
+              </div>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="w-9 h-9 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center transition-all active:scale-95"
+            className="w-9 h-9 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center transition-all active:scale-95 z-10 relative"
             aria-label="Close modal"
           >
             <Icons.X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Tab Selection */}
-        <div className="flex border-b border-slate-100 bg-slate-50 p-1">
-          <button
-            onClick={() => {
-              setActiveTab('info');
-              setTaskStatus('idle');
-              setErrorMessage('');
-            }}
-            className={`flex-1 py-3 text-center text-sm font-semibold rounded-2xl transition-all ${
-              activeTab === 'info'
-                ? 'bg-white text-slate-800 shadow-sm'
-                : 'text-slate-500 hover:text-slate-800'
-            }`}
-          >
-            {lang === 'bn' ? '📋 প্রজেক্ট গাইডলাইন' : '📋 Project Guidelines'}
-          </button>
-          <button
-            onClick={() => {
-              setActiveTab('practice');
-              setTaskStatus('idle');
-              setErrorMessage('');
-            }}
-            className={`flex-1 py-3 text-center text-sm font-semibold rounded-2xl transition-all ${
-              activeTab === 'practice'
-                ? 'bg-white text-slate-800 shadow-sm border border-emerald-200/50'
-                : 'text-slate-500 hover:text-slate-800'
-            }`}
-          >
-            {lang === 'bn' ? '⚡ উপলব্ধ কাজসমূহ' : '⚡ Available Contracts'}
-          </button>
-        </div>
-
         {/* Modal Scrollable Content */}
         <div className="p-6 overflow-y-auto flex-1 bg-slate-50/50">
-          {activeTab === 'info' ? (
-            <div className="space-y-6">
-              {/* Rewards Summary Card */}
-              <div className="grid grid-cols-3 gap-3 bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
-                <div className="text-center p-2">
-                  <span className="text-[10px] uppercase tracking-wider text-slate-400 font-bold block mb-1">
-                    {lang === 'bn' ? 'কমিশন/পুরস্কার' : 'Reward'}
-                  </span>
-                  <span className="text-sm font-bold text-emerald-600">
-                    {lang === 'bn' ? job.rewardBn : job.rewardEn}
-                  </span>
-                </div>
-                <div className="text-center p-2 border-x border-slate-100">
-                  <span className="text-[10px] uppercase tracking-wider text-slate-400 font-bold block mb-1">
-                    {lang === 'bn' ? 'সময় লাগবে' : 'Est. Time'}
-                  </span>
-                  <span className="text-sm font-bold text-slate-700">
-                    {lang === 'bn' ? job.estimatedTimeBn : job.estimatedTimeEn}
-                  </span>
-                </div>
-                <div className="text-center p-2">
-                  <span className="text-[10px] uppercase tracking-wider text-slate-400 font-bold block mb-1">
-                    {lang === 'bn' ? 'কঠিনতা' : 'Difficulty'}
-                  </span>
-                  <span className={`text-sm font-bold ${
-                    job.difficultyEn === 'Easy' ? 'text-emerald-500' :
-                    job.difficultyEn === 'Medium' ? 'text-amber-500' : 'text-rose-500'
-                  }`}>
-                    {lang === 'bn' ? job.difficultyBn : job.difficultyEn}
-                  </span>
-                </div>
-              </div>
-
-              {/* Detailed Description */}
-              <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm space-y-3">
-                <h4 className="font-bold text-slate-800 text-base">
-                  {lang === 'bn' ? 'কাজের সংক্ষিপ্ত বিবরণ' : 'Project Overview'}
-                </h4>
-                <p className="text-slate-600 text-sm leading-relaxed whitespace-pre-line">
-                  {lang === 'bn' ? job.longDescBn : job.longDescEn}
-                </p>
-              </div>
-
-              {/* Steps/Instructions */}
-              <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm space-y-4">
-                <h4 className="font-bold text-slate-800 text-base flex items-center gap-2">
-                  <Icons.ListChecks className="w-5 h-5 text-amber-500" />
-                  {lang === 'bn' ? 'ধাপসমূহ (কিভাবে কাজ করতে হবে):' : 'Step-by-Step Instructions:'}
-                </h4>
-                <ol className="space-y-3">
-                  {(lang === 'bn' ? job.instructionsBn : job.instructionsEn).map((inst, index) => (
-                    <li key={index} className="flex gap-3 text-slate-600 text-sm leading-relaxed">
-                      <span className="flex-shrink-0 w-6 h-6 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center font-bold text-xs">
-                        {index + 1}
-                      </span>
-                      <span className="pt-0.5">{inst}</span>
-                    </li>
-                  ))}
-                </ol>
-              </div>
-
-              {/* Required Skills */}
-              <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm space-y-3">
-                <h4 className="font-bold text-slate-800 text-sm">
-                  {lang === 'bn' ? 'প্রয়োজনীয় দক্ষতা:' : 'Skills Required:'}
-                </h4>
-                <div className="flex flex-wrap gap-2">
-                  {(lang === 'bn' ? job.skillsRequiredBn : job.skillsRequiredEn).map((skill, idx) => (
-                    <span key={idx} className="bg-slate-100 text-slate-700 text-xs px-3 py-1.5 rounded-xl font-medium">
-                      ✓ {skill}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              {/* Interactive Start Callout */}
-              <div className="bg-gradient-to-r from-slate-800 to-slate-950 text-white p-5 rounded-2xl shadow-md text-center space-y-3 border border-slate-700/30">
-                <p className="font-bold text-sm md:text-base">
-                  {lang === 'bn' ? 'আপনি কি প্রস্তুত? কাজ শুরু করে আপনার ব্যালেন্স বাড়ান!' : 'Ready to work? Enter the active workspace to start!'}
-                </p>
-                <button
-                  onClick={() => setActiveTab('practice')}
-                  className="bg-amber-500 text-slate-900 font-bold px-6 py-2.5 rounded-xl text-xs hover:bg-amber-400 transition-all active:scale-95 shadow-sm"
-                >
-                  {lang === 'bn' ? '⚡ কাজ শুরু করুন' : '⚡ Enter Workspace'}
-                </button>
-              </div>
-            </div>
-          ) : (
-            // --- LIVE WORK AREA ---
-            <div className="space-y-6">
+          <div className="space-y-6">
               {!activeSubTaskId ? (
+                job.id === 'daily-work' ? (
+                  <div className="bg-orange-500 rounded-3xl p-6 shadow-xl relative overflow-hidden animate-fade-in">
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
+                    <div className="absolute bottom-0 left-0 w-40 h-40 bg-black/5 rounded-full blur-2xl pointer-events-none -ml-10 -mb-10" />
+                    
+                    <div className="flex items-center gap-3 mb-6 relative z-10">
+                      <Icons.Layers className="w-8 h-8 text-white" />
+                      <h2 className="text-xl md:text-2xl font-black text-white">
+                        {lang === 'bn' ? 'আমাদের প্রজেক্ট সমূহ' : 'Our Projects'}
+                      </h2>
+                    </div>
+
+                    <div className="grid grid-cols-3 sm:grid-cols-4 gap-y-6 gap-x-2 relative z-10">
+                      {[
+                        { id: 'dw-mobile-recharge', nameEn: 'Mobile Recharge', nameBn: 'মোবাইল রিচার্জ', icon: 'Smartphone', color: 'text-blue-500' },
+                        { id: 'dw-drive-offer', nameEn: 'Drive Offer', nameBn: 'ড্রাইভ অফার', icon: 'Radio', color: 'text-teal-500' },
+                        { id: 'dw-online-shop', nameEn: 'Online Shop', nameBn: 'অনলাইন শপ', icon: 'ShoppingCart', color: 'text-emerald-500' },
+                        { id: 'dw-ads-view', nameEn: 'Ads View', nameBn: 'এডস ভিউ', icon: 'Video', color: 'text-rose-500' },
+                        { id: 'dw-micro-job', nameEn: 'Micro Job', nameBn: 'মাইক্রো জব', icon: 'ListChecks', color: 'text-blue-600' },
+                        { id: 'dw-job-post', nameEn: 'Job Post', nameBn: 'জব পোস্ট', icon: 'Upload', color: 'text-orange-500' },
+                        { id: 'dw-social-marketing', nameEn: 'Social Marketing', nameBn: 'সোশ্যাল মিডিয়া মার্কেটিং', icon: 'Store', color: 'text-purple-500' },
+                        { id: 'dw-smart-earning', nameEn: 'Smart Earning', nameBn: 'স্মার্ট আর্নিং', icon: 'Wallet', color: 'text-teal-600' },
+                        { id: 'dw-learning-earning', nameEn: 'Learning & Earning', nameBn: 'লার্নিং & আর্নিং', icon: 'BookOpen', color: 'text-slate-600' },
+                        { id: 'dw-leadership', nameEn: 'Leadership', nameBn: 'লিডারশিপ', icon: 'Trophy', color: 'text-yellow-500' },
+                        { id: 'dw-target-bonus', nameEn: 'Target Bonus', nameBn: 'টার্গেট বোনাস', icon: 'Target', color: 'text-indigo-500' },
+                        { id: 'dw-monthly-salary', nameEn: 'Monthly Salary', nameBn: 'মাসিক বেতন', icon: 'Coins', color: 'text-green-600' },
+                        { id: 'dw-quran-education', nameEn: 'Quran Education', nameBn: 'কোরআন শিক্ষা', icon: 'Book', color: 'text-emerald-600' },
+                        { id: 'dw-football-game', nameEn: 'Football Game', nameBn: 'ফুটবল খেলা', icon: 'Gamepad2', color: 'text-indigo-600' },
+                      ].map((item) => {
+                        const IconComponent = Icons[item.icon as keyof typeof Icons] as React.ElementType;
+                        return (
+                          <div
+                            key={item.id}
+                            onClick={() => {
+                              setActiveSubTaskId(item.id);
+                              setTaskStatus('idle');
+                            }}
+                            className="flex flex-col items-center gap-2 cursor-pointer group"
+                          >
+                            <div className="w-14 h-14 md:w-16 md:h-16 bg-white rounded-full flex items-center justify-center shadow-sm group-hover:scale-105 group-active:scale-95 transition-all duration-300 relative">
+                              <div className="absolute inset-0 bg-white/20 rounded-full blur-md opacity-0 group-hover:opacity-100 transition-opacity" />
+                              <IconComponent className={`w-7 h-7 md:w-8 md:h-8 ${item.color}`} />
+                            </div>
+                            <span className="text-white text-[11px] md:text-xs font-semibold text-center leading-tight">
+                              {lang === 'bn' ? item.nameBn : item.nameEn}
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ) : (
                 // Related Tasks Directory
                 <div className="space-y-4">
                   <div className="bg-slate-900 text-white p-5 rounded-2xl relative overflow-hidden border border-slate-800 shadow-lg">
@@ -1353,6 +1294,7 @@ export default function JobDetailModal({
                     ))}
                   </div>
                 </div>
+                )
               ) : taskStatus === 'success' ? (
                   // Success State View
                   <div className="bg-white p-8 rounded-2xl border border-slate-100 shadow-lg text-center space-y-4 animate-scale-up">
@@ -3494,10 +3436,38 @@ export default function JobDetailModal({
                       })()}
                     </div>
                   )}
+
+                  {/* 13. DAILY WORK GENERIC SCREEN */}
+                  {job.id === 'daily-work' && (
+                    <div className="space-y-6">
+                      <div className="bg-blue-50/50 p-8 rounded-3xl border border-blue-100 flex flex-col items-center justify-center text-center shadow-inner relative overflow-hidden min-h-[300px]">
+                        <div className="w-20 h-20 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mb-5 shadow-sm">
+                          <Icons.Settings className="w-10 h-10 animate-spin-slow" />
+                        </div>
+                        
+                        <h3 className="text-xl md:text-2xl font-black text-slate-800 mb-2">
+                          {lang === 'bn' ? 'প্রজেক্টটি প্রক্রিয়াধীন আছে' : 'Project Under Maintenance'}
+                        </h3>
+                        <p className="text-slate-500 text-sm max-w-sm mx-auto leading-relaxed">
+                          {lang === 'bn' 
+                            ? 'এই সার্ভিসটির কাজ বর্তমানে মেইনটেনেন্স এবং আপডেটের অধীনে আছে। অনুগ্রহ করে পরবর্তী আপডেটের জন্য অপেক্ষা করুন।' 
+                            : 'This specific service module is currently undergoing updates and maintenance. Please check back later.'}
+                        </p>
+                        
+                        <div className="mt-8 flex gap-3">
+                          <button
+                            onClick={() => setActiveSubTaskId(null)}
+                            className="bg-slate-900 hover:bg-slate-800 text-white font-bold px-6 py-2.5 rounded-xl text-xs transition-all active:scale-95"
+                          >
+                            {lang === 'bn' ? 'ফিরে যান' : 'Go Back'}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
-          )}
         </div>
       </div>
     </div>

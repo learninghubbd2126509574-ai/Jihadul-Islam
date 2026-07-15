@@ -24,11 +24,11 @@ interface QuizTabProps {
 const QUESTIONS: Question[] = [
   {
     id: 1,
-    questionBn: "টাইপিং জবে (Typing Job) প্রতি প্রজেক্টে সাধারণত কত টাকা commission বা কমিশন দেওয়া হয়?",
-    questionEn: "How much commission is usually paid per project in the Typing Job?",
-    optionsBn: ["৳৫০ - ৳১০০", "৳১৫০ - ৳২০০", "৳২৫০ - ৳৪০০", "৳৫০০ - ৳৮০০"],
-    optionsEn: ["৳50 - ৳100", "৳150 - ৳200", "৳250 - ৳400", "৳500 - ৳800"],
-    answerIndex: 2
+    questionBn: "Unity Earning E-learning Platform এ ডাটা এন্ট্রি লিমিট কত?",
+    questionEn: "What is the data entry limit in Unity Earning E-learning Platform?",
+    optionsBn: ["আনলিমিটেড", "প্রতিদিন ৫০ টি", "প্রতিদিন ১০০ টি", "প্রতিদিন ২০০ টি"],
+    optionsEn: ["Unlimited", "50 per day", "100 per day", "200 per day"],
+    answerIndex: 0
   },
   {
     id: 2,
@@ -425,7 +425,7 @@ const QUESTIONS: Question[] = [
 ];
 
 export default function QuizTab({ profile, updateProfile, addLog, lang }: QuizTabProps) {
-  const [gameState, setGameState] = useState<'welcome' | 'playing' | 'completed'>('welcome');
+  const [gameState, setGameState] = useState<'welcome' | 'playing' | 'completed'>('playing');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [isAnswered, setIsAnswered] = useState(false);
@@ -482,17 +482,21 @@ export default function QuizTab({ profile, updateProfile, addLog, lang }: QuizTa
   const handleOptionSelect = (idx: number) => {
     if (isAnswered) return;
     setSelectedOption(idx);
+  };
+
+  const handleSubmitAnswer = () => {
+    if (isAnswered || selectedOption === null) return;
     setIsAnswered(true);
     if (timerRef.current) clearInterval(timerRef.current);
 
-    const correct = idx === QUESTIONS[currentIndex].answerIndex;
+    const correct = selectedOption === QUESTIONS[currentIndex].answerIndex;
     if (correct) {
       setScore((prev) => prev + 1);
     }
 
     setAnswersHistory((prev) => [
       ...prev,
-      { qIndex: currentIndex, selected: idx, correct }
+      { qIndex: currentIndex, selected: selectedOption, correct }
     ]);
   };
 
@@ -641,6 +645,13 @@ export default function QuizTab({ profile, updateProfile, addLog, lang }: QuizTa
       {/* 2. PLAYING SCREEN */}
       {gameState === 'playing' && (
         <div className="space-y-4">
+          
+          <div className="bg-emerald-100 border-2 border-emerald-500 rounded-xl p-3 flex justify-center items-center shadow-sm animate-pulse">
+            <span className="text-emerald-800 font-black text-sm md:text-base text-center">
+              {lang === 'bn' ? 'প্রত্যেকটি সঠিক উত্তরের জন্য পাবেন ২ টাকা করে বোনাস!' : 'You will get 2 Taka bonus for each correct answer!'}
+            </span>
+          </div>
+
           {/* Progress Header */}
           <div className="bg-white rounded-xl border border-slate-200 p-3 flex justify-between items-center shadow-sm">
             <span className="text-xs font-bold text-slate-500">
@@ -688,6 +699,8 @@ export default function QuizTab({ profile, updateProfile, addLog, lang }: QuizTa
                   } else {
                     optClass = "border-slate-100 bg-slate-50/50 text-slate-400 opacity-60";
                   }
+                } else if (isSelected) {
+                  optClass = "border-indigo-500 bg-indigo-50 text-indigo-800 font-bold";
                 }
 
                 return (
@@ -703,6 +716,20 @@ export default function QuizTab({ profile, updateProfile, addLog, lang }: QuizTa
                 );
               })}
             </div>
+
+            {/* Submit Button (Before Answered) */}
+            {!isAnswered && (
+              <div className="pt-2 animate-fade-in flex justify-end border-t border-slate-100 mt-4">
+                <button
+                  onClick={handleSubmitAnswer}
+                  disabled={selectedOption === null}
+                  className="bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white font-bold px-6 py-2.5 rounded-xl text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+                >
+                  {lang === 'bn' ? 'উত্তর সাবমিট করুন' : 'Submit Answer'}
+                  <Icons.Check className="w-4 h-4" />
+                </button>
+              </div>
+            )}
 
             {/* Next Button / Feedback */}
             {isAnswered && (

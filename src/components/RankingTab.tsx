@@ -2,7 +2,8 @@ import React from 'react';
 import { Trophy, TrendingUp } from 'lucide-react';
 
 const names = [
-  'রহিম (Rahim)', 'করিম (Karim)', 'সালাম (Salam)', 'বারকাত (Barkat)', 'রফিক (Rafiq)', 'জব্বার (Jabbar)', 'শফিক (Shafiq)', 'আরিফ (Arif)', 'নাহিদ (Nahid)', 'সানি (Sunny)',
+  'Jihadul Islam', 'Habiba Sekh', 'Jannat Akter', 'Foysal Hasan', 'Amena Akter', 'Nurjahan Akter', 'Mim Akter', 'Arif Hasan', 'রহিম (Rahim)', 'করিম (Karim)',
+  'সালাম (Salam)', 'বারকাত (Barkat)', 'রফিক (Rafiq)', 'জব্বার (Jabbar)', 'শফিক (Shafiq)', 'আরিফ (Arif)', 'নাহিদ (Nahid)', 'সানি (Sunny)',
   'আয়েশা (Ayesha)', 'ফাতেমা (Fatema)', 'খাদিজা (Khadija)', 'সাবিহা (Sabiha)', 'নূরী (Nuri)', 'জুলেখা (Zulekha)', 'মরিয়ম (Mariam)', 'সাইমা (Saima)', 'তানিয়া (Tania)', 'রোকসানা (Roksana)',
   'মিজান (Mizan)', 'হিমেল (Himel)', 'রাশেদ (Rashed)', 'মাসুম (Masum)', 'সুমন (Sumon)', 'ইমরান (Imran)', 'রাসেল (Rasel)', 'লিটন (Liton)', 'ফারুক (Faruk)', 'বিল্লাল (Billal)',
   'নিপা (Nipa)', 'ববিতা (Babita)', 'সুমি (Sumi)', 'মায়া (Maya)', 'শিলা (Shila)', 'জুঁই (Jui)', 'লিপি (Lipi)', 'পপি (Popi)', 'কাজল (Kajol)', 'নীলা (Nila)',

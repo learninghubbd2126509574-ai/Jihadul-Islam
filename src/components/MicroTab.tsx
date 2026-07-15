@@ -105,25 +105,24 @@ export default function MicroTab({ profile, updateProfile, addLog, lang }: Micro
     <div className="space-y-6 pb-24 animate-fade-in" id="micro-container">
       {/* Intro block */}
       <div className="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 rounded-full blur-2xl pointer-events-none" />
         <h2 className="text-lg font-bold text-[#0f172a] flex items-center gap-2">
           <Icons.Zap className="w-5 h-5 text-amber-500 fill-amber-400" />
           {lang === 'bn' ? '⚡ ইন্সট্যান্ট মাইক্রো টাস্কস' : '⚡ Instant Micro Tasks'}
         </h2>
         <p className="text-slate-500 text-xs mt-1 leading-relaxed">
           {lang === 'bn'
-            ? 'ফেসবুক লাইক, কমেন্ট, শেয়ার, ইউটিউব ওয়াচ, টেলিগ্রাম এবং হোয়াটসঅ্যাপ গ্রুপে জয়েন করে ২ টাকা, ৫ টাকা ও ১০ টাকা করে ব্যালেন্স আর্ন করুন।'
-            : 'Complete simple tasks like Liking, Commenting on Facebook, Subscribing to YouTube, or Joining groups to instantly earn ৳2, ৳5, ৳6, or ৳10.'}
+            ? 'সহজ কাজগুলো সম্পন্ন করে তাৎক্ষণিক আয় করুন।'
+            : 'Complete simple tasks to earn instantly.'}
         </p>
 
         {/* Short Stats */}
         <div className="grid grid-cols-2 gap-3 mt-4 pt-4 border-t border-slate-100 text-center">
           <div className="p-2 bg-slate-50 rounded-xl border border-slate-100">
-            <span className="text-[9px] text-slate-400 block font-bold uppercase">{lang === 'bn' ? 'মোট কাজ উপলব্ধ' : 'Total Available'}</span>
+            <span className="text-[9px] text-slate-400 block font-bold uppercase">{lang === 'bn' ? 'মোট কাজ' : 'Total'}</span>
             <span className="text-sm font-extrabold text-slate-800 font-mono">{toBnNum(tasks.length)}</span>
           </div>
           <div className="p-2 bg-emerald-50/40 rounded-xl border border-emerald-100">
-            <span className="text-[9px] text-emerald-600 block font-bold uppercase">{lang === 'bn' ? 'আপনার সম্পন্ন কাজ' : 'Your Completed'}</span>
+            <span className="text-[9px] text-emerald-600 block font-bold uppercase">{lang === 'bn' ? 'আপনার কাজ' : 'Completed'}</span>
             <span className="text-sm font-extrabold text-emerald-700 font-mono">{toBnNum(tasks.filter(t => t.completed).length)}</span>
           </div>
         </div>

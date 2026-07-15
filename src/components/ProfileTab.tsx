@@ -572,6 +572,18 @@ export default function ProfileTab({ profile, updateProfile, addLog, taskLogs, l
         </div>
       </div>
 
+      {/* Main Website Link Button */}
+      <a 
+        href="https://unityearning.com/" 
+        target="_blank" 
+        rel="noopener noreferrer"
+        className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-extrabold px-6 py-4 rounded-2xl transition-all hover:scale-[1.02] active:scale-[0.98] text-base flex items-center justify-center gap-2 shadow-md cursor-pointer mb-2"
+      >
+        <Icons.Globe className="w-5 h-5" />
+        <span>{lang === 'bn' ? 'মেইন ওয়েবসাইট' : 'Main Website'}</span>
+        <Icons.ExternalLink className="w-4 h-4 ml-1 opacity-70" />
+      </a>
+
       {/* --- RECONSTRUCTED DEMO VIDEO PLAYER --- */}
       {/* As requested: "ভিডিওটা যেন থাকি" -> "The video must be there" */}
       <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
