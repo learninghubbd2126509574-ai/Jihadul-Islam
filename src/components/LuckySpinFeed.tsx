@@ -22,7 +22,7 @@ interface WheelItem {
 }
 
 const WHEEL_ITEMS: WheelItem[] = [
-  { id: 1, labelBn: 'iPhone 15 Pro', labelEn: 'iPhone 15 Pro', type: 'gift', amount: 0, color: '#e11d48', textColor: '#ffffff', iconName: 'Smartphone' },
+  { id: 1, labelBn: '৫০ পয়েন্ট', labelEn: '50 Points', type: 'points', amount: 50, color: '#e11d48', textColor: '#ffffff', iconName: 'Coins' },
   { id: 2, labelBn: '৫০ পয়েন্ট', labelEn: '50 Points', type: 'points', amount: 50, color: '#06b6d4', textColor: '#ffffff', iconName: 'Coins' },
   { id: 3, labelBn: 'পাওয়ার ব্যাংক', labelEn: 'Power Bank', type: 'gift', amount: 0, color: '#8b5cf6', textColor: '#ffffff', iconName: 'BatteryCharging' },
   { id: 4, labelBn: '০ টাকা', labelEn: '0 Taka', type: 'zero', amount: 0, color: '#64748b', textColor: '#ffffff', iconName: 'Frown' },
@@ -101,8 +101,7 @@ export default function LuckySpinFeed({
     if (!winningItem) return;
 
     if (winningItem.type === 'points') {
-      const newPoints = (profile.points || 0) + winningItem.amount;
-      updateProfile({ points: newPoints });
+      // Per user request: top points should remain fixed at 2730 and not increase when winning points from spin
 
       if (addLog) {
         addLog({

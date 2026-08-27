@@ -544,7 +544,7 @@ export const INITIAL_PROFILE: UserProfile = {
   totalIncome: 66400,
   tasksCompleted: 632,
   level: 'Gold Rank',
-  points: 5320,
+  points: 2730,
   joinedDate: '2026-07-01'
 };
 
