@@ -8,9 +8,29 @@ interface ProfileTabProps {
   addLog?: (newLog: { jobId: string; jobTitleBn: string; jobTitleEn: string; reward: number }) => void;
   taskLogs: TaskLog[];
   lang: 'bn' | 'en';
+  onLogout?: () => void;
+  onOpenNotifications?: () => void;
 }
 
-export default function ProfileTab({ profile, updateProfile, addLog, taskLogs, lang }: ProfileTabProps) {
+const toBnNum = (num: number | string): string => {
+  const bnDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+  return num.toString().replace(/\d/g, (d) => bnDigits[parseInt(d, 10)]);
+};
+
+type TransferMethodType = 'main-portal' | 'bkash' | 'nagad' | 'rocket' | 'p2p';
+
+interface TransferRecord {
+  id: string;
+  trxId: string;
+  amountBDT: number;
+  receiver: string;
+  method: string;
+  methodType: TransferMethodType;
+  date: string;
+  status: string;
+}
+
+export default function ProfileTab({ profile, updateProfile, addLog, taskLogs, lang, onLogout, onOpenNotifications }: ProfileTabProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [name, setName] = useState(profile.fullName);
   const [email, setEmail] = useState(profile.email);
@@ -29,12 +49,13 @@ export default function ProfileTab({ profile, updateProfile, addLog, taskLogs, l
         if (prev === null) return null;
         if (prev >= 100) {
           clearInterval(interval);
-          
-          // Instead of downloading a fake broken APK, we instruct the user to use Add to Home Screen
           setTimeout(() => {
-            alert(lang === 'bn' ? 'পুরো অ্যাপটি আপনার ফোনে ইনস্টল করতে ব্রাউজারের মেনু (⋮) থেকে "Add to Home screen" বা "Install App" এ ক্লিক করুন।' : 'To install the full app on your phone, click "Add to Home screen" or "Install App" from your browser menu (⋮).');
+            alert(
+              lang === 'bn'
+                ? 'পুরো অ্যাপটি আপনার ফোনে ইনস্টল করতে ব্রাউজারের মেনু (⋮) থেকে "Add to Home screen" বা "Install App" এ ক্লিক করুন।'
+                : 'To install the full app on your phone, click "Add to Home screen" or "Install App" from your browser menu (⋮).'
+            );
           }, 500);
-          
           return 100;
         }
         return prev + 10;
@@ -42,26 +63,95 @@ export default function ProfileTab({ profile, updateProfile, addLog, taskLogs, l
     }, 150);
   };
 
-  // 6 beautiful avatars for quick selection
   const avatarPresets = [
-    'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=150',
+    'https://api.dicebear.com/7.x/adventurer/svg?seed=HabibaAkter',
+    'https://api.dicebear.com/7.x/adventurer/svg?seed=Sumaiya',
+    'https://api.dicebear.com/7.x/adventurer/svg?seed=Nusrat',
     'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=150',
-    'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&q=80&w=150',
     'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=150',
-    'https://images.unsplash.com/photo-1628157582853-a796fa650a6a?auto=format&fit=crop&q=80&w=150',
     'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&q=80&w=150'
   ];
 
-  const [editBalance, setEditBalance] = useState((profile.balance * 100).toFixed(0));
-  const [editTotalIncome, setEditTotalIncome] = useState(((profile.totalIncome ?? profile.balance) * 100).toFixed(0));
+  const [editBalance, setEditBalance] = useState(profile.balance.toString());
+  const [editTotalIncome, setEditTotalIncome] = useState((profile.totalIncome ?? profile.balance).toString());
   const [editTasksCompleted, setEditTasksCompleted] = useState(profile.tasksCompleted.toString());
+  const [editLevel, setEditLevel] = useState(profile.level || 'Gold Rank');
 
   // Balance transfer states
-  const [transferUID, setTransferUID] = useState('');
+  const [selectedMethod, setSelectedMethod] = useState<TransferMethodType>('main-portal');
+  const [transferTarget, setTransferTarget] = useState('');
   const [transferAmount, setTransferAmount] = useState('');
   const [transferSuccess, setTransferSuccess] = useState(false);
+  const [latestTrxData, setLatestTrxData] = useState<TransferRecord | null>(null);
   const [transferError, setTransferError] = useState<string | null>(null);
   const [transferring, setTransferring] = useState(false);
+  const [copiedTrxId, setCopiedTrxId] = useState<string | null>(null);
+  const [historyFilter, setHistoryFilter] = useState<string>('all');
+  const [historySearch, setHistorySearch] = useState<string>('');
+
+  // Initial transactions summing to 63,000 BDT
+  const [transferHistory, setTransferHistory] = useState<TransferRecord[]>([
+    {
+      id: 'trx-1',
+      trxId: 'TRX-98421001',
+      amountBDT: 25000,
+      receiver: 'UE-MAIN-7701',
+      method: 'মেইন অ্যাকাউন্ট (Unity Portal)',
+      methodType: 'main-portal',
+      date: '2026-08-26 18:30',
+      status: 'সফল'
+    },
+    {
+      id: 'trx-2',
+      trxId: 'TRX-87425002',
+      amountBDT: 18000,
+      receiver: '01712-884910',
+      method: 'বিকাশ ওয়ালেট (bKash)',
+      methodType: 'bkash',
+      date: '2026-08-25 14:15',
+      status: 'সফল'
+    },
+    {
+      id: 'trx-3',
+      trxId: 'TRX-63912003',
+      amountBDT: 10000,
+      receiver: '01823-991203',
+      method: 'নগদ ওয়ালেট (Nagad)',
+      methodType: 'nagad',
+      date: '2026-08-24 11:05',
+      status: 'সফল'
+    },
+    {
+      id: 'trx-4',
+      trxId: 'TRX-51203914',
+      amountBDT: 5000,
+      receiver: 'UE-2026-3392',
+      method: 'ইউজার-টু-ইউজার (P2P)',
+      methodType: 'p2p',
+      date: '2026-08-22 09:40',
+      status: 'সফল'
+    },
+    {
+      id: 'trx-5',
+      trxId: 'TRX-99823415',
+      amountBDT: 3000,
+      receiver: '01911-554433',
+      method: 'রকেট ওয়ালেট (Rocket)',
+      methodType: 'rocket',
+      date: '2026-08-20 20:10',
+      status: 'সফল'
+    },
+    {
+      id: 'trx-6',
+      trxId: 'TRX-77612089',
+      amountBDT: 2000,
+      receiver: 'UE-MAIN-7701',
+      method: 'মেইন অ্যাকাউন্ট (Unity Portal)',
+      methodType: 'main-portal',
+      date: '2026-08-18 16:25',
+      status: 'সফল'
+    }
+  ]);
 
   const startEditing = () => {
     setName(profile.fullName);
@@ -69,9 +159,10 @@ export default function ProfileTab({ profile, updateProfile, addLog, taskLogs, l
     setPhone(profile.phone);
     setBio(profile.bio);
     setAddress(profile.address);
-    setEditBalance((profile.balance * 100).toFixed(0));
-    setEditTotalIncome(((profile.totalIncome ?? profile.balance) * 100).toFixed(0));
+    setEditBalance(profile.balance.toString());
+    setEditTotalIncome((profile.totalIncome ?? profile.balance).toString());
     setEditTasksCompleted(profile.tasksCompleted.toString());
+    setEditLevel(profile.level || 'Gold Rank');
     setIsEditing(true);
   };
 
@@ -87,9 +178,10 @@ export default function ProfileTab({ profile, updateProfile, addLog, taskLogs, l
       bio: bio,
       address: address,
       avatarUrl: customAvatar,
-      balance: parsedBalance / 100,
-      totalIncome: parsedTotalIncome / 100,
-      tasksCompleted: parsedTasksCompleted
+      balance: parsedBalance,
+      totalIncome: parsedTotalIncome,
+      tasksCompleted: parsedTasksCompleted,
+      level: editLevel
     });
     setIsEditing(false);
   };
@@ -104,13 +196,17 @@ export default function ProfileTab({ profile, updateProfile, addLog, taskLogs, l
     setTransferError(null);
     setTransferSuccess(false);
 
-    if (!transferUID.trim()) {
-      setTransferError(lang === 'bn' ? 'দয়া করে একটি সঠিক ইউজার আইডি (UID) প্রবেশ করান।' : 'Please enter a valid User ID (UID).');
+    if (!transferTarget.trim()) {
+      setTransferError(
+        selectedMethod === 'main-portal' || selectedMethod === 'p2p'
+          ? (lang === 'bn' ? 'দয়া করে একটি সঠিক ইউজার আইডি (UID) প্রবেশ করান।' : 'Please enter a valid User ID (UID).')
+          : (lang === 'bn' ? 'দয়া করে সঠিক মোবাইল নম্বর দিন।' : 'Please enter a valid mobile number.')
+      );
       return;
     }
 
     const amountInBDT = parseFloat(transferAmount) || 0;
-    const availableBDT = profile.balance * 100;
+    const availableBDT = profile.balance;
 
     if (amountInBDT <= 0) {
       setTransferError(lang === 'bn' ? 'দয়া করে ট্রান্সফারের সঠিক পরিমাণ (টাকা) প্রবেশ করুন।' : 'Please enter a valid transfer amount.');
@@ -125,40 +221,120 @@ export default function ProfileTab({ profile, updateProfile, addLog, taskLogs, l
     setTransferring(true);
 
     setTimeout(() => {
-      const deductionInUSD = amountInBDT / 100;
-      const nextBalance = Math.max(0, profile.balance - deductionInUSD);
-
-      // Perform updates
+      const nextBalance = Math.max(0, profile.balance - amountInBDT);
       updateProfile({ balance: nextBalance });
 
-      // Add log
+      const methodNames: Record<TransferMethodType, { bn: string; en: string }> = {
+        'main-portal': { bn: 'মেইন অ্যাকাউন্ট (Unity Portal)', en: 'Main Portal Account' },
+        'bkash': { bn: 'বিকাশ ওয়ালেট (bKash)', en: 'bKash Wallet' },
+        'nagad': { bn: 'নগদ ওয়ালেট (Nagad)', en: 'Nagad Wallet' },
+        'rocket': { bn: 'রকেট ওয়ালেট (Rocket)', en: 'Rocket Wallet' },
+        'p2p': { bn: 'ইউজার-টু-ইউজার (P2P)', en: 'Peer-to-Peer UID' }
+      };
+
+      const randomTrxNumber = Math.floor(10000000 + Math.random() * 90000000);
+      const newTrx: TransferRecord = {
+        id: `trx-${Date.now()}`,
+        trxId: `TRX-${randomTrxNumber}`,
+        amountBDT: amountInBDT,
+        receiver: transferTarget.trim(),
+        method: lang === 'bn' ? methodNames[selectedMethod].bn : methodNames[selectedMethod].en,
+        methodType: selectedMethod,
+        date: new Date().toISOString().replace('T', ' ').substring(0, 16),
+        status: lang === 'bn' ? 'সফল' : 'Completed'
+      };
+
+      setTransferHistory((prev) => [newTrx, ...prev]);
+
       if (addLog) {
         addLog({
           jobId: 'balance-transfer',
-          jobTitleBn: `মেইন অ্যাকাউন্টে ব্যালেন্স ট্রান্সফার (UID: ${transferUID.trim()})`,
-          jobTitleEn: `Balance Transfer to Main Account (UID: ${transferUID.trim()})`,
-          reward: -deductionInUSD
+          jobTitleBn: `ব্যালেন্স ট্রান্সফার (${newTrx.method}): ${transferTarget.trim()}`,
+          jobTitleEn: `Balance Transfer (${newTrx.method}): ${transferTarget.trim()}`,
+          reward: -amountInBDT
         });
       }
 
+      setLatestTrxData(newTrx);
       setTransferSuccess(true);
       setTransferAmount('');
       setTransferring(false);
     }, 1200);
   };
 
+  const handleCopyTrx = (trxId: string) => {
+    navigator.clipboard.writeText(trxId);
+    setCopiedTrxId(trxId);
+    setTimeout(() => setCopiedTrxId(null), 2000);
+  };
+
+  // Filtered History
+  const filteredTransactions = transferHistory.filter((trx) => {
+    const matchesFilter = historyFilter === 'all' || trx.methodType === historyFilter;
+    const matchesSearch =
+      trx.trxId.toLowerCase().includes(historySearch.toLowerCase()) ||
+      trx.receiver.toLowerCase().includes(historySearch.toLowerCase()) ||
+      trx.method.toLowerCase().includes(historySearch.toLowerCase());
+    return matchesFilter && matchesSearch;
+  });
+
+  const totalWithdrawn = transferHistory.reduce((acc, curr) => acc + curr.amountBDT, 0);
+
   return (
     <div className="space-y-6 pb-24 animate-fade-in" id="profile-container">
+      {/* Top Logout Bar */}
+      <div className="flex justify-between items-center bg-white rounded-2xl p-3.5 px-5 border border-slate-200 shadow-xs">
+        <div className="flex items-center gap-2.5">
+          <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
+            <Icons.ShieldCheck className="w-5 h-5 text-blue-600" />
+          </div>
+          <div>
+            <h3 className="text-xs font-black text-slate-800">
+              {lang === 'bn' ? 'সেশন ও সিকিউরিটি হাব' : 'Session & Security Hub'}
+            </h3>
+            <p className="text-[10px] text-slate-400 font-medium">
+              {lang === 'bn' ? 'নিরাপদে অ্যাকাউন্ট থেকে বের হতে লগ আউট করুন' : 'Click log out to securely end session'}
+            </p>
+          </div>
+        </div>
+
+        {onLogout && (
+          <button
+            onClick={onLogout}
+            className="bg-rose-600 hover:bg-rose-700 text-white font-black px-3 py-1.5 rounded-lg text-[11px] flex items-center gap-1 transition-all shadow-sm active:scale-95 cursor-pointer"
+            id="profile-logout-btn"
+          >
+            <Icons.LogOut className="w-3.5 h-3.5" />
+            <span>{lang === 'bn' ? 'লগ আউট' : 'Log Out'}</span>
+          </button>
+        )}
+      </div>
+
       {/* Profile Summary Card */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm relative overflow-hidden">
-        {/* Decorative elements */}
-        <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full blur-2xl -mr-8 -mt-8" />
-        <div className="absolute bottom-0 left-0 w-24 h-24 bg-indigo-500/5 rounded-full blur-xl -ml-6 -mb-6" />
+      <div className="clay-card bg-white rounded-3xl border border-blue-100/80 p-5 md:p-6 relative overflow-hidden">
+        {/* Decorative ambient elements */}
+        <div className="absolute top-0 right-0 w-36 h-36 bg-blue-500/10 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-28 h-28 bg-emerald-500/10 rounded-full blur-2xl -ml-8 -mb-8 pointer-events-none" />
 
         <div className="flex flex-col items-center text-center relative z-10">
-          {/* Avatar Section */}
-          <div className="relative group">
-            <div className="w-24 h-24 rounded-full p-1 bg-gradient-to-tr from-blue-600 via-indigo-500 to-violet-600 shadow-md">
+          {/* Avatar Section with Notification Bell on Left */}
+          <div className="relative group flex items-center justify-center">
+            {/* Notification Bell Button next to Avatar */}
+            {onOpenNotifications && (
+              <button
+                onClick={onOpenNotifications}
+                className="absolute -left-16 md:-left-24 -top-2 w-9 h-9 rounded-xl bg-white hover:bg-indigo-50 border border-indigo-200/80 text-indigo-600 flex items-center justify-center shadow-md transition-all active:scale-95 cursor-pointer group/bell"
+                title="Notifications"
+                id="profile-notification-btn"
+              >
+                <Icons.Bell className="w-4 h-4 group-hover/bell:scale-110 transition-transform animate-pulse text-indigo-600" />
+                <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-rose-600 text-white text-[8px] font-black rounded-full flex items-center justify-center shadow-sm">
+                  12
+                </span>
+              </button>
+            )}
+
+            <div className="w-24 h-24 rounded-full p-1 bg-gradient-to-tr from-blue-600 via-indigo-500 to-violet-600 shadow-[0_6px_16px_rgba(37,99,235,0.3)]">
               <img
                 src={profile.avatarUrl}
                 alt="Profile Avatar"
@@ -166,36 +342,48 @@ export default function ProfileTab({ profile, updateProfile, addLog, taskLogs, l
                 className="w-full h-full rounded-full object-cover bg-white"
               />
             </div>
+            
+            {/* Camera / Edit Avatar Button */}
             <button
               onClick={() => setShowAvatarPicker(!showAvatarPicker)}
-              className="absolute bottom-0 right-0 bg-[#0f172a] text-white p-2 rounded-full border-2 border-white hover:bg-blue-600 transition-all active:scale-90"
+              className="absolute bottom-0 right-0 bg-blue-600 text-white p-2 rounded-full border-2 border-white hover:bg-blue-700 transition-all active:scale-90 shadow-md cursor-pointer"
               aria-label="Change Avatar"
             >
               <Icons.Camera className="w-4 h-4" />
             </button>
           </div>
 
-          {/* Avatar Presets Dropdown */}
+          {/* Quick Avatar Selector Drawer */}
           {showAvatarPicker && (
-            <div className="mt-4 p-4 bg-slate-50 border border-slate-200 rounded-2xl w-full max-w-sm">
-              <span className="text-xs font-bold text-slate-500 block mb-2">
-                {lang === 'bn' ? 'একটি প্রোফাইল ছবি নির্বাচন করুন:' : 'Choose a Profile Avatar Preset:'}
-              </span>
-              <div className="grid grid-cols-6 gap-2">
-                {avatarPresets.map((preset, index) => (
+            <div className="mt-4 p-4 bg-slate-50 border border-slate-200 rounded-2xl w-full max-w-md animate-scale-up space-y-3">
+              <div className="flex justify-between items-center">
+                <span className="text-xs font-bold text-slate-700">
+                  {lang === 'bn' ? 'প্রোফাইল ছবি নির্বাচন করুন:' : 'Choose Avatar Preset:'}
+                </span>
+                <button
+                  onClick={() => setShowAvatarPicker(false)}
+                  className="text-slate-400 hover:text-slate-600 p-1 text-xs"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="flex justify-center gap-2 flex-wrap">
+                {avatarPresets.map((preset, idx) => (
                   <button
-                    key={index}
+                    key={idx}
                     onClick={() => handleSelectPreset(preset)}
-                    className="w-10 h-10 rounded-full overflow-hidden border-2 border-white hover:border-blue-500 transition-all flex-shrink-0"
+                    className="w-12 h-12 rounded-full border-2 border-blue-500/40 hover:border-blue-600 overflow-hidden hover:scale-110 transition-all"
                   >
                     <img src={preset} alt="preset" className="w-full h-full object-cover" />
                   </button>
                 ))}
               </div>
-              <div className="mt-3 border-t border-slate-200 pt-3 space-y-3">
+
+              <div className="pt-2 border-t border-slate-200 space-y-2">
                 <div>
                   <span className="text-xs font-bold text-slate-500 block mb-1">
-                    {lang === 'bn' ? 'অথবা নিজের কম্পিউটার থেকে ছবি আপলোড করুন:' : 'Or upload from your computer:'}
+                    {lang === 'bn' ? 'নিজের ডিভাইস থেকে ছবি আপলোড করুন:' : 'Upload from your device:'}
                   </span>
                   <input
                     type="file"
@@ -213,7 +401,7 @@ export default function ProfileTab({ profile, updateProfile, addLog, taskLogs, l
                         reader.readAsDataURL(file);
                       }
                     }}
-                    className="w-full text-xs text-slate-500 file:mr-2 file:py-1 file:px-2.5 file:rounded-xl file:border-0 file:text-[10px] file:font-black file:bg-slate-900 file:text-white hover:file:bg-slate-800 file:cursor-pointer cursor-pointer border border-dashed border-slate-200 p-2 rounded-xl"
+                    className="w-full text-xs text-slate-500 file:mr-2 file:py-1 file:px-2.5 file:rounded-xl file:border-0 file:text-[10px] file:font-black file:bg-blue-600 file:text-white hover:file:bg-blue-700 file:cursor-pointer cursor-pointer border border-dashed border-slate-200 p-2 rounded-xl"
                   />
                 </div>
 
@@ -234,7 +422,7 @@ export default function ProfileTab({ profile, updateProfile, addLog, taskLogs, l
                         updateProfile({ avatarUrl: customAvatar });
                         setShowAvatarPicker(false);
                       }}
-                      className="bg-slate-900 text-white px-3 py-1.5 rounded-xl text-xs font-bold"
+                      className="bg-blue-600 text-white px-3 py-1.5 rounded-xl text-xs font-bold cursor-pointer"
                     >
                       Apply
                     </button>
@@ -244,90 +432,136 @@ export default function ProfileTab({ profile, updateProfile, addLog, taskLogs, l
             </div>
           )}
 
-          {/* User ID and Verification Badge */}
-          <div className="mt-4 flex items-center gap-2">
-            <span className="text-slate-500 font-mono text-xs font-bold bg-slate-100 px-2.5 py-1 rounded-lg">
+          {/* User ID, Verification, Gold Rank Badges */}
+          <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
+            <span className="text-slate-600 font-mono text-xs font-bold bg-slate-100/80 px-3 py-1 rounded-xl border border-slate-200/60 shadow-[inset_1px_1px_2px_rgba(255,255,255,0.8)]">
               UID: {profile.uid}
             </span>
-            <span className="bg-emerald-100 text-emerald-800 text-[10px] px-2 py-0.5 rounded-lg font-extrabold flex items-center gap-0.5">
-              <Icons.ShieldCheck className="w-3.5 h-3.5 fill-emerald-100" />
+
+            {/* Verification Badge */}
+            <span className="bg-emerald-500/10 text-emerald-700 text-[11px] px-2.5 py-1 rounded-xl font-extrabold flex items-center gap-1 border border-emerald-500/20 shadow-xs">
+              <Icons.ShieldCheck className="w-4 h-4 fill-emerald-500 text-white" />
               {lang === 'bn' ? 'ভেরিফাইড' : 'VERIFIED'}
+            </span>
+
+            {/* Gold Rank Badge */}
+            <span className="bg-amber-50 text-amber-900 text-[11px] px-3 py-1 rounded-xl font-bold flex items-center gap-1.5 border border-amber-300/80 shadow-xs">
+              <Icons.Crown className="w-4 h-4 text-amber-500 fill-amber-500" />
+              {profile.level === 'Gold Rank' || profile.level === 'গোল্ড র‍্যাংক' ? (lang === 'bn' ? 'গোল্ড র‍্যাংক' : 'Gold Rank') : profile.level}
             </span>
           </div>
 
-          <h2 className="mt-2 text-xl font-bold text-slate-800 leading-tight">
+          <h2 className="mt-2.5 text-xl md:text-2xl font-black text-slate-800 leading-tight">
             {profile.fullName}
           </h2>
-          <p className="text-slate-400 text-xs mt-0.5">{profile.email}</p>
+          <p className="text-slate-500 text-xs mt-0.5 font-medium">{profile.email}</p>
 
-          <p className="mt-2.5 text-slate-600 text-xs md:text-sm max-w-sm italic leading-relaxed">
+          <p className="mt-2 text-slate-600 text-xs md:text-sm max-w-sm italic leading-relaxed bg-blue-50/40 px-3 py-2 rounded-2xl border border-blue-100/50">
             "{profile.bio}"
           </p>
 
           {/* Performance stats bento block */}
-          <div className="grid grid-cols-3 gap-2.5 w-full mt-6">
-            <div className="bg-emerald-50 border border-emerald-100 p-3.5 rounded-2xl flex flex-col items-center justify-center text-center shadow-xs">
-              <span className="text-[9px] text-emerald-600 font-bold uppercase tracking-tight block mb-0.5">
-                {lang === 'bn' ? 'চলতি ব্যালেন্স' : 'Available Balance'}
-              </span>
-              <span className="text-sm font-black text-emerald-700 truncate max-w-full">
-                {lang === 'bn' ? `৳${(profile.balance * 100).toFixed(0)}` : `$${profile.balance.toFixed(2)}`}
-              </span>
+          <div className="w-full mt-5 space-y-3">
+            {/* 2-Column Row for Financial Balances */}
+            <div className="grid grid-cols-2 gap-3 w-full">
+              {/* Current Balance Card */}
+              <div className="clay-card bg-gradient-to-br from-emerald-50 via-teal-50 to-emerald-100/80 border border-emerald-200/90 p-3.5 md:p-4 rounded-2xl flex flex-col justify-between shadow-[inset_1px_1px_2px_rgba(255,255,255,0.9),0_6px_14px_rgba(16,185,129,0.12)] text-left">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-[10px] md:text-xs text-emerald-700 font-black uppercase tracking-tight">
+                    {lang === 'bn' ? 'চলতি ব্যালেন্স' : 'Available Balance'}
+                  </span>
+                  <div className="w-7 h-7 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-700 border border-emerald-300/50">
+                    <Icons.Wallet className="w-4 h-4" />
+                  </div>
+                </div>
+                <div className="text-lg md:text-xl font-black text-emerald-900 font-mono tracking-tight leading-none whitespace-nowrap overflow-x-auto no-scrollbar">
+                  {lang === 'bn' ? `৳${toBnNum(profile.balance.toLocaleString('en-US'))}` : `৳${profile.balance.toLocaleString('en-US')}`}
+                </div>
+              </div>
+
+              {/* Total Income Card */}
+              <div className="clay-card bg-gradient-to-br from-blue-50 via-indigo-50 to-blue-100/80 border border-blue-200/90 p-3.5 md:p-4 rounded-2xl flex flex-col justify-between shadow-[inset_1px_1px_2px_rgba(255,255,255,0.9),0_6px_14px_rgba(59,130,246,0.12)] text-left">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-[10px] md:text-xs text-blue-700 font-black uppercase tracking-tight">
+                    {lang === 'bn' ? 'টোটাল ইনকাম' : 'Total Earnings'}
+                  </span>
+                  <div className="w-7 h-7 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-700 border border-blue-300/50">
+                    <Icons.TrendingUp className="w-4 h-4" />
+                  </div>
+                </div>
+                <div className="text-lg md:text-xl font-black text-blue-900 font-mono tracking-tight leading-none whitespace-nowrap overflow-x-auto no-scrollbar">
+                  {lang === 'bn' ? `৳${toBnNum((profile.totalIncome ?? profile.balance).toLocaleString('en-US'))}` : `৳${(profile.totalIncome ?? profile.balance).toLocaleString('en-US')}`}
+                </div>
+              </div>
             </div>
-            <div className="bg-blue-50 border border-blue-100 p-3.5 rounded-2xl flex flex-col items-center justify-center text-center shadow-xs">
-              <span className="text-[9px] text-blue-600 font-bold uppercase tracking-tight block mb-0.5">
-                {lang === 'bn' ? 'টোটাল ইনকাম' : 'Total Earnings'}
-              </span>
-              <span className="text-sm font-black text-blue-700 truncate max-w-full">
-                {lang === 'bn' ? `৳${((profile.totalIncome ?? profile.balance) * 100).toFixed(0)}` : `$${(profile.totalIncome ?? profile.balance).toFixed(2)}`}
-              </span>
-            </div>
-            <div className="bg-indigo-50 border border-indigo-100 p-3.5 rounded-2xl flex flex-col items-center justify-center text-center shadow-xs">
-              <span className="text-[9px] text-indigo-600 font-bold uppercase tracking-tight block mb-0.5">
-                {lang === 'bn' ? 'সম্পন্ন কাজ' : 'Completed Tasks'}
-              </span>
-              <span className="text-sm font-black text-indigo-700 truncate max-w-full">
-                {profile.tasksCompleted}
-              </span>
+
+            {/* 2-Column Row for Completed Tasks and Total Withdrawals */}
+            <div className="grid grid-cols-2 gap-3 w-full">
+              {/* Completed Tasks Card */}
+              <div className="clay-card bg-gradient-to-br from-violet-50 via-purple-50 to-indigo-50 border border-violet-200/80 p-3.5 rounded-2xl flex flex-col justify-between shadow-[inset_1px_1px_2px_rgba(255,255,255,0.9),0_4px_12px_rgba(139,92,246,0.1)] text-left">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-[10px] text-violet-800 font-extrabold uppercase tracking-tight">
+                    {lang === 'bn' ? 'মোট সম্পন্ন কাজ' : 'Tasks Done'}
+                  </span>
+                  <div className="w-7 h-7 rounded-xl bg-violet-500/20 flex items-center justify-center text-violet-700 border border-violet-300/50">
+                    <Icons.CheckCircle2 className="w-4 h-4" />
+                  </div>
+                </div>
+                <div className="text-base md:text-lg font-black text-violet-900 font-mono">
+                  {lang === 'bn' ? toBnNum(profile.tasksCompleted) : profile.tasksCompleted} {lang === 'bn' ? 'টি' : 'Tasks'}
+                </div>
+              </div>
+
+              {/* Total Withdrawals Card */}
+              <div className="clay-card bg-gradient-to-br from-slate-50 via-slate-100 to-slate-200/80 border border-slate-300/80 p-3.5 rounded-2xl flex flex-col justify-between shadow-[inset_1px_1px_2px_rgba(255,255,255,0.9),0_4px_12px_rgba(0,0,0,0.05)] text-left">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-[10px] text-slate-700 font-extrabold uppercase tracking-tight">
+                    {lang === 'bn' ? 'মোট উত্তোলন / স্থানান্তরিত' : 'Total Transferred'}
+                  </span>
+                  <div className="w-7 h-7 rounded-xl bg-slate-200 flex items-center justify-center text-slate-700 border border-slate-300">
+                    <Icons.ArrowUpRight className="w-4 h-4 text-emerald-600" />
+                  </div>
+                </div>
+                <div className="text-base md:text-lg font-black text-slate-900 font-mono">
+                  ৳{toBnNum(totalWithdrawn.toLocaleString('en-US'))}
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Profile Form Details View */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
-        <div className="flex items-center justify-between border-b border-slate-200 pb-3 mb-2">
-          <h3 className="font-bold text-[#0f172a] text-base flex items-center gap-2">
-            <Icons.UserPen className="w-5 h-5 text-blue-600" />
-            {lang === 'bn' ? 'ব্যক্তিগত বিবরণ' : 'Personal Details'}
+      {/* --- PROFILE DETAILS SECTION & EDIT --- */}
+      <div className="clay-card bg-white rounded-3xl border border-blue-100/80 p-5 md:p-6 space-y-4" id="profile-details-card">
+        <div className="flex justify-between items-center border-b border-slate-100 pb-3">
+          <h3 className="font-extrabold text-slate-800 text-base flex items-center gap-2">
+            <Icons.User className="w-5 h-5 text-blue-600" />
+            {lang === 'bn' ? 'অ্যাকাউন্ট ও ব্যক্তিগত তথ্য' : 'Account & Personal Details'}
           </h3>
           <button
-            onClick={() => {
-              if (isEditing) {
-                handleSave();
-              } else {
-                startEditing();
-              }
-            }}
-            className="text-xs bg-[#0f172a] text-white font-bold px-4 py-2 rounded-xl hover:bg-slate-800 transition-all flex items-center gap-1.5"
-            id="edit-profile-btn"
+            onClick={isEditing ? handleSave : startEditing}
+            className={`text-xs font-bold px-3.5 py-1.5 rounded-xl transition-all shadow-xs flex items-center gap-1.5 cursor-pointer ${
+              isEditing
+                ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
+                : 'bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200/80'
+            }`}
           >
             {isEditing ? (
               <>
                 <Icons.Save className="w-3.5 h-3.5" />
-                {lang === 'bn' ? 'সংরক্ষণ করুন' : 'Save Info'}
+                {lang === 'bn' ? 'সংরক্ষণ করুন' : 'Save Changes'}
               </>
             ) : (
               <>
                 <Icons.Edit3 className="w-3.5 h-3.5" />
-                {lang === 'bn' ? 'তথ্য পরিবর্তন' : 'Edit Profile'}
+                {lang === 'bn' ? 'তথ্য এডিট করুন' : 'Edit Profile'}
               </>
             )}
           </button>
         </div>
 
         {isEditing ? (
-          <div className="space-y-4">
+          <div className="space-y-4 text-xs md:text-sm animate-scale-up">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-500">{lang === 'bn' ? 'পুরো নাম:' : 'Full Name:'}</label>
@@ -335,7 +569,7 @@ export default function ProfileTab({ profile, updateProfile, addLog, taskLogs, l
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full border border-slate-200 rounded-xl p-3 text-sm text-slate-700 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 bg-slate-50"
+                  className="w-full clay-input bg-slate-50/70 border border-slate-200 rounded-xl p-3 text-sm text-slate-700 outline-none focus:bg-white focus:border-blue-500"
                 />
               </div>
               <div className="space-y-1">
@@ -344,7 +578,7 @@ export default function ProfileTab({ profile, updateProfile, addLog, taskLogs, l
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full border border-slate-200 rounded-xl p-3 text-sm text-slate-700 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 bg-slate-50"
+                  className="w-full clay-input bg-slate-50/70 border border-slate-200 rounded-xl p-3 text-sm text-slate-700 outline-none focus:bg-white focus:border-blue-500"
                 />
               </div>
             </div>
@@ -356,7 +590,7 @@ export default function ProfileTab({ profile, updateProfile, addLog, taskLogs, l
                   type="text"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  className="w-full border border-slate-200 rounded-xl p-3 text-sm text-slate-700 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 bg-slate-50"
+                  className="w-full clay-input bg-slate-50/70 border border-slate-200 rounded-xl p-3 text-sm text-slate-700 outline-none focus:bg-white focus:border-blue-500"
                 />
               </div>
               <div className="space-y-1">
@@ -365,12 +599,12 @@ export default function ProfileTab({ profile, updateProfile, addLog, taskLogs, l
                   type="text"
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
-                  className="w-full border border-slate-200 rounded-xl p-3 text-sm text-slate-700 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 bg-slate-50"
+                  className="w-full clay-input bg-slate-50/70 border border-slate-200 rounded-xl p-3 text-sm text-slate-700 outline-none focus:bg-white focus:border-blue-500"
                 />
               </div>
             </div>
 
-            {/* Editable Balance, Total Earnings, and Completed Tasks section */}
+            {/* Editable Balance, Total Earnings, Completed Tasks and Rank section */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-500">
@@ -382,11 +616,12 @@ export default function ProfileTab({ profile, updateProfile, addLog, taskLogs, l
                     type="number"
                     value={editBalance}
                     onChange={(e) => setEditBalance(e.target.value)}
-                    className="w-full border border-slate-200 rounded-xl p-3 pl-8 text-sm font-bold text-slate-700 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 bg-slate-50 font-mono"
-                    placeholder="e.g. 1550"
+                    className="w-full clay-input bg-slate-50/70 border border-slate-200 rounded-xl p-3 pl-8 text-sm font-bold text-slate-700 outline-none focus:bg-white focus:border-blue-500 font-mono"
+                    placeholder="e.g. 3400"
                   />
                 </div>
               </div>
+
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-500">
                   {lang === 'bn' ? 'টোটাল ইনকাম (টাকা):' : 'Total Earnings (BDT):'}
@@ -397,11 +632,12 @@ export default function ProfileTab({ profile, updateProfile, addLog, taskLogs, l
                     type="number"
                     value={editTotalIncome}
                     onChange={(e) => setEditTotalIncome(e.target.value)}
-                    className="w-full border border-slate-200 rounded-xl p-3 pl-8 text-sm font-bold text-slate-700 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 bg-slate-50 font-mono"
-                    placeholder="e.g. 2550"
+                    className="w-full clay-input bg-slate-50/70 border border-slate-200 rounded-xl p-3 pl-8 text-sm font-bold text-slate-700 outline-none focus:bg-white focus:border-blue-500 font-mono"
+                    placeholder="e.g. 66400"
                   />
                 </div>
               </div>
+
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-500">
                   {lang === 'bn' ? 'সম্পন্ন কাজ (টি):' : 'Completed Tasks (count):'}
@@ -410,10 +646,26 @@ export default function ProfileTab({ profile, updateProfile, addLog, taskLogs, l
                   type="number"
                   value={editTasksCompleted}
                   onChange={(e) => setEditTasksCompleted(e.target.value)}
-                  className="w-full border border-slate-200 rounded-xl p-3 text-sm font-bold text-slate-700 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 bg-slate-50 font-mono"
-                  placeholder="e.g. 10"
+                  className="w-full clay-input bg-slate-50/70 border border-slate-200 rounded-xl p-3 text-sm font-bold text-slate-700 outline-none focus:bg-white focus:border-blue-500 font-mono"
+                  placeholder="e.g. 632"
                 />
               </div>
+            </div>
+
+            <div className="space-y-1">
+              <label className="text-xs font-bold text-slate-500">
+                {lang === 'bn' ? 'র‍্যাংক মেম্বারশিপ:' : 'Rank Level:'}
+              </label>
+              <select
+                value={editLevel}
+                onChange={(e) => setEditLevel(e.target.value)}
+                className="w-full clay-input bg-slate-50/70 border border-slate-200 rounded-xl p-3 text-sm font-bold text-slate-700 outline-none focus:bg-white focus:border-blue-500"
+              >
+                <option value="Gold Rank">Gold Rank (গোল্ড র‍্যাংক)</option>
+                <option value="Silver Rank">Silver Rank (সিলভার র‍্যাংক)</option>
+                <option value="Bronze Rank">Bronze Rank (ব্রোঞ্জ র‍্যাংক)</option>
+                <option value="Platinum Rank">Platinum Rank (প্ল্যাটিনাম র‍্যাংক)</option>
+              </select>
             </div>
 
             <div className="space-y-1">
@@ -421,74 +673,121 @@ export default function ProfileTab({ profile, updateProfile, addLog, taskLogs, l
               <textarea
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
-                className="w-full h-20 border border-slate-200 rounded-xl p-3 text-sm text-slate-700 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 bg-slate-50"
+                className="w-full h-20 clay-input bg-slate-50/70 border border-slate-200 rounded-xl p-3 text-sm text-slate-700 outline-none focus:bg-white focus:border-blue-500"
               />
             </div>
           </div>
         ) : (
-          <div className="space-y-3.5 text-xs md:text-sm">
-            <div className="flex justify-between items-center py-2.5 border-b border-slate-50">
-              <span className="text-slate-400 font-medium">{lang === 'bn' ? 'মোবাইল নাম্বার' : 'Phone'}</span>
-              <span className="text-slate-700 font-bold">{profile.phone}</span>
+          <div className="space-y-3 text-xs md:text-sm">
+            <div className="flex justify-between items-center py-2.5 border-b border-slate-100">
+              <span className="text-slate-500 font-medium">{lang === 'bn' ? 'মোবাইল নাম্বার' : 'Phone'}</span>
+              <span className="text-slate-800 font-bold font-mono">{profile.phone}</span>
             </div>
-            <div className="flex justify-between items-center py-2.5 border-b border-slate-50">
-              <span className="text-slate-400 font-medium">{lang === 'bn' ? 'ঠিকানা' : 'Address'}</span>
-              <span className="text-slate-700 font-bold text-right">{profile.address}</span>
+            <div className="flex justify-between items-center py-2.5 border-b border-slate-100">
+              <span className="text-slate-500 font-medium">{lang === 'bn' ? 'ঠিকানা' : 'Address'}</span>
+              <span className="text-slate-800 font-bold text-right">{profile.address}</span>
             </div>
-            <div className="flex justify-between items-center py-2.5 border-b border-slate-50">
-              <span className="text-slate-400 font-medium">{lang === 'bn' ? 'যোগদানের তারিখ' : 'Member Since'}</span>
-              <span className="text-slate-700 font-bold">{profile.joinedDate}</span>
+            <div className="flex justify-between items-center py-2.5 border-b border-slate-100">
+              <span className="text-slate-500 font-medium">{lang === 'bn' ? 'যোগদানের তারিখ' : 'Member Since'}</span>
+              <span className="text-slate-800 font-bold">{profile.joinedDate}</span>
             </div>
             <div className="flex justify-between items-center py-2.5">
-              <span className="text-slate-400 font-medium">{lang === 'bn' ? 'মেম্বারশিপ লেভেল' : 'Rank'}</span>
-              <span className="text-blue-600 font-extrabold bg-blue-50 px-2.5 py-0.5 rounded-lg border border-blue-100">
-                {profile.level}
+              <span className="text-slate-500 font-medium">{lang === 'bn' ? 'মেম্বারশিপ লেভেল' : 'Rank'}</span>
+              <span className="text-amber-950 font-black bg-gradient-to-r from-amber-300 to-yellow-400 px-3.5 py-1 rounded-xl border border-amber-400 shadow-xs flex items-center gap-1.5">
+                <Icons.Crown className="w-3.5 h-3.5 text-amber-950 fill-amber-950" />
+                {profile.level === 'Gold Rank' || profile.level === 'গোল্ড র‍্যাংক' ? (lang === 'bn' ? 'গোল্ড র‍্যাংক' : 'Gold Rank') : profile.level}
               </span>
             </div>
           </div>
         )}
       </div>
 
-      {/* --- BALANCE TRANSFER WIDGET --- */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4 relative overflow-hidden" id="balance-transfer-card">
-        {/* Subtle accent border */}
+      {/* --- UPGRADED BALANCE TRANSFER WIDGET --- */}
+      <div className="clay-card bg-white rounded-3xl border border-emerald-100/90 p-5 md:p-6 space-y-4 relative overflow-hidden shadow-sm" id="balance-transfer-card">
         <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-emerald-500 via-teal-500 to-blue-500" />
         
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
-          <h3 className="font-bold text-[#0f172a] text-base flex items-center gap-2">
+          <h3 className="font-extrabold text-slate-800 text-base flex items-center gap-2">
             <Icons.Send className="w-5 h-5 text-emerald-600" />
-            {lang === 'bn' ? 'মেইন অ্যাকাউন্টে ব্যালেন্স ট্রান্সফার' : 'Balance Transfer to Main Account'}
+            {lang === 'bn' ? 'ব্যালেন্স ট্রান্সফার ও উত্তোলন হাব' : 'Balance Transfer & Payout Portal'}
           </h3>
-          <span className="text-[10px] font-extrabold text-slate-400 bg-slate-100 px-2 py-1 rounded-md uppercase font-mono self-start sm:self-auto">
+          <span className="text-[10px] font-extrabold text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-xl uppercase font-mono self-start sm:self-auto border border-emerald-200">
             {lang === 'bn' ? `আপনার UID: ${profile.uid}` : `Your UID: ${profile.uid}`}
           </span>
         </div>
 
-        <p className="text-xs text-slate-400 font-medium">
+        <p className="text-xs text-slate-500 font-medium leading-relaxed">
           {lang === 'bn'
-            ? 'আপনার অর্জিত ব্যালেন্স সরাসরি আপনার মেইন অ্যাকাউন্টে বা অন্য যেকোনো ইউজার অ্যাকাউন্টে ট্রান্সফার করতে নিচের ফর্মটি পূরণ করুন। ট্রান্সফার সাথে সাথে সম্পন্ন হয়ে যাবে।'
-            : 'Transfer your earnings directly to your main registration account or any other user account using the form below. Transfers are processed instantly.'}
+            ? 'আপনার অর্জিত ব্যালেন্স সরাসরি ইউনিটি মেইন অ্যাকাউন্ট, বিকাশ, নগদ, রকেট অথবা অন্য যেকোনো ইউজার অ্যাকাউন্টে দ্রুত ও নিরাপদে ট্রান্সফার করুন।'
+            : 'Transfer your wallet earnings instantly to your main portal registration, bKash, Nagad, Rocket, or another user account.'}
         </p>
 
-        <div className="bg-slate-50 border border-slate-100 rounded-2xl p-4 md:p-5 space-y-4">
+        {/* Transfer Method Selector Chips */}
+        <div className="space-y-1.5">
+          <label className="text-[11px] font-black text-slate-600 block uppercase tracking-wider">
+            {lang === 'bn' ? 'ট্রান্সফার মাধ্যম নির্বাচন করুন:' : 'Select Transfer Destination:'}
+          </label>
+
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+            {[
+              { id: 'main-portal', labelBn: 'মেইন অ্যাকাউন্ট', labelEn: 'Main UID', icon: Icons.Zap, color: 'text-indigo-600' },
+              { id: 'bkash', labelBn: 'বিকাশ (bKash)', labelEn: 'bKash', icon: Icons.Smartphone, color: 'text-pink-600' },
+              { id: 'nagad', labelBn: 'নগদ (Nagad)', labelEn: 'Nagad', icon: Icons.Flame, color: 'text-orange-600' },
+              { id: 'rocket', labelBn: 'রকেট (Rocket)', labelEn: 'Rocket', icon: Icons.Radio, color: 'text-purple-600' },
+              { id: 'p2p', labelBn: 'P2P ইউজার', labelEn: 'Peer UID', icon: Icons.Users, color: 'text-emerald-600' }
+            ].map((method) => {
+              const IconComp = method.icon;
+              const isSelected = selectedMethod === method.id;
+              return (
+                <button
+                  key={method.id}
+                  type="button"
+                  onClick={() => {
+                    setSelectedMethod(method.id as TransferMethodType);
+                    setTransferSuccess(false);
+                    setTransferError(null);
+                  }}
+                  className={`p-2.5 rounded-2xl border text-xs font-bold flex flex-col items-center justify-center gap-1 transition-all cursor-pointer ${
+                    isSelected
+                      ? 'bg-slate-900 text-white border-slate-900 shadow-sm scale-[1.02]'
+                      : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100 hover:border-slate-300'
+                  }`}
+                >
+                  <IconComp className={`w-4 h-4 ${isSelected ? 'text-white' : method.color}`} />
+                  <span className="text-[11px]">{lang === 'bn' ? method.labelBn : method.labelEn}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="bg-slate-50/80 border border-slate-100 rounded-2xl p-4 md:p-5 space-y-4 shadow-[inset_1px_1px_3px_rgba(0,0,0,0.03)]">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* UID Field */}
+            {/* Dynamic Target Input */}
             <div className="space-y-1">
               <label className="text-xs font-bold text-slate-500 flex items-center gap-1">
                 <Icons.User className="w-3.5 h-3.5 text-indigo-500" />
-                {lang === 'bn' ? 'রিসিভার ইউজার আইডি (UID):' : 'Receiver User ID (UID):'}
+                {selectedMethod === 'main-portal' || selectedMethod === 'p2p'
+                  ? (lang === 'bn' ? 'রিসিভার ইউজার আইডি (UID):' : 'Receiver User ID (UID):')
+                  : (lang === 'bn' ? 'রিসিভার মোবাইল নম্বর (017...):' : 'Receiver Mobile Number:')}
               </label>
               <input
                 type="text"
-                value={transferUID}
+                value={transferTarget}
                 onChange={(e) => {
-                  setTransferUID(e.target.value);
+                  setTransferTarget(e.target.value);
                   setTransferSuccess(false);
                   setTransferError(null);
                 }}
                 disabled={transferring}
-                className="w-full border border-slate-200 rounded-xl p-3 text-sm font-bold text-slate-700 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 bg-white placeholder-slate-300 font-mono"
-                placeholder="e.g. UE-2026-8942"
+                className="w-full clay-input bg-white border border-slate-200 rounded-xl p-3 text-sm font-bold text-slate-700 outline-none focus:border-emerald-500 font-mono"
+                placeholder={
+                  selectedMethod === 'main-portal'
+                    ? 'e.g. UE-MAIN-7701'
+                    : selectedMethod === 'p2p'
+                    ? 'e.g. UE-2026-8942'
+                    : 'e.g. 017xxxxxxxx'
+                }
               />
             </div>
 
@@ -502,13 +801,12 @@ export default function ProfileTab({ profile, updateProfile, addLog, taskLogs, l
                 <button
                   type="button"
                   onClick={() => {
-                    const availableBDT = (profile.balance * 100).toFixed(0);
-                    setTransferAmount(availableBDT);
+                    setTransferAmount(profile.balance.toFixed(0));
                     setTransferSuccess(false);
                     setTransferError(null);
                   }}
                   disabled={transferring || profile.balance <= 0}
-                  className="text-[10px] font-bold text-emerald-600 hover:text-emerald-700 hover:underline cursor-pointer"
+                  className="text-[10px] font-extrabold text-emerald-600 hover:text-emerald-700 hover:underline cursor-pointer"
                 >
                   {lang === 'bn' ? 'সবটুকু পাঠান' : 'Send All'}
                 </button>
@@ -524,11 +822,32 @@ export default function ProfileTab({ profile, updateProfile, addLog, taskLogs, l
                     setTransferError(null);
                   }}
                   disabled={transferring}
-                  className="w-full border border-slate-200 rounded-xl p-3 pl-8 text-sm font-bold text-slate-700 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 bg-white font-mono"
+                  className="w-full clay-input bg-white border border-slate-200 rounded-xl p-3 pl-8 text-sm font-bold text-slate-700 outline-none focus:border-emerald-500 font-mono"
                   placeholder="0.00"
                 />
               </div>
             </div>
+          </div>
+
+          {/* Quick Amount Selector Chips */}
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <span className="text-[10px] font-bold text-slate-400 mr-1">
+              {lang === 'bn' ? 'কুইক অ্যামাউন্ট:' : 'Quick Select:'}
+            </span>
+            {[500, 1000, 2000, 5000].map((amt) => (
+              <button
+                key={amt}
+                type="button"
+                onClick={() => {
+                  setTransferAmount(amt.toString());
+                  setTransferSuccess(false);
+                  setTransferError(null);
+                }}
+                className="text-[10px] font-bold font-mono px-2.5 py-1 bg-white hover:bg-emerald-50 text-slate-700 hover:text-emerald-700 rounded-lg border border-slate-200 transition-all cursor-pointer"
+              >
+                +৳{toBnNum(amt)}
+              </button>
+            ))}
           </div>
 
           {/* Messages & Actions */}
@@ -539,36 +858,164 @@ export default function ProfileTab({ profile, updateProfile, addLog, taskLogs, l
             </div>
           )}
 
-          {transferSuccess && (
-            <div className="p-3 bg-emerald-50 border border-emerald-100 rounded-xl flex items-center gap-2 text-emerald-800 text-xs font-bold animate-scale-up">
-              <Icons.CheckCircle className="w-4 h-4 shrink-0 text-emerald-500" />
-              <span>
-                {lang === 'bn'
-                  ? `সফলভাবে মেইন অ্যাকাউন্টে ব্যালেন্স ট্রান্সফার হয়েছে! রিসিভার UID: ${transferUID}`
-                  : `Successfully transferred balance to UID: ${transferUID}!`}
-              </span>
+          {transferSuccess && latestTrxData && (
+            <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-2xl space-y-2 animate-scale-up">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 text-emerald-800 font-extrabold text-xs">
+                  <Icons.CheckCircle className="w-4 h-4 text-emerald-600" />
+                  <span>{lang === 'bn' ? 'ব্যালেন্স ট্রান্সফার সফল হয়েছে!' : 'Transfer Completed Successfully!'}</span>
+                </div>
+                <span className="text-xs font-black text-emerald-700 font-mono">
+                  -৳{toBnNum(latestTrxData.amountBDT.toLocaleString('en-US'))}
+                </span>
+              </div>
+              <div className="flex items-center justify-between text-[11px] bg-white p-2.5 rounded-xl border border-emerald-100">
+                <div className="font-mono text-slate-600">
+                  <span className="font-bold text-slate-400">TRX:</span> {latestTrxData.trxId}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => handleCopyTrx(latestTrxData.trxId)}
+                  className="text-emerald-600 hover:text-emerald-700 font-bold flex items-center gap-1 cursor-pointer"
+                >
+                  {copiedTrxId === latestTrxData.trxId ? (
+                    <>
+                      <Icons.Check className="w-3.5 h-3.5" />
+                      <span>{lang === 'bn' ? 'কপি হয়েছে' : 'Copied'}</span>
+                    </>
+                  ) : (
+                    <>
+                      <Icons.Copy className="w-3.5 h-3.5" />
+                      <span>{lang === 'bn' ? 'কপি TRX' : 'Copy TRX'}</span>
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
           )}
 
-          <div className="flex justify-end">
+          <div className="flex items-center justify-between pt-1">
+            <span className="text-[11px] font-bold text-slate-500 flex items-center gap-1">
+              <Icons.ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+              {lang === 'bn' ? '০% ট্রানজেকশন ফি (ইনস্ট্যান্ট সেটেলমেন্ট)' : '0% Fee Instant Settlement'}
+            </span>
+
             <button
               onClick={handleBalanceTransfer}
-              disabled={transferring || !transferUID || !transferAmount}
-              className="w-full md:w-auto min-w-[160px] bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-extrabold px-6 py-3 rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none text-xs flex items-center justify-center gap-1.5 shadow-sm hover:shadow cursor-pointer"
+              disabled={transferring || !transferTarget || !transferAmount}
+              className="min-w-[160px] bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-extrabold px-6 py-3 rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none text-xs flex items-center justify-center gap-1.5 shadow-sm hover:shadow cursor-pointer"
             >
               {transferring ? (
                 <>
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  <span>{lang === 'bn' ? 'ভেরিফাই হচ্ছে...' : 'Verifying...'}</span>
+                  <span>{lang === 'bn' ? 'প্রসেসিং হচ্ছে...' : 'Processing...'}</span>
                 </>
               ) : (
                 <>
                   <Icons.ArrowRightLeft className="w-4 h-4" />
-                  <span>{lang === 'bn' ? 'ব্যালেন্স ট্রান্সফার করুন' : 'Confirm & Transfer'}</span>
+                  <span>{lang === 'bn' ? 'কনফার্ম ও ট্রান্সফার করুন' : 'Confirm & Transfer'}</span>
                 </>
               )}
             </button>
           </div>
+        </div>
+      </div>
+
+      {/* --- BALANCE TRANSFER HISTORY CARD --- */}
+      <div className="clay-card bg-white rounded-3xl border border-slate-200/90 p-5 md:p-6 space-y-4 shadow-sm" id="transfer-history-card">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+          <h3 className="font-extrabold text-slate-800 text-base flex items-center gap-2">
+            <Icons.History className="w-5 h-5 text-emerald-600" />
+            {lang === 'bn' ? 'ট্রান্সফার ও উত্তোলন হিস্টোরি' : 'Payout & Transfer History'}
+          </h3>
+          <span className="text-[10px] font-extrabold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-xl border border-emerald-200/80 self-start sm:self-auto">
+            {lang === 'bn' ? `${filteredTransactions.length} টি লেনদেন` : `${filteredTransactions.length} Transactions`}
+          </span>
+        </div>
+
+        {/* Filter Chips & Search */}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2">
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar">
+            {[
+              { id: 'all', label: lang === 'bn' ? 'সব' : 'All' },
+              { id: 'main-portal', label: 'মেইন UID' },
+              { id: 'bkash', label: 'বিকাশ' },
+              { id: 'nagad', label: 'নগদ' },
+              { id: 'rocket', label: 'রকেট' },
+              { id: 'p2p', label: 'P2P' }
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => setHistoryFilter(tab.id)}
+                className={`px-3 py-1 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
+                  historyFilter === tab.id
+                    ? 'bg-slate-900 text-white shadow-xs'
+                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          <div className="relative">
+            <Icons.Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              value={historySearch}
+              onChange={(e) => setHistorySearch(e.target.value)}
+              placeholder={lang === 'bn' ? 'TRX ID খুঁজুন...' : 'Search TRX...'}
+              className="bg-slate-50 border border-slate-200 rounded-xl pl-8 pr-3 py-1.5 text-xs text-slate-700 outline-none focus:bg-white focus:border-emerald-500 w-full sm:w-40"
+            />
+          </div>
+        </div>
+
+        <div className="space-y-2.5">
+          {filteredTransactions.map((trx) => (
+            <div
+              key={trx.id}
+              className="p-3.5 bg-slate-50/90 hover:bg-slate-100/80 border border-slate-200/80 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-all shadow-2xs"
+            >
+              <div className="space-y-1">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <button
+                    type="button"
+                    onClick={() => handleCopyTrx(trx.trxId)}
+                    className="font-mono text-xs font-black text-indigo-700 bg-indigo-50 hover:bg-indigo-100 px-2.5 py-1 rounded-lg border border-indigo-200/60 flex items-center gap-1 shadow-2xs cursor-pointer transition-all"
+                  >
+                    <Icons.Receipt className="w-3.5 h-3.5 text-indigo-500" />
+                    TRX: {trx.trxId}
+                    {copiedTrxId === trx.trxId && <Icons.Check className="w-3 h-3 text-emerald-600 ml-0.5" />}
+                  </button>
+                  <span className="text-[10px] font-extrabold text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded-md flex items-center gap-1 border border-emerald-200">
+                    <Icons.CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                    {trx.status}
+                  </span>
+                </div>
+
+                <div className="text-xs font-bold text-slate-700 flex items-center gap-2 mt-1">
+                  <span>{trx.method}</span>
+                  <span className="text-slate-300">•</span>
+                  <span className="text-slate-500 font-mono text-[11px]">{trx.receiver}</span>
+                </div>
+
+                <div className="text-[10px] text-slate-400 font-medium font-mono flex items-center gap-1">
+                  <Icons.Clock className="w-3 h-3 text-slate-400" />
+                  {trx.date}
+                </div>
+              </div>
+
+              <div className="text-right sm:self-center bg-rose-50/60 px-3 py-1.5 rounded-xl border border-rose-100/80">
+                <span className="text-sm md:text-base font-black text-rose-600 font-mono block">
+                  -৳{toBnNum(trx.amountBDT.toLocaleString('en-US'))}
+                </span>
+                <span className="text-[9px] text-rose-700 font-extrabold uppercase tracking-wider block">
+                  {lang === 'bn' ? 'স্থানান্তরিত' : 'Debited'}
+                </span>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
@@ -584,8 +1031,7 @@ export default function ProfileTab({ profile, updateProfile, addLog, taskLogs, l
         <Icons.ExternalLink className="w-4 h-4 ml-1 opacity-70" />
       </a>
 
-      {/* --- RECONSTRUCTED DEMO VIDEO PLAYER --- */}
-      {/* As requested: "ভিডিওটা যেন থাকি" -> "The video must be there" */}
+      {/* Training Video Player */}
       <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
         <h3 className="font-bold text-[#0f172a] text-base flex items-center gap-2">
           <Icons.Video className="w-5 h-5 text-blue-600" />
@@ -610,7 +1056,6 @@ export default function ProfileTab({ profile, updateProfile, addLog, taskLogs, l
 
       {/* Download App Section */}
       <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 rounded-2xl p-6 text-white shadow-md relative overflow-hidden">
-        {/* Decorative Circles */}
         <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-xl -mr-8 -mt-8" />
         <div className="absolute -bottom-10 -left-10 w-36 h-36 bg-white/10 rounded-full blur-2xl" />
 

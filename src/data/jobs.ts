@@ -3,38 +3,34 @@ import { Job, UserProfile, ShopItem, TaskLog } from '../types';
 export const INITIAL_JOBS: Job[] = [
   {
     id: 'typing-job',
-    titleEn: 'Typing Job',
+    titleEn: 'Typing Work',
     titleBn: 'টাইপিং জব',
     tag: 'POPULAR',
     iconName: 'Keyboard',
     bgColor: 'bg-blue-50',
     iconColor: 'text-blue-600',
     rewardEn: '$2.50 - $4.00 per project',
-    rewardBn: '৳২৫০ - ৳৪০০ প্রতি প্রজেক্ট',
+    rewardBn: '৳২৫০ - ৳৪০০ প্রতি কাজ',
     estimatedTimeEn: '5-10 mins',
     estimatedTimeBn: '৫-১০ মিনিট',
     difficultyEn: 'Easy',
     difficultyBn: 'সহজ',
-    shortDescBn: 'সঠিকভাবে তথ্য এবং ট্রান্সক্রিপশন ডিরেক্টরি টাইপ করে কাস্টমার প্রজেক্ট সাবমিট করুন।',
-    shortDescEn: 'Transcribe raw client documents and type text datasets accurately into secure portals.',
-    longDescBn: 'ডাটা টাইপিং কাজ হলো আমাদের প্ল্যাটফর্মের অন্যতম গুরুত্বপূর্ণ সেবা। এখানে আপনাকে ক্লায়েন্টের দেওয়া ফাইল বা ইমেজ ফাইল থেকে সঠিক ক্যারেক্টার ও স্পেসিং মেনে নির্ভুলভাবে টাইপ করতে হবে। কোনো বানান ভুল বা কমা-ডট ভুল করা যাবে না। এটি সরাসরি ডাটাবেজ ভ্যালিডেশনের জন্য সাবমিট করা হয়।',
-    longDescEn: 'Data typing is a vital contract service on our platform. Your task is to transcribe digital customer files, raw scanned records, or logs into clean digital formats. Accuracy, spacing, and punctuation must match the source files perfectly for real-time validation.',
+    shortDescBn: 'ফাইল ও টেক্সট সঠিক অক্ষরে টাইপ করে জমা দিন।',
+    shortDescEn: 'Transcribe raw client documents and type text datasets accurately.',
+    longDescBn: 'টাইপিং কাজ: ক্লায়েন্টের ফাইল বা ছবি দেখে নির্ভুলভাবে টেক্সট টাইপ করে সাবমিট করুন।',
+    longDescEn: 'Data typing is a vital contract service. Transcribe digital customer files or records accurately into clean formats.',
     instructionsBn: [
-      'প্রথমে কাস্টমার ডাটা সোর্সটি মনোযোগ দিয়ে পর্যবেক্ষণ করুন।',
-      'নিচের টেক্সট এরিয়াতে কোনো ভুল ছাড়াই হুবহু টাইপ করা শুরু করুন।',
-      'আপনার টাইপিং স্পিড এবং ক্যারেক্টার একুরেসি রিয়েল-টাইমে গণনা করা হবে।',
-      'কমপক্ষে ৯৫% নির্ভুলতা বজায় রেখে কাজ সম্পন্ন করে সাবমিট করুন।',
-      'কোনো অতিরিক্ত স্পেস বা অপ্রয়োজনীয় ক্যারেক্টার এড়িয়ে চলুন।'
+      'প্রথমে কাস্টমার ডাটা সোর্সটি দেখুন।',
+      'নিচের বক্সে নির্ভুলভাবে টাইপ করুন।',
+      'কমপক্ষে ৯৫% সঠিকতা রেখে সাবমিট করুন।'
     ],
     instructionsEn: [
-      'Carefully inspect the provided client source record.',
-      'Type the characters exactly as shown in the active workspace field.',
-      'Your typing speed and correctness are calculated automatically in real-time.',
-      'Maintain at least a 95% accuracy rate to successfully approve the project.',
-      'Double-check all punctuation and casing before submitting.'
+      'Inspect the provided client source record.',
+      'Type the characters exactly as shown.',
+      'Maintain at least 95% accuracy to submit.'
     ],
-    skillsRequiredEn: ['Fast Typing', 'Attention to Detail', 'Keyboard Shortcuts'],
-    skillsRequiredBn: ['দ্রুত টাইপিং গতি', 'ক্ষুদ্র বিষয়ে মনোযোগ', 'কীবোর্ড শর্টকাট']
+    skillsRequiredEn: ['Fast Typing', 'Attention to Detail'],
+    skillsRequiredBn: ['টাইপিং গতি', 'সঠিকতা']
   },
   {
     id: 'email-marketing',
@@ -45,29 +41,120 @@ export const INITIAL_JOBS: Job[] = [
     bgColor: 'bg-indigo-50',
     iconColor: 'text-indigo-600',
     rewardEn: '$0.20 per account',
-    rewardBn: '৳২০ প্রতি ইমেইল সেল',
+    rewardBn: '৳২০ প্রতি ইমেইল',
     estimatedTimeEn: '1-2 mins',
     estimatedTimeBn: '১-২ মিনিট',
     difficultyEn: 'Easy',
     difficultyBn: 'সহজ',
-    shortDescBn: 'সহজে ইমেইল এবং পাসওয়ার্ড সাবমিট করে প্রতিটি সচল ইমেইলের জন্য ২০ টাকা আয় করুন।',
-    shortDescEn: 'Sell active email accounts by submitting credentials for instant $0.20 / ৳20 payouts.',
-    longDescBn: 'ইমেইল সেলস কাজের মাধ্যমে আপনি প্রতি সচল ইমেইল এবং পাসওয়ার্ড সাবমিট করার সাথে সাথে ২০ টাকা করে নিশ্চিত কমিশন পাবেন। এখানে কোন জটিল কাজ নেই, শুধু ইমেইল আইডি ও পাসওয়ার্ড প্রদান করলেই হবে।',
-    longDescEn: 'Earn instant payouts by submitting working email accounts with their passwords. Receive a flat $0.20 / ৳20 commission for each account.',
+    shortDescBn: 'সচল ইমেইল সাবমিট করে প্রতিটি ইমেইলে ২০ টাকা পান।',
+    shortDescEn: 'Submit active email credentials to earn instant ৳20 payouts.',
+    longDescBn: 'ইমেইল সাবমিট: প্রতি সচল ইমেইল ও পাসওয়ার্ড জমা দিয়ে ২০ টাকা কমিশন লাভ করুন।',
+    longDescEn: 'Earn instant payouts by submitting working email accounts.',
     instructionsBn: [
-      'প্রথমে একটি সচল ইমেইল অ্যাড্রেস লিখুন।',
-      'ইমেইলের সঠিক পাসওয়ার্ডটি টাইপ করুন।',
-      'তথ্য সাবমিট করার জন্য বাটনে ক্লিক করুন।',
-      'আমাদের অটোমেটেড সিস্টেমে ভেরিফাই হওয়ার পর সাথে সাথে ২০ টাকা কমিশন আপনার ব্যালেন্সে যোগ হবে।'
+      'একটি সচল ইমেইল অ্যাড্রেস লিখুন।',
+      'ইমেইলের পাসওয়ার্ড দিন।',
+      'সাবমিট করে ২০ টাকা কমিশন নিন।'
     ],
     instructionsEn: [
       'Enter an active, working email address.',
-      'Provide the correct password for the email.',
-      'Click the submit button to initiate automated verification.',
-      'Receive instant $0.20 / ৳20 credit in your balance upon successful verification.'
+      'Provide the correct password.',
+      'Click submit to claim commission.'
     ],
-    skillsRequiredEn: ['Active Email Accounts', 'Account Security', 'Fast Submission'],
-    skillsRequiredBn: ['সক্রিয় ইমেইল অ্যাকাউন্ট', 'অ্যাকাউন্ট নিরাপত্তা', 'দ্রুত সাবমিশন']
+    skillsRequiredEn: ['Active Email', 'Fast Submission'],
+    skillsRequiredBn: ['সক্রিয় ইমেইল', 'দ্রুত কাজ']
+  },
+  {
+    id: 'form-fillup-work',
+    titleEn: 'Form Fill-Up',
+    titleBn: 'ফর্ম ফিল আপ',
+    tag: 'EASY',
+    iconName: 'FileSpreadsheet',
+    bgColor: 'bg-emerald-50',
+    iconColor: 'text-emerald-600',
+    rewardEn: '$2.00 per submission',
+    rewardBn: '৳২০০ প্রতি কাজ',
+    estimatedTimeEn: '2-3 mins',
+    estimatedTimeBn: '২-৩ মিনিট',
+    difficultyEn: 'Easy',
+    difficultyBn: 'সহজ',
+    shortDescBn: 'তথ্য দেখে অনলাইন ফর্মে সঠিক ডাটা ইনপুট দিন।',
+    shortDescEn: 'Enter client details into online service forms accurately to earn ৳200.',
+    longDescBn: 'ফর্ম ফিল আপ: ডাটা কার্ড দেখে নির্দিষ্ট বক্সে নাম, ইমেইল ও তথ্য বসিয়ে জমা দিন।',
+    longDescEn: 'Online Form Submission: transfer raw customer details into online forms accurately.',
+    instructionsBn: [
+      'ডাটা সোর্স কার্ডটি দেখুন।',
+      'ফর্মে নাম, ইমেইল ও তথ্য লিখুন।',
+      'যাচাই করে সাবমিট করুন।'
+    ],
+    instructionsEn: [
+      'Review the customer data card.',
+      'Enter Name, Email, and details.',
+      'Click submit form.'
+    ],
+    skillsRequiredEn: ['Form Entry', 'Accuracy'],
+    skillsRequiredBn: ['ফর্ম ফিল আপ', 'সঠিকতা']
+  },
+  {
+    id: 'data-entry-work',
+    titleEn: 'Data Entry',
+    titleBn: 'ডাটা এন্ট্রি',
+    tag: 'POPULAR',
+    iconName: 'Database',
+    bgColor: 'bg-purple-50',
+    iconColor: 'text-purple-600',
+    rewardEn: '$3.00 - $5.00 per dataset',
+    rewardBn: '৳৩০০ - ৳৫০০ প্রতি ডাটা',
+    estimatedTimeEn: '8-12 mins',
+    estimatedTimeBn: '৮-১২ মিনিট',
+    difficultyEn: 'Medium',
+    difficultyBn: 'মাঝারি',
+    shortDescBn: '১০০ জন ক্লায়েন্টের নাম ও ইউআইডি ডাটা চেক করে জমা দিন।',
+    shortDescEn: 'Verify and submit client data entries in a professional spreadsheet.',
+    longDescBn: 'ডাটা এন্ট্রি: ক্লায়েন্ট নাম ও ইউআইডি ডাটাশিট ভেরিফাই করে সেভ করুন।',
+    longDescEn: 'Client Data Entry: inspect details and view spreadsheet data to file entries.',
+    instructionsBn: [
+      'পেন্ডিং ক্লায়েন্ট সিলেক্ট করুন।',
+      'নাম ও ইউআইডি চেক করুন।',
+      'ডাটাশিট সাবমিট করুন।'
+    ],
+    instructionsEn: [
+      'Select a pending client.',
+      'Verify UID and details.',
+      'Click submit datasheet.'
+    ],
+    skillsRequiredEn: ['Spreadsheet', 'Data Checking'],
+    skillsRequiredBn: ['এক্সেল', 'ডাটা এন্ট্রি']
+  },
+  {
+    id: 'code-entry',
+    titleEn: 'Code Entry',
+    titleBn: 'কোড বসানো (কোড এন্ট্রি)',
+    tag: 'NEW',
+    iconName: 'Code',
+    bgColor: 'bg-indigo-50',
+    iconColor: 'text-indigo-600',
+    rewardEn: '$3.50 per dataset',
+    rewardBn: '৳৩৫০ প্রতি কাজ',
+    estimatedTimeEn: '5-8 mins',
+    estimatedTimeBn: '৫-৮ মিনিট',
+    difficultyEn: 'Easy',
+    difficultyBn: 'সহজ',
+    shortDescBn: 'প্রোডাক্টের ছবি দেখে সিরিয়াল কোড মিলিয়ে ইনপুট দিন।',
+    shortDescEn: 'Match product serial numbers with correct verification keys.',
+    longDescBn: 'কোড এন্ট্রি: স্ক্রিনে দেখানো প্রোডাক্ট ছবি ও সিরিয়াল কোড মিলিয়ে সাবমিট করুন।',
+    longDescEn: 'Look up serial numbers and enter exact confirmation codes.',
+    instructionsBn: [
+      'প্রোডাক্ট ছবি দেখুন।',
+      'সিরিয়াল কোডটি মেলান।',
+      'বক্সে টাইপ করে কনফার্ম করুন।'
+    ],
+    instructionsEn: [
+      'Observe product image.',
+      'Match verification code.',
+      'Type code into box and confirm.'
+    ],
+    skillsRequiredEn: ['Serial Matching', 'Numeric Typing'],
+    skillsRequiredBn: ['কোড মেলানো', 'টাইপিং']
   },
   {
     id: 'facebook-marketing',
@@ -78,29 +165,27 @@ export const INITIAL_JOBS: Job[] = [
     bgColor: 'bg-sky-50',
     iconColor: 'text-sky-600',
     rewardEn: '$3.80 - $5.50 per campaign',
-    rewardBn: '৳৩৮০ - ৳৫৫০ প্রতি ক্যাম্পেইন',
+    rewardBn: '৳৩৮০ - ৳৫৫০ প্রতি কাজ',
     estimatedTimeEn: '10-15 mins',
     estimatedTimeBn: '১০-১৫ মিনিট',
     difficultyEn: 'Medium',
     difficultyBn: 'মাঝারি',
-    shortDescBn: 'টার্গেট অডিয়েন্স ও বাজেট নির্ধারণ করে ফেসবুক বিজ্ঞাপন রান করুন।',
-    shortDescEn: 'Design ad copy, select target audience profiles, and launch active social media campaigns.',
-    longDescBn: 'সোশ্যাল মিডিয়া বিজ্ঞাপন প্রচারের প্রধান উদ্দেশ্য হলো সঠিক কাস্টমারের কাছে বিজ্ঞাপন পৌঁছে দেওয়া। এই কাজে আপনি আকর্ষণীয় হেডলাইন, ইমেজ ও কাস্টমার ইন্টারেস্ট ডেটা সেটআপ করে বিজ্ঞাপন রান করবেন এবং লাইভ এনগেজমেন্ট মনিটর করবেন।',
-    longDescEn: 'Social media advertisement execution focuses on matching engaging banners with targeted demographics. Set up post text, define buyer locations, interests, and budget levels, and inspect key statistics like Cost-Per-Click and Reach.',
+    shortDescBn: 'টার্গেট অডিয়েন্স অনুযায়ী সামাজিক বিজ্ঞাপন সেটআপ করুন।',
+    shortDescEn: 'Design ad copy and launch social media promotion campaigns.',
+    longDescBn: 'ডিজিটাল প্রচার: বিজ্ঞাপনের শিরোনাম, বাজেট ও টার্গেট সেট করে কাজ সাবমিট করুন।',
+    longDescEn: 'Set up post text, define buyer locations, interests, and publish ads.',
     instructionsBn: [
-      'পোস্টের জন্য একটি আকর্ষণীয় কাস্টমার ক্যাপশন এবং অফার লিখুন।',
-      'বিজ্ঞাপনের নির্দিষ্ট লক্ষ্য (যেমন: পেজ লাইক, মেসেজ বৃদ্ধি, বা সেলস) সিলেক্ট করুন।',
-      'গ্রাহকদের বয়স, লোকেশন এবং ইন্টারেস্ট (পছন্দসমূহ) নিখুঁতভাবে টার্গেট করুন।',
-      'বিজ্ঞাপন রান করুন এবং লাইভ কাস্টমার রিচ ও ইম্প্রেশন চার্টটি পর্যবেক্ষণ করুন।'
+      'বিজ্ঞাপনের ক্যাপশন ও অফার লিখুন।',
+      'টার্গেট সিলেক্ট করুন।',
+      'বিজ্ঞাপন চালু করে সাবমিট করুন।'
     ],
     instructionsEn: [
-      'Compose high-converting ad copy with an engaging headline.',
-      'Select your promotion target (e.g., Page Followers, Messages, Website Traffic).',
-      'Refine target demographics including Location, Age bracket, and Interests.',
-      'Publish the advertisement to generate active metrics, impressions, and engagement graphs.'
+      'Compose ad copy.',
+      'Select target audience.',
+      'Publish and complete campaign.'
     ],
-    skillsRequiredEn: ['Social Media Copy', 'Target Demographics', 'CPC Optimization'],
-    skillsRequiredBn: ['বিজ্ঞাপন স্ক্রিপ্ট রাইটিং', 'টার্গেট অডিয়েন্স রিসার্চ', 'সিপিসি অপ্টিমাইজেশন']
+    skillsRequiredEn: ['Social Media Copy', 'Targeting'],
+    skillsRequiredBn: ['বিজ্ঞাপন লেখা', 'টার্গেটিং']
   },
   {
     id: 'lead-generation',
@@ -111,100 +196,32 @@ export const INITIAL_JOBS: Job[] = [
     bgColor: 'bg-rose-50',
     iconColor: 'text-rose-600',
     rewardEn: '$4.50 - $7.00 per dataset',
-    rewardBn: '৳৪৫০ - ৳৭০০ প্রতি ডাটা-লিস্ট',
+    rewardBn: '৳৪৫০ - ৳৭০০ প্রতি ডাটা',
     estimatedTimeEn: '12-18 mins',
     estimatedTimeBn: '১২-১৮ মিনিট',
     difficultyEn: 'Hard',
     difficultyBn: 'কঠিন',
-    shortDescBn: 'ক্লায়েন্টের টার্গেট ইন্ডাস্ট্রি অনুযায়ী ভেরিফাইড বিটুবি লিড ও কন্টাক্ট ডাটা সংগ্রহ করুন।',
-    shortDescEn: 'Identify and compile verified business contact databases (B2B leads) for corporate clients.',
-    longDescBn: 'লিড জেনারেশন কাজের অর্থ হলো সম্ভাব্য ক্রেতা বা কোম্পানির তথ্য খুঁজে বের করা। এই সিস্টেমে আপনি নির্দিষ্ট ক্যাটাগরি, লোকেশন ও সার্চ ফিল্টার ব্যবহার করে আসল ইমেল, ফোন ও ওয়েবসাইট ডেটা কালেকশন করে ক্লায়েন্টের কাছে সাবমিট করবেন।',
-    longDescEn: 'B2B Lead Generation services involve scraping and compiling active contact sheets for target industries. Filter database nodes by Location, Industry Type, and Job Title to output error-free email registers ready for immediate client use.',
+    shortDescBn: 'কোম্পানির আসল ইমেইল ও কন্টাক্ট ডাটা সংগ্রহ করুন।',
+    shortDescEn: 'Identify and compile verified business contact databases.',
+    longDescBn: 'লিড সংগ্রহ: ফিল্টার ব্যবহার করে আসল বিটুবি কন্টাক্ট ইনফরমেশন সংগ্রহ করুন।',
+    longDescEn: 'Filter database nodes by Location and Industry Type to output lead lists.',
     instructionsBn: [
-      'প্রথমে ক্লায়েন্টের টার্গেট ইন্ডাস্ট্রি (যেমন: আইটি, রিয়েল এস্টেট, রিটেইল) সিলেক্ট করুন।',
-      'টার্গেট কান্ট্রি বা এলাকা নির্বাচন করুন।',
-      'লিড সার্চ ইঞ্জিন চালু করে ডাটা মাইনিং প্রক্রিয়া শুরু করুন।',
-      'প্রাপ্ত ইমেল এবং কন্টাক্ট ইনফরমেশন ভেরিফাই করে লিস্টটি সরাসরি সাবমিট করুন।'
+      'টার্গেট ইন্ডাস্ট্রি সিলেক্ট করুন।',
+      'ডাটা সার্চ ইঞ্জিন চালু করুন।',
+      'ভেরিফাইড ইমেইল সাবমিট করুন।'
     ],
     instructionsEn: [
-      'Select the target client industry vertical (e.g., Software, Healthcare, Real Estate).',
-      'Choose the active geographic target country or region.',
-      'Initiate the B2B contact extraction sequence to pull live directory nodes.',
-      'Review and filter the extracted emails and submit the validated contact register.'
+      'Select target industry.',
+      'Run extraction tool.',
+      'Submit validated email list.'
     ],
-    skillsRequiredEn: ['B2B Research', 'Data Scraping', 'Email Format Verification'],
-    skillsRequiredBn: ['বিটুবি রিসার্চ', 'ডাটা স্ক্র্যাপিং', 'ইমেল ফরম্যাট যাচাই']
-  },
-  {
-    id: 'form-fillup-work',
-    titleEn: 'Form Submission Work',
-    titleBn: 'অনলাইন ফরম সাবমিশন ও ডাটা এন্ট্রি',
-    tag: 'EASY',
-    iconName: 'FileSpreadsheet',
-    bgColor: 'bg-emerald-50',
-    iconColor: 'text-emerald-600',
-    rewardEn: '$2.00 per submission',
-    rewardBn: '৳২০০ প্রতি সাবমিশন',
-    estimatedTimeEn: '2-3 mins',
-    estimatedTimeBn: '২-৩ মিনিট',
-    difficultyEn: 'Easy',
-    difficultyBn: 'সহজ',
-    shortDescBn: 'কাস্টমার ডাটা দেখে অনলাইন ফর্মে নির্ভুলভাবে ইনপুট দিয়ে ২০০ টাকা আয় করুন।',
-    shortDescEn: 'Enter client contact databases into online service forms and directories accurately to earn ৳200.',
-    longDescBn: 'অনলাইন ফরম ফিলাপ কাজ খুবই সহজ কিন্তু মনোযোগ প্রয়োজন। এখানে আপনাকে ক্লায়েন্টদের অগোছালো ডাটা শিট দেওয়া হবে, যা দেখে আপনাকে ফর্মে সঠিক জায়গায় ক্যারেক্টার টাইপ করতে হবে এবং সঠিক ক্যাটাগরি সিলেক্ট করে সাবমিট করতে হবে।',
-    longDescEn: 'Online Form Submission is a direct utility task where you transfer raw corporate registry details into online checkouts and forms. Transcribe the fields precisely matching the provided data cards to guarantee error-free database filing.',
-    instructionsBn: [
-      'বাম পাশের একটি কাস্টমার ডাটা সোর্স কার্ডটি দেখুন।',
-      'ডাটা কার্ডে উল্লিখিত নাম, ইমেইল, এড্রেস ও কান্ট্রি ডানের ফর্মে সঠিকভাবে ইনপুট দিন।',
-      'স্পেলিং বা টাইপিং ভুল এড়াতে ফিল্ডগুলি রি-চেক করুন।',
-      'সব তথ্য ইনপুট দেওয়া হয়ে গেলে ফর্মটি ভেরিফাই এবং সাবমিট বাটনে ক্লিক করুন।'
-    ],
-    instructionsEn: [
-      'Review the raw customer data card provided in the active workspace.',
-      'Accurately key in the Name, Email, Address, and Country into the corresponding form.',
-      'Ensure zero spelling mismatches or empty fields.',
-      'Check the declaration statement and click "Submit Completed Form" to verify.'
-    ],
-    skillsRequiredEn: ['Data Entry Speed', 'Field Mapping', 'Attention to Detail'],
-    skillsRequiredBn: ['ডাটা এন্ট্রি স্পিড', 'ডাটা ফিল্ড ম্যাপিং', 'সঠিকতা যাচাই']
-  },
-  {
-    id: 'data-entry-work',
-    titleEn: 'Client Data Entry',
-    titleBn: 'ক্লায়েন্ট ডাটা এন্ট্রি (Data Entry)',
-    tag: 'POPULAR',
-    iconName: 'Database',
-    bgColor: 'bg-purple-50',
-    iconColor: 'text-purple-600',
-    rewardEn: '$3.00 - $5.00 per dataset',
-    rewardBn: '৳৩০০ - ৳৫০০ প্রতি ডাটা সেট',
-    estimatedTimeEn: '8-12 mins',
-    estimatedTimeBn: '৮-১২ মিনিট',
-    difficultyEn: 'Medium',
-    difficultyBn: 'মাঝারি',
-    shortDescBn: '১০০ জন ক্লায়েন্টের নাম এবং ইউআইডি ডাটা চেক করে এক্সেল সাবমিশন করুন।',
-    shortDescEn: 'Verify and submit 100 client data entries with Names and UIDs in a professional spreadsheet.',
-    longDescBn: 'ক্লায়েন্ট ডাটা এন্ট্রি হলো অন্যতম গুরুত্বপূর্ণ কাজ। এখানে ১০০ জন ক্লায়েন্টের নাম ও ইউআইডি লিস্ট থাকবে। যেকোনো ক্লায়েন্টের ওপর ক্লিক করলে তার সম্পূর্ণ বিস্তারিত ডাটা দেখা যাবে এবং নিচে ডাটা এক্সেল শিটে সেভ করার জন্য সাবমিট অপশন থাকবে।',
-    longDescEn: 'Client Data Entry manages a live directory of 100 unique corporate client accounts. Clicking an entry allows you to view their detailed data sheet in an Excel-like grid, and verify/submit it for immediate database filing.',
-    instructionsBn: [
-      'প্রথমে যেকোনো একজন ক্লায়েন্ট সিলেক্ট করুন যার ডাটা সাবমিট করা হয়নি।',
-      'ক্লিক করলে ক্লায়েন্টের বিস্তারিত নাম, ইউআইডি এবং ডাটা গ্রিড দেখতে পাবেন।',
-      'ডাটা ও পণ্যের মূল্য মিলিয়ে নিন।',
-      'নিচে "ডাটাশিট সাবমিট করুন" বাটনে ক্লিক করে ডেটাবেজে ফাইল সেভ করুন।'
-    ],
-    instructionsEn: [
-      'Select any client from the list of 100 entries whose status is still pending.',
-      'Click the client to inspect details and view their spreadsheet data.',
-      'Verify the product prices and balances.',
-      'Click "Submit Client Datasheet" below to file it to the client server.'
-    ],
-    skillsRequiredEn: ['Client Registry Management', 'Excel Formatting', 'UID Verification'],
-    skillsRequiredBn: ['ক্লায়েন্ট রেজিস্ট্রি ম্যানেজমেন্ট', 'এক্সেল ফরম্যাটিং', 'ইউআইডি ভেরিফিকেশন']
+    skillsRequiredEn: ['B2B Research', 'Data Scraping'],
+    skillsRequiredBn: ['বিটুবি রিসার্চ', 'ডাটা কালেকশন']
   },
   {
     id: 'video-submit-work',
-    titleEn: 'Media Campaign & Review',
-    titleBn: 'মিডিয়া ক্যাম্পেইন এবং রিভিউ',
+    titleEn: 'Video Review',
+    titleBn: 'ভিডিও দেখা ও রিভিউ',
     tag: 'NEW',
     iconName: 'Video',
     bgColor: 'bg-pink-50',
@@ -215,29 +232,27 @@ export const INITIAL_JOBS: Job[] = [
     estimatedTimeBn: '৫-১০ মিনিট',
     difficultyEn: 'Easy',
     difficultyBn: 'সহজ',
-    shortDescBn: 'প্রোমোশনাল কনটেন্ট ও ভিডিও দেখে প্রফেশনাল ফিডব্যাক রিভিউ সাবমিট করুন।',
-    shortDescEn: 'Evaluate brand promotional videos, write concise audience reviews, and submit sharing logs.',
-    longDescBn: 'মিডিয়া রিভিউ কাজ কনটেন্ট ক্রিয়েটর ও সোশ্যাল প্রচারকদের সহায়তা করে। এখানে আপনাকে নির্দিষ্ট ভিডিওর মূল বার্তা বুঝে তার ওপর একটি গঠনমূলক বিশ্লেষণ রিভিউ লিখতে হবে এবং শেয়ার আইডি লিঙ্ক সহ সাবমিট করতে হবে।',
-    longDescEn: 'Media assessment tasks require micro-reviews of active product promo clips. Watch the commercial asset, draft a concise, high-value qualitative feedback report, and submit your sharing verification URL directly into the client database.',
+    shortDescBn: 'ভিডিও দেখে ২ লাইনের রিভিউ ও মতামত জমা দিন।',
+    shortDescEn: 'Watch promotional videos and submit qualitative feedback reviews.',
+    longDescBn: 'ভিডিও রিভিউ: কনটেন্টটি দেখে সংক্ষেপে রিভিউ লিখে সাবমিট করুন।',
+    longDescEn: 'Watch promotional clips and draft a concise qualitative review.',
     instructionsBn: [
-      'প্রথমে ডানের ভিডিও প্লেয়ারটি প্লে করে অন্ততঃ ৩০ সেকেন্ডের কনটেন্ট দেখুন।',
-      'ভিডিওর মূল মেসেজ সম্পর্কে ২ লাইনের একটি চমৎকার প্রফেশনাল ফিডব্যাক রিভিউ বক্সে লিখুন।',
-      'শেয়ার লিঙ্কটি কপি করে ভেরিফিকেশন ইউআরএল বক্সে দিন।',
-      'বাটনে ক্লিক করে প্রজেক্ট রিভিউ সাবমিশন সম্পন্ন করুন।'
+      'ভিডিওটি প্লে করে ৩০ সেকেন্ড দেখুন।',
+      'সংক্ষিপ্ত রিভিউ লিখুন।',
+      'সাবমিট বাটনে ক্লিক করুন।'
     ],
     instructionsEn: [
-      'Watch the promotional video asset for at least 30 seconds to capture the core pitch.',
-      'Write a brief 2-sentence professional review focusing on the content quality.',
-      'Copy the sharing URL into the Verification URL input field.',
-      'Click the submit button to log the completed review directly into the project archive.'
+      'Watch video clip for 30s.',
+      'Write a brief review.',
+      'Click submit.'
     ],
-    skillsRequiredEn: ['Content Evaluation', 'Review Writing', 'Media Tracking'],
-    skillsRequiredBn: ['কনটেন্ট মূল্যায়ন', 'রিভিউ রাইটিং', 'মিডিয়া ট্র্যাকিং']
+    skillsRequiredEn: ['Review Writing', 'Video Watching'],
+    skillsRequiredBn: ['মতামত লেখা', 'ভিডিও দেখা']
   },
   {
     id: 'product-selling-work',
-    titleEn: 'SIM Offer & MB Selling',
-    titleBn: 'সিম অফার ও এমবি সেলিং',
+    titleEn: 'Offer Selling',
+    titleBn: 'অফার সেলিং',
     tag: 'HIGH PAY',
     iconName: 'ShoppingBag',
     bgColor: 'bg-amber-50',
@@ -281,24 +296,22 @@ export const INITIAL_JOBS: Job[] = [
     estimatedTimeBn: '৬-১২ মিনিট',
     difficultyEn: 'Medium',
     difficultyBn: 'মাঝারি',
-    shortDescBn: 'ব্রাইটনেস, কন্ট্রাস্ট এবং কালার ফিল্টার অ্যাডজাস্ট করে কাস্টমারের ফটো রিটাচিং করুন।',
-    shortDescEn: 'Retouch customer portraits and product photos by adjusting brightness, contrast, and filters.',
-    longDescBn: 'ফটো এডিটিং কাজ হলো গ্রাফিক সার্ভিসের একটি গুরুত্বপূর্ণ অংশ। এখানে আপনাকে ক্লায়েন্টের পোর্ট্রেট, প্রোডাক্ট বা ল্যান্ডস্কেপ ইমেজ দেওয়া হবে। ক্লায়েন্টের দেওয়া নির্দেশিকা অনুযায়ী সঠিক ব্রাইটনেস, কন্ট্রাস্ট, স্যাচুরেশন এবং ফিল্টার সেটআপ করে ফটো সাবমিট করুন।',
-    longDescEn: 'Photo Editing & Retouching is a highly sought-after creative task. Adjust brightness, contrast, saturation, and apply professional filters to source images matching client guidelines to deliver stunning, high-quality visuals.',
+    shortDescBn: 'ব্রাইটনেস ও কালার এডজাস্ট করে ছবি রিটাচ করুন।',
+    shortDescEn: 'Retouch customer portraits and product photos.',
+    longDescBn: 'ফটো এডিটিং: ব্রাইটনেস, কন্ট্রাস্ট ও ফিল্টার এডজাস্ট করে ছবি জমা দিন।',
+    longDescEn: 'Photo Editing: adjust brightness, contrast, and apply filters to source images.',
     instructionsBn: [
-      'বাম পাশের কাস্টমার প্রজেক্ট ইমেজ এবং ক্লায়েন্টের কালার রিকোয়ারমেন্টটি দেখুন।',
-      'নিচের স্লাইডারগুলির সাহায্যে ব্রাইটনেস, কন্ট্রাস্ট, স্যাচুরেশন ও কালার টোন অ্যাডজাস্ট করুন।',
-      'লাইভ প্রাকভিউ ইমেজটিতে আপনার এডিটিং পরিবর্তনগুলি সরাসরি লক্ষ করুন।',
-      'এডিট সম্পন্ন হয়ে গেলে "ফটো সাবমিট করুন" বাটনে ক্লিক করে কাজ সম্পন্ন করুন।'
+      'কাস্টমার ইমেজ দেখুন।',
+      'স্লাইডার দিয়ে আলো ও কন্ট্রাস্ট এডজাস্ট করুন।',
+      'ছবি সাবমিট করুন।'
     ],
     instructionsEn: [
-      'Inspect the client\'s source image and required filter target parameters.',
-      'Use the interactive sliders to adjust Brightness, Contrast, Saturation, and special filters.',
-      'Observe the live changes on the photo preview viewport in real-time.',
-      'Click "Submit Edited Photo" once the values match within target bounds to earn reward.'
+      'Inspect the source image.',
+      'Adjust sliders for Brightness and Contrast.',
+      'Click submit photo.'
     ],
-    skillsRequiredEn: ['Color Grading', 'Contrast & Lighting', 'Filter Optimization'],
-    skillsRequiredBn: ['কালার গ্রেডিং', 'কন্ট্রাস্ট ও লাইটিং', 'ফিল্টার অপ্টিমাইজেশন']
+    skillsRequiredEn: ['Color Grading', 'Contrast'],
+    skillsRequiredBn: ['কালার এডজাস্ট', 'কন্ট্রাস্ট']
   },
   {
     id: 'video-editing',
@@ -314,29 +327,27 @@ export const INITIAL_JOBS: Job[] = [
     estimatedTimeBn: '৮-১৫ মিনিট',
     difficultyEn: 'Medium',
     difficultyBn: 'মাঝারি',
-    shortDescBn: 'বিভিন্ন প্রচারণামূলক ভিডিও ক্লিপ সাজিয়ে এবং ট্রানজিশন যোগ করে ভিডিও এডিটিং সম্পন্ন করুন।',
-    shortDescEn: 'Arrange promo clips, set trim durations, and apply transitions to edit final marketing videos.',
-    longDescBn: 'ভিডিও এডিটিং এর মাধ্যমে আকর্ষণীয় শর্ট এবং রিলে বিজ্ঞাপন তৈরি করা হয়। এখানে আপনাকে সোর্স ক্লিপগুলি সঠিক অর্ডারে সাজাতে হবে, অপ্রয়োজনীয় অংশ ট্রিম করে বাদ দিতে হবে এবং প্রফেশনাল ফেইড বা স্লাইড ট্রানজিশন ইফেক্ট দিয়ে ভিডিওটি রেন্ডার করতে হবে।',
-    longDescEn: 'Video editing involves arranging, trimming, and applying transition effects to raw video assets. Correctly arrange the timeline tracks, trim lengths to fit specifications, and select transitions to compile social reels and ads.',
+    shortDescBn: 'ক্লিপ সাজিয়ে ও ট্রানজিশন দিয়ে ভিডিও বানান।',
+    shortDescEn: 'Arrange promo clips and apply transitions to edit final videos.',
+    longDescBn: 'ভিডিও এডিটিং: শর্ট ক্লিপ সঠিক ক্রমে ট্রিম করে ও ট্রানজিশন দিয়ে সেভ করুন।',
+    longDescEn: 'Arrange, trim, and apply transition effects to raw video assets.',
     instructionsBn: [
-      'ক্লায়েন্টের কাঙ্ক্ষিত ভিডিও সিকোয়েন্স এবং টাইমলাইন সিক্রেট কোড খেয়াল করুন।',
-      'টাইমলাইনে ক্লিপগুলি সঠিক ক্রমানুসারে ড্র্যাগ বা বাটন দিয়ে সাজান।',
-      'প্রতিটি ক্লিপের ডিউরেশন (সময়) ট্রিম করে ক্লায়েন্টের দেওয়া সেকেন্ডের সাথে মেলান।',
-      'উপযুক্ত ট্রানজিশন ইফেক্ট (যেমন: Fade, Dissolve) যুক্ত করে সাবমিট করুন।'
+      'টাইমলাইনে ক্লিপ সাজান।',
+      'সময় ট্রিম করুন।',
+      'ট্রানজিশন দিয়ে রেন্ডার করুন।'
     ],
     instructionsEn: [
-      'Read the client\'s storyboarding timeline and target video duration specs.',
-      'Arrange raw video tracks in the timeline in the correct sequence.',
-      'Trim the seconds for each track precisely to meet the client\'s guidelines.',
-      'Apply transition styles and click "Compile & Render Video" to submit.'
+      'Arrange video tracks in timeline.',
+      'Trim track duration.',
+      'Apply transitions and render.'
     ],
-    skillsRequiredEn: ['Timeline Sequencing', 'Video Trimming', 'Transition Effects'],
-    skillsRequiredBn: ['টাইমলাইন সিকোয়েন্সিং', 'ভিডিও ট্রিম করা', 'ট্রানজিশন ইফেক্ট']
+    skillsRequiredEn: ['Timeline Sequencing', 'Trimming'],
+    skillsRequiredBn: ['টাইমলাইন সাজানো', 'ক্লিপ ট্রিম']
   },
   {
     id: 'computer-training',
     titleEn: 'Computer Training',
-    titleBn: 'কম্পিউটার ট্রেইনিং',
+    titleBn: 'কম্পিউটার ট্রেনিং',
     tag: 'NEW',
     iconName: 'Monitor',
     bgColor: 'bg-purple-50',
@@ -347,74 +358,193 @@ export const INITIAL_JOBS: Job[] = [
     estimatedTimeBn: '৮-১২ মিনিট',
     difficultyEn: 'Easy',
     difficultyBn: 'সহজ',
-    shortDescBn: 'কম্পিউটারের বেসিক উইন্ডোজ ও অফিস টুলসের ব্যবহার এবং শর্টকাট প্র্যাকটিস করুন।',
-    shortDescEn: 'Master basic operating system file operations, shortcuts, and spreadsheet office formulas.',
-    longDescBn: 'কম্পিউটার ট্রেইনিং ল্যাবে আপনাকে প্রফেশনাল অফিস বা আইটি কাজের জন্য প্রয়োজনীয় স্কিল শেখানো হবে। এখানে ইন্টারেক্টিভ ল্যাবের মাধ্যমে শর্টকাট কী টাইপিং, ফাইল ম্যানেজার নেভিগেশন এবং স্প্রেডশিটের ফর্মুলা টেস্ট সম্পূর্ণ করে সার্টিফাইড ক্রেডিট অর্জন করুন।',
-    longDescEn: 'Computer Training offers interactive simulated OS, file management, and office tool laboratories. Solve real-time command tasks, execute critical keyboard shortcuts, and compile spreadsheet formulas to build core computing skills.',
+    shortDescBn: 'কীবোর্ড শর্টকাট ও বেসিক ওএস কমান্ড প্র্যাকটিস করুন।',
+    shortDescEn: 'Master basic operating system file operations and shortcuts.',
+    longDescBn: 'কম্পিউটার ল্যাব: ফাইল নেভিগেশন, উইন্ডোজ শর্টকাট ও এক্সেল টেস্ট সম্পূর্ণ করুন।',
+    longDescEn: 'Solve real-time command tasks and execute critical keyboard shortcuts.',
     instructionsBn: [
-      'বাম পাশের ল্যাব টাস্ক নির্দেশনাটি মনোযোগ দিয়ে পড়ুন।',
-      'প্রদত্ত কম্পিউটারের ভার্চুয়াল স্ক্রিন, ফাইল ম্যানেজার বা কনসোলে প্রয়োজনীয় কমান্ডটি টাইপ করুন।',
-      'উইন্ডোজ বা এক্সেল ফর্মুলা টেস্ট এবং প্রয়োজনীয় শর্টকাট কী প্রেস করে উত্তর দিন।',
-      'সমস্ত টেস্ট সফলভাবে সম্পূর্ণ করে আপনার ল্যাব সার্টিফিকেট এবং ব্যালেন্স রিওয়ার্ড অর্জন করুন।'
+      'ল্যাব নির্দেশিকা পড়ুন।',
+      'প্রয়োজনীয় শর্টকাট প্রেস করুন।',
+      'টেস্ট সফল করে সার্টিফিকেট নিন।'
     ],
     instructionsEn: [
-      'Read the prompt in the active virtual laboratory environment.',
-      'Type corresponding system command strings, folder creations, or formulas.',
-      'Test your understanding of critical keyboard shortcuts (Ctrl+C, Ctrl+V, etc.) to progress.',
-      'Verify all system tests to lock in your score and claim your certificate.'
+      'Read lab instructions.',
+      'Press required shortcuts.',
+      'Complete test to claim credit.'
     ],
-    skillsRequiredEn: ['OS Operations', 'Keyboard Shortcuts', 'Excel Formulas'],
-    skillsRequiredBn: ['ওএস অপারেশনস', 'কীবোর্ড শর্টকাট', 'এক্সেল ফর্মুলা']
+    skillsRequiredEn: ['OS Operations', 'Keyboard Shortcuts'],
+    skillsRequiredBn: ['উইন্ডোজ ব্যবহার', 'কীবোর্ড শর্টকাট']
   },
   {
-    id: 'code-entry',
-    titleEn: 'Product Code Entry',
-    titleBn: 'কোড বসানোর কাজ (Code Entry)',
-    tag: 'NEW',
-    iconName: 'Code',
-    bgColor: 'bg-indigo-50',
-    iconColor: 'text-indigo-600',
-    rewardEn: '$3.50 per dataset',
-    rewardBn: '৳৩৫০ প্রতি ডাটা সেট',
-    estimatedTimeEn: '5-8 mins',
-    estimatedTimeBn: '৫-৮ মিনিট',
-    difficultyEn: 'Easy',
-    difficultyBn: 'সহজ',
-    shortDescBn: 'প্রোডাক্টের ছবি দেখে সিরিয়াল নাম্বারের সাথে মিলিয়ে কনফার্মেশন কোডটি সঠিকভাবে ইনপুট করুন।',
-    shortDescEn: 'Match product serial numbers with correct verification keys and input codes to log entries.',
-    longDescBn: 'কোড বসানোর কাজ হলো অত্যন্ত প্রফেশনাল এবং সহজ একটি ডাটা সাবমিশন প্রজেক্ট। এখানে আপনাকে স্ক্রিনে প্রদর্শিত বিভিন্ন প্রোডাক্টের ছবি দেখে তার নিচে দেওয়া সিরিয়াল নাম্বার এবং সঠিক কোড মিলিয়ে কনফার্মেশন ইনপুট বক্সে কোড বসাতে হবে। প্রতিটি প্রোডাক্টের জন্য আলাদা আলাদা ছবি ও ইউনিক কোড থাকবে।',
-    longDescEn: 'Product Code Entry is a highly professional and simple data entry project. Your task is to view different product images, look up their serial numbers, and enter the exact confirmation codes. Each product features its own unique image and verification key.',
+    id: 'social-media-management',
+    titleEn: 'Social Media Management',
+    titleBn: 'সোশ্যাল মিডিয়া ম্যানেজমেন্ট',
+    tag: 'HIGH PAY',
+    iconName: 'Share2',
+    bgColor: 'bg-blue-50',
+    iconColor: 'text-blue-600',
+    rewardEn: '$10.00 - $45.00 per contract',
+    rewardBn: '৳১,০০০ - ৳৪,৫০০ (৩-৭ দিন)',
+    estimatedTimeEn: '3-7 days',
+    estimatedTimeBn: '৩-৭ দিন',
+    difficultyEn: 'Medium',
+    difficultyBn: 'মাঝারি',
+    shortDescBn: 'ফেসবুক, টিকটক, ইনস্টাগ্রাম পেজ ও চ্যানেলের মডারেটর হিসেবে কাজ করুন ও চুক্তিভিত্তিক পেমেন্ট পান।',
+    shortDescEn: 'Work as Facebook, TikTok, Instagram page & channel moderator with contract payments.',
+    longDescBn: 'সোশ্যাল মিডিয়া মডারেটর নিয়োগ: বিভিন্ন প্ল্যাটফর্ম যেমন ফেসবুক পেজ, টিকটক চ্যানেল, আইডি, ইনস্টাগ্রাম ও ইউটিউবের ৩-৭ দিনের চুক্তিভিত্তিক মডারেটর পদে আবেদন করুন।',
+    longDescEn: 'Social Media Moderator Roles: Apply for 3 to 7 days contract moderator positions across Facebook, TikTok, Instagram and YouTube.',
     instructionsBn: [
-      'প্রথমে স্ক্রিনে প্রদর্শিত প্রোডাক্টের ছবিটি দেখুন।',
-      'প্রোডাক্টের সিরিয়াল নাম্বার অনুযায়ী সঠিক কনফার্মেশন কোডটি খুঁজে বের করুন।',
-      'ইনপুট বক্সে কোডটি নির্ভুলভাবে টাইপ করুন।',
-      'কনফার্ম বাটনে ক্লিক করে পরবর্তী প্রোডাক্টের কোড বসানো শুরু করুন।',
-      'সবগুলো প্রোডাক্টের কোড বসানো শেষ করে ফাইনাল সাবমিট করুন।'
+      'আপনার পছন্দের মডারেটর রোল (ফেসবুক, টিকটক, ইনস্টাগ্রাম ইত্যাদি) নির্বাচন করুন।',
+      'মেয়াদ (৩ দিন বা ৭ দিন) ও বেতন দেখে "এপ্লাই করুন" বাটনে চাপুন।',
+      'আমাদের অফিশিয়াল ফেসবুক পেজে যোগাযোগ করে অ্যাপয়েন্টমেন্ট কনফার্ম করুন।'
     ],
     instructionsEn: [
-      'Observe the product image displayed on the screen.',
-      'Find the corresponding verification code matching the product serial number.',
-      'Type the confirmation code accurately into the input box.',
-      'Click confirm to proceed to the next product code entry.',
-      'Complete all entries to submit the final project dataset.'
+      'Choose your preferred moderator role (Facebook, TikTok, Instagram, etc).',
+      'Review contract duration (3 or 7 days) and salary, then click "Apply Now".',
+      'Contact our official Facebook page to confirm your onboarding.'
     ],
-    skillsRequiredEn: ['Data Verification', 'Serial Matching', 'Numeric Typing'],
-    skillsRequiredBn: ['ডাটা ভেরিফিকেশন', 'সিরিয়াল ম্যাচিং', 'সংখ্যাসূচক টাইপিং']
+    skillsRequiredEn: ['Page Management', 'Customer Engagement'],
+    skillsRequiredBn: ['পেজ ম্যানেজমেন্ট', 'অডিয়েন্স রিপ্লাই']
+  },
+  {
+    id: 'content-writing',
+    titleEn: 'Content Writing',
+    titleBn: 'কন্টেন্ট রাইটিং',
+    tag: 'POPULAR',
+    iconName: 'Edit3',
+    bgColor: 'bg-emerald-50',
+    iconColor: 'text-emerald-600',
+    rewardEn: '$5.00 - $9.00 per article',
+    rewardBn: '৳৫০০ - ৳৯০০ প্রতি আর্টিকেল',
+    estimatedTimeEn: '15-20 mins',
+    estimatedTimeBn: '১৫-২০ মিনিট',
+    difficultyEn: 'Medium',
+    difficultyBn: 'মাঝারি',
+    shortDescBn: 'নির্দিষ্ট টপিক নিয়ে আকর্ষণীয় এসইও বান্ধব ব্লগ পোস্ট ও আর্টিকেল লিখুন।',
+    shortDescEn: 'Write engaging, SEO-optimized blog posts and articles for client brands.',
+    longDescBn: 'কন্টেন্ট রাইটিং: প্রদত্ত কি-ওয়ার্ড ও টাইটেল অনুযায়ী ৫০০ শব্দের মানসম্মত আর্টিকেল লিখে সাবমিট করুন।',
+    longDescEn: 'Draft high-quality, well-structured 500-word articles with appropriate heading structure and targeted SEO keywords.',
+    instructionsBn: [
+      'মূল বিষয়বস্তু ও কি-ওয়ার্ডগুলো পর্যবেক্ষণ করুন।',
+      'প্যারাগ্রাফ ও হেডিং সহ আর্টিকেলটি টাইপ করুন।',
+      'গ্রামার ও সঠিকতা নিশ্চিত করে সাবমিট করুন।'
+    ],
+    instructionsEn: [
+      'Review target topic guidelines and SEO keywords.',
+      'Compose structured article with headings and body.',
+      'Perform proofreading and click submit.'
+    ],
+    skillsRequiredEn: ['SEO Writing', 'Grammar & Tone'],
+    skillsRequiredBn: ['এসইও রাইটিং', 'ব্যাকরণ ও বানান']
+  },
+  {
+    id: 'drop-shipping',
+    titleEn: 'Drop Shipping',
+    titleBn: 'ড্রপ শিপিং',
+    tag: 'HIGH PAY',
+    iconName: 'Truck',
+    bgColor: 'bg-indigo-50',
+    iconColor: 'text-indigo-600',
+    rewardEn: '$8.00 - $15.00 per order',
+    rewardBn: '৳৮০০ - ৳১৫০০ প্রতি অর্ডার',
+    estimatedTimeEn: '10-15 mins',
+    estimatedTimeBn: '১০-১৫ মিনিট',
+    difficultyEn: 'Hard',
+    difficultyBn: 'কঠিন',
+    shortDescBn: 'কোনো স্টক ছাড়াই সাপ্লায়ারের পোরডাক্ট কাস্টমারের ঠিকানায় ড্রপশিপিং ডেলিভারি করুন।',
+    shortDescEn: 'Manage supplier product listings and process customer drop shipping orders directly.',
+    longDescBn: 'ড্রপ শিপিং বিজনেস: আপনার অনলাইন শপ বা কাস্টমার অডিয়েন্স থেকে অর্ডারের তথ্য নিয়ে সরাসরি গ্লোবাল সাপ্লায়ার হাবের মাধ্যমে ডেলিভারি বুকিং নিশ্চিত করুন এবং আকর্ষণীয় প্রফিট মার্জিন রাখুন।',
+    longDescEn: 'Fulfill client e-commerce orders by placing supplier order requests with verified shipping addresses, keeping zero physical inventory.',
+    instructionsBn: [
+      'কাস্টমারের পেমেন্ট ও ডেলিভারি তথ্য যাচাই করুন।',
+      'সাপ্লায়ার সেন্টারে অর্ডার পেস্ট করুন।',
+      'ট্র্যাকিং নম্বর নিয়ে কাজ সম্পন্ন করুন।'
+    ],
+    instructionsEn: [
+      'Verify buyer shipping address and order specs.',
+      'Forward order details to supplier logistics portal.',
+      'Input generated tracking ID to complete task.'
+    ],
+    skillsRequiredEn: ['Order Processing', 'Logistics Tracking'],
+    skillsRequiredBn: ['অর্ডার প্রসেসিং', 'লজিস্টিকস ট্র্যাকিং']
+  },
+  {
+    id: 'gaming-tournament',
+    titleEn: 'Gaming Tournament',
+    titleBn: 'গেমিং টুর্নামেন্ট',
+    tag: 'NEW',
+    iconName: 'Gamepad2',
+    bgColor: 'bg-amber-50',
+    iconColor: 'text-amber-600',
+    rewardEn: '$3.00 - $10.00 per match',
+    rewardBn: '৳৩০০ - ৳১০০০ প্রতি ম্যাচ',
+    estimatedTimeEn: '15-30 mins',
+    estimatedTimeBn: '১৫-৩০ মিনিট',
+    difficultyEn: 'Medium',
+    difficultyBn: 'মাঝারি',
+    shortDescBn: 'ই-স্পোর্টস স্কোয়াড ম্যাচ খেলুন এবং পয়েন্ট বানিয়ে নগদ পুরস্কার জিতুন।',
+    shortDescEn: 'Participate in esports matches, log game match scores & claim tournament rewards.',
+    longDescBn: 'গেমিং টুর্নামেন্ট: ফ্রি ফায়ার, পাবজি বা কল অফ ডিউটি টুর্নামেন্ট কক্ষে যুক্ত হয়ে রূম আইডি দিয়ে স্কিল প্রদর্শন করুন এবং লিডারবোর্ড থেকে ক্যাশ প্রাইজ জয় করুন।',
+    longDescEn: 'Join active esports room matches, submit match placement screenshots and stats to claim cash prize pools.',
+    instructionsBn: [
+      'প্রদত্ত টুর্নামেন্ট রুম আইডি ও পাসওয়ার্ড কপি করুন।',
+      'নির্দিষ্ট সময়ে গেম রুমে জয়েন করুন।',
+      'ম্যাচ শেষে আপনার স্কোর বা কিল কাউন্ট সাবমিট করুন।'
+    ],
+    instructionsEn: [
+      'Copy generated custom room ID and passcode.',
+      'Join tournament lobby at scheduled time.',
+      'Submit final match rank screenshot or kill count.'
+    ],
+    skillsRequiredEn: ['Esports Gaming', 'Teamwork'],
+    skillsRequiredBn: ['গেমিং স্কিল', 'টিমওয়ার্ক']
+  },
+  {
+    id: 'website-visit',
+    titleEn: 'Website Visit',
+    titleBn: 'ওয়েবসাইট ভিজিট',
+    tag: 'EASY',
+    iconName: 'Globe',
+    bgColor: 'bg-teal-50',
+    iconColor: 'text-teal-600',
+    rewardEn: '$0.10 - $0.30 per visit',
+    rewardBn: '৳১০ - ৳৩০ প্রতি ভিজিট',
+    estimatedTimeEn: '1-2 mins',
+    estimatedTimeBn: '১-২ মিনিট',
+    difficultyEn: 'Easy',
+    difficultyBn: 'সহজ',
+    shortDescBn: 'নির্ধারিত ওয়েবসাইটে ব্রাউজ ও এডস ভিউ করে ১-২ মিনিটে রিওয়ার্ড আর্ন করুন।',
+    shortDescEn: 'Visit websites, view sponsored ads & earn instant commissions.',
+    longDescBn: 'ওয়েবসাইট ভিজিট: www.unityearning.com ওয়েবসাইটে ১-২ মিনিট অবস্থান করুন, বিজ্ঞাপন ও পেজ ঘুরে দেখে কমিশন ইনকাম করুন।',
+    longDescEn: 'Visit www.unityearning.com, browse sponsored ads for 1-2 minutes and claim instant cash reward.',
+    instructionsBn: [
+      'ওয়েবসাইট ভিজিট লিংকে ক্লিক করুন (www.unityearning.com)।',
+      'কমপক্ষে ১-২ মিনিট পেজ ও এডস ব্রাউজ করুন।',
+      'টাইমার শেষ হলে টাস্ক সাবমিট করে বোনাস ক্লেইম করুন।'
+    ],
+    instructionsEn: [
+      'Click Visit Website link (www.unityearning.com).',
+      'Stay on page and view ads for 1-2 minutes.',
+      'Submit completed task to claim your commission.'
+    ],
+    skillsRequiredEn: ['Web Browsing', 'Basic Verification'],
+    skillsRequiredBn: ['ওয়েব ব্রাউজিং', 'ভেরিফিকেশন']
   }
 ];
 
 export const INITIAL_PROFILE: UserProfile = {
   uid: 'UE-2026-9842',
-  fullName: 'মো. রবিউল ইসলাম (Rabiul Islam)',
-  email: 'learninghubbd21@gmail.com',
+  fullName: 'Habiba Akter',
+  email: 'habiba.akter2026@gmail.com',
   phone: '01712-345678',
-  bio: 'ডিজিটাল এন্টারপ্রেনিউর ও ফ্রিল্যান্স মাইক্রো-টাস্ক ট্রেইনার। আমি নতুনদের সহজে অনলাইনে আয়ের সঠিক পথ দেখাই।',
+  bio: 'প্রফেশনাল ডিজিটাল মাইক্রো-টাস্ক ও ইমেইল মার্কেটিং বিশেষজ্ঞ।',
   address: 'মিরপুর ২, ঢাকা ১২১৬, বাংলাদেশ',
-  avatarUrl: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=200',
-  balance: 15.50,
-  totalIncome: 25.50,
-  tasksCompleted: 50,
-  level: 'Silver Rank',
+  avatarUrl: 'https://api.dicebear.com/7.x/adventurer/svg?seed=HabibaAkter',
+  balance: 3400,
+  totalIncome: 66400,
+  tasksCompleted: 632,
+  level: 'Gold Rank',
+  points: 5320,
   joinedDate: '2026-07-01'
 };
 

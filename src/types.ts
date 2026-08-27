@@ -39,6 +39,7 @@ export interface UserProfile {
   totalIncome: number; // Total money earned so far
   tasksCompleted: number;
   level: string;
+  points?: number;
   joinedDate: string;
 }
 

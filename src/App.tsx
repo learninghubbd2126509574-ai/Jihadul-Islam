@@ -12,6 +12,16 @@ import ShopTab from './components/ShopTab';
 import MicroTab from './components/MicroTab';
 import QuizTab from './components/QuizTab';
 import DailyWorkTab from './components/DailyWorkTab';
+import GiftOfferWidget from './components/GiftOfferWidget';
+import SupportModal from './components/SupportModal';
+import NotificationModal from './components/NotificationModal';
+import TopNotificationToast from './components/TopNotificationToast';
+import LoginPortal from './components/LoginPortal';
+
+const toBnNum = (num: number | string): string => {
+  const bnDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+  return num.toString().replace(/\d/g, (d) => bnDigits[parseInt(d, 10)]);
+};
 
 export default function App() {
   // Global States
@@ -23,8 +33,9 @@ export default function App() {
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
   const [showWarningBanner, setShowWarningBanner] = useState(true);
 
-  // Auth States
-  const [isLoggedIn, setIsLoggedIn] = useState(true); // Default to logged in for premium demo feel
+  // Auth / Portal States
+  const [isPortalLoggedIn, setIsPortalLoggedIn] = useState<boolean>(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authName, setAuthName] = useState('');
   const [authEmail, setAuthEmail] = useState('');
@@ -36,6 +47,7 @@ export default function App() {
 
   // Support Tab Modal State
   const [showSupportModal, setShowSupportModal] = useState(false);
+  const [showNotificationModal, setShowNotificationModal] = useState(false);
   const [supportMessage, setSupportMessage] = useState('');
   const [supportSubmitted, setSupportSubmitted] = useState(false);
 
@@ -66,12 +78,14 @@ export default function App() {
 
     if (savedProfile) {
       const parsed = JSON.parse(savedProfile);
-      if (!parsed.tasksCompleted || parsed.tasksCompleted < 50) {
-        parsed.tasksCompleted = 50;
-        localStorage.setItem('ue_profile', JSON.stringify(parsed));
+      if (!parsed.fullName || parsed.fullName !== 'Habiba Akter' || !parsed.balance || parsed.totalIncome !== 66400 || parsed.tasksCompleted < 600 || !parsed.points || parsed.level === 'Silver Rank') {
+        setProfile(INITIAL_PROFILE);
+        localStorage.setItem('ue_profile', JSON.stringify(INITIAL_PROFILE));
+      } else {
+        setProfile(parsed);
       }
-      setProfile(parsed);
     } else {
+      setProfile(INITIAL_PROFILE);
       localStorage.setItem('ue_profile', JSON.stringify(INITIAL_PROFILE));
     }
 
@@ -190,24 +204,36 @@ export default function App() {
     }, 2500);
   };
 
+  if (!isPortalLoggedIn) {
+    return (
+      <LoginPortal
+        lang={lang}
+        onLoginSuccess={() => setIsPortalLoggedIn(true)}
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col font-sans text-slate-800 antialiased pb-24">
+      {/* Top Banner Notification on Site Load/Refresh (Only after Portal Login) */}
+      <TopNotificationToast lang={lang} />
+
       {/* --- CORE NAVIGATION HEADER (from screenshots) --- */}
       <header 
-        className={`bg-slate-900 text-white sticky top-0 z-30 shadow-md transition-transform duration-300 ${
+        className={`bg-slate-900/95 backdrop-blur-md text-white sticky top-0 z-30 shadow-[0_4px_20px_rgba(0,0,0,0.2)] border-b border-slate-800/80 transition-transform duration-300 ${
           isHeaderVisible ? 'translate-y-0' : '-translate-y-full'
         }`}
       >
-        <div className="max-w-md mx-auto px-5 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-500 to-blue-600 flex items-center justify-center font-black text-white text-base shadow-sm">
+        <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-blue-600 via-blue-500 to-indigo-500 flex items-center justify-center font-black text-white text-lg shadow-[inset_2px_2px_4px_rgba(255,255,255,0.4),0_4px_10px_rgba(37,99,235,0.3)] border border-blue-400/40">
               U
             </div>
             <div className="flex flex-col">
-              <h1 className="font-extrabold text-sm tracking-tight text-white leading-none">
+              <h1 className="font-black text-sm tracking-tight text-white leading-tight">
                 Unity Earning
               </h1>
-              <span className="text-[9px] text-blue-200 uppercase tracking-widest font-bold">E-learning Platform</span>
+              <span className="text-[9px] text-blue-400 uppercase tracking-widest font-extrabold">E-learning Platform</span>
             </div>
           </div>
 
@@ -215,74 +241,88 @@ export default function App() {
             {/* Language Toggle */}
             <button
               onClick={() => setLang(lang === 'bn' ? 'en' : 'bn')}
-              className="bg-slate-800 hover:bg-slate-700 text-[10px] uppercase font-black px-2.5 py-1.5 rounded-lg border border-slate-700 tracking-wider flex items-center gap-1 transition-all"
+              className="bg-slate-800/90 hover:bg-slate-700 text-[10px] uppercase font-bold px-2.5 py-1.5 rounded-xl border border-slate-700/80 tracking-wider flex items-center gap-1 transition-all text-blue-300 shadow-[inset_1px_1px_2px_rgba(255,255,255,0.1)] active:scale-95"
               title="Toggle Language"
             >
-              <Icons.Globe className="w-3 h-3" />
+              <Icons.Globe className="w-3.5 h-3.5 text-blue-400" />
               {lang === 'bn' ? 'EN' : 'বাং'}
             </button>
 
+            {/* Ranking Button - Golden/Amber Theme */}
             <button
               onClick={() => setCurrentTab('ranking')}
-              className="flex flex-col items-center justify-center text-slate-300 hover:text-amber-400 transition-colors mr-1"
+              className="flex flex-col items-center justify-center p-1.5 px-2 rounded-xl bg-amber-400/15 hover:bg-amber-400/25 border border-amber-400/40 text-amber-300 transition-all active:scale-95 shadow-2xs"
               id="ranking-header-btn"
             >
-              <Icons.Award className="w-5 h-5 text-amber-500" />
-              <span className="text-[9px] font-bold mt-0.5">{lang === 'bn' ? 'র‍্যাঙ্কিং' : 'Ranking'}</span>
+              <Icons.Trophy className="w-4 h-4 text-amber-400 drop-shadow-[0_2px_6px_rgba(251,191,36,0.6)]" />
+              <span className="text-[9px] font-extrabold mt-0.5">{lang === 'bn' ? 'র‍্যাঙ্কিং' : 'Ranking'}</span>
             </button>
 
-            {/* Support button (from first screenshot) */}
+            {/* Support Button - Emerald/Green Theme */}
             <button
               onClick={() => setShowSupportModal(true)}
-              className="flex flex-col items-center justify-center text-slate-300 hover:text-amber-400 transition-colors"
+              className="flex flex-col items-center justify-center p-1.5 px-2 rounded-xl bg-emerald-400/15 hover:bg-emerald-400/25 border border-emerald-400/40 text-emerald-300 transition-all active:scale-95 shadow-2xs"
               id="support-header-btn"
             >
-              <Icons.LifeBuoy className="w-5 h-5 text-amber-500" />
-              <span className="text-[9px] font-bold mt-0.5">{lang === 'bn' ? 'সাপোর্ট' : 'Support'}</span>
+              <Icons.Headphones className="w-4 h-4 text-emerald-400 drop-shadow-[0_2px_6px_rgba(52,211,153,0.6)]" />
+              <span className="text-[9px] font-extrabold mt-0.5">{lang === 'bn' ? 'সাপোর্ট' : 'Support'}</span>
             </button>
           </div>
         </div>
       </header>
 
       {/* --- APP CONTAINER WITH MAX-WIDTH PRESET FOR FAITHFUL PHONE LAYOUT --- */}
-      <main className="flex-1 w-full max-w-md mx-auto px-4 pt-5 pb-24">
+      <main className="flex-1 w-full max-w-5xl mx-auto px-4 pt-5 pb-24">
         {/* TAB RENDERING */}
 
         {/* 1. HOME TAB */}
         {currentTab === 'home' && (
           <div className="space-y-6">
-            {/* Hero Welcome block (from first screenshot) */}
-            <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm relative overflow-hidden animate-fade-in">
-              {/* Decorative circle glow */}
-              <div className="absolute top-0 right-0 w-44 h-44 bg-blue-500/5 rounded-full blur-3xl -mr-16 -mt-16" />
-              <div className="relative z-10 space-y-1">
-                <h2 className="text-xl font-black text-[#0f172a] tracking-tight leading-tight">
-                  Unity Earning {lang === 'bn' ? 'কমিশন ভিত্তিক কাজ' : 'Commission Jobs'}
-                </h2>
-                <p className="text-slate-500 text-xs">
+            {/* Hero Welcome block - Beautiful Eye-Pleasing Color Gradient & Design */}
+            <div className="rounded-2xl p-5 md:p-6 bg-[linear-gradient(110deg,#3b82f6,45%,#6366f1,55%,#3b82f6)] bg-[length:250%_auto] text-white relative overflow-hidden shadow-[0_6px_20px_rgba(59,130,246,0.3)] border border-blue-400/40 animate-[bg-shimmer_3s_linear_infinite] transition-all">
+              {/* Soft decorative background circles */}
+              <div className="absolute top-0 right-0 w-48 h-48 bg-white/20 rounded-full blur-2xl -mr-12 -mt-12 pointer-events-none mix-blend-overlay animate-pulse" />
+              <div className="absolute bottom-0 left-0 w-36 h-36 bg-cyan-300/30 rounded-full blur-xl -ml-10 -mb-10 pointer-events-none mix-blend-overlay animate-pulse" style={{ animationDelay: '1s' }} />
+              
+              <div className="relative z-10 space-y-1.5">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg bg-white/20 backdrop-blur-md flex items-center justify-center text-amber-300 border border-white/30 shrink-0 shadow-inner">
+                    <Icons.Briefcase className="w-4.5 h-4.5 text-amber-300" />
+                  </div>
+                  <h2 className="text-lg md:text-xl font-extrabold tracking-tight leading-tight text-white drop-shadow-xs">
+                    Unity Earning {lang === 'bn' ? 'কমিশন কাজ' : 'Commission Jobs'}
+                  </h2>
+                </div>
+                <p className="text-blue-100/90 text-xs md:text-sm font-medium leading-relaxed pl-0.5">
                   {lang === 'bn'
-                    ? 'নিচের কাজের তালিকা থেকে প্রজেক্ট সম্পন্ন করে সাথে সাথে নির্ধারিত ক্যাশ কমিশন আয় করুন।'
-                    : 'Complete simple training projects from the list below and earn verified cash commissions.'}
+                    ? 'কাজের তালিকা থেকে প্রজেক্ট সম্পন্ন করে সাথে সাথে নির্ধারিত কমিশন লাভ করুন।'
+                    : 'Complete simple projects from the list below and earn verified cash commissions.'}
                 </p>
               </div>
-
-
             </div>
 
-            {/* Simulated Earnings stats card */}
-            <div className="bg-[#0f172a] text-white p-5 rounded-2xl shadow-sm border border-slate-800 flex items-center justify-between">
+            {/* Rank and Points Card - Simple, Clean & Aesthetic Gold Design */}
+            <div className="clay-card bg-white p-4 md:p-4.5 rounded-2xl border border-amber-200/80 flex items-center justify-between shadow-[0_2px_12px_rgba(245,158,11,0.06)]">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-400">
-                  <Icons.TrendingUp className="w-5 h-5" />
+                <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 border border-amber-200 flex items-center justify-center shrink-0 shadow-xs">
+                  <Icons.Crown className="w-5 h-5 text-amber-500 fill-amber-500" />
                 </div>
                 <div>
-                  <span className="text-[10px] text-slate-400 font-bold uppercase block">{lang === 'bn' ? 'র‍্যাংক এবং ব্যাজ' : 'Member Level'}</span>
-                  <span className="text-xs font-bold text-blue-400">{profile.level}</span>
+                  <span className="text-[10px] text-slate-400 font-bold uppercase block tracking-wider">{lang === 'bn' ? 'র‍্যাংক' : 'Member Level'}</span>
+                  <div className="flex items-center gap-2 flex-wrap mt-0.5">
+                    <span className="text-sm font-black text-amber-700 tracking-tight">
+                      {profile.level === 'Gold Rank' ? (lang === 'bn' ? 'গোল্ড র‍্যাংক' : 'Gold Rank') : profile.level}
+                    </span>
+                    <span className="bg-amber-100/80 text-amber-900 text-[11px] px-2.5 py-0.5 rounded-lg font-bold flex items-center gap-1 border border-amber-300/70">
+                      <Icons.Sparkles className="w-3.5 h-3.5 text-amber-600 fill-amber-500" />
+                      {lang === 'bn' ? `${toBnNum((profile.points || 5320).toLocaleString('en-US'))} পয়েন্ট` : `${(profile.points || 5320).toLocaleString('en-US')} Pts`}
+                    </span>
+                  </div>
                 </div>
               </div>
-              <div className="bg-slate-800/80 px-3 py-1.5 rounded-xl border border-slate-700/50 text-[10px] text-slate-300 flex items-center gap-1 font-semibold">
-                <Icons.Clock className="w-3.5 h-3.5 text-blue-400" />
-                <span>{lang === 'bn' ? 'সক্রিয় সেশন' : 'Active'}</span>
+              <div className="bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-xl border border-emerald-200 text-xs flex items-center gap-1.5 font-bold shrink-0">
+                <Icons.Clock className="w-3.5 h-3.5 text-emerald-600" />
+                <span>{lang === 'bn' ? 'সক্রিয়' : 'Active'}</span>
               </div>
             </div>
 
@@ -320,33 +360,84 @@ export default function App() {
 
         {/* 2. MY WORK TAB */}
         {currentTab === 'work' && (
-          <div className="space-y-6">
-            <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
-              <h2 className="text-lg font-bold text-[#0f172a] flex items-center gap-2">
-                <Icons.Briefcase className="w-5 h-5 text-blue-600" />
-                {lang === 'bn' ? 'আমার ডেমো কাজের অগ্রগতি' : 'Active Training Workspace'}
-              </h2>
-              <p className="text-slate-500 text-xs mt-1.5 leading-relaxed">
-                {lang === 'bn'
-                  ? 'আপনার ইতিমধ্যে সাবমিট করা কাজ এবং রিয়েল-টাইম পেন্ডিং ডেমো ট্র্যাকিং দেখতে নিচের লিস্টটি পর্যবেক্ষণ করুন।'
-                  : 'Check status, verify completion tokens, and inspect detailed campaign analytics ledger below.'}
-              </p>
+          <div className="space-y-5 animate-fade-in">
 
-            <div className="grid grid-cols-3 gap-3 mt-5 pt-4 border-t border-slate-200 text-center">
-              <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl">
-                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block mb-0.5">{lang === 'bn' ? 'মোট কাজ' : 'Total'}</span>
-                <span className="text-base font-black text-slate-800">305</span>
+            {/* Top Featured Work Cards (Requested: ফর্ম ফিলআপ ২৫০, ইমেইল সেল ৪০, মাইক্রো জব ৫৫) */}
+            <div className="clay-card bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white rounded-3xl p-4 md:p-5 border border-slate-800 shadow-md space-y-3">
+              <div className="flex items-center justify-between border-b border-slate-800/80 pb-2.5">
+                <h2 className="text-base md:text-lg font-black text-amber-400 flex items-center gap-2">
+                  <Icons.Briefcase className="w-5 h-5 text-amber-400" />
+                  {lang === 'bn' ? 'আজকের কাজ ও রেট' : "Today's Featured Work"}
+                </h2>
+                <span className="bg-emerald-500/20 text-emerald-300 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full border border-emerald-400/30">
+                  {lang === 'bn' ? 'সক্রিয় কাজ' : 'Active'}
+                </span>
               </div>
-              <div className="p-3 bg-emerald-50/40 border border-emerald-200 rounded-xl">
-                <span className="text-[10px] text-emerald-600 font-bold uppercase tracking-wider block mb-0.5">{lang === 'bn' ? 'সফল' : 'Verified'}</span>
-                <span className="text-base font-black text-emerald-700">{profile.tasksCompleted}</span>
-              </div>
-              <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl">
-                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block mb-0.5">{lang === 'bn' ? 'পেন্ডিং' : 'Pending'}</span>
-                <span className="text-base font-black text-slate-500">2</span>
+
+              {/* 3 Main Work Rate Cards */}
+              <div className="grid grid-cols-3 gap-2 text-center">
+                {/* Form Fillup 250 Taka */}
+                <div className="bg-slate-800/90 hover:bg-slate-800 p-2.5 rounded-2xl border border-emerald-400/40 flex flex-col items-center justify-between transition-all">
+                  <span className="text-[10px] font-bold text-slate-300">
+                    {lang === 'bn' ? 'ফর্ম ফিলআপ' : 'Form Fillup'}
+                  </span>
+                  <span className="text-base md:text-lg font-black text-emerald-400 font-mono mt-1">
+                    ৳২৫০
+                  </span>
+                </div>
+
+                {/* Email Sale 40 Taka */}
+                <div className="bg-slate-800/90 hover:bg-slate-800 p-2.5 rounded-2xl border border-blue-400/40 flex flex-col items-center justify-between transition-all">
+                  <span className="text-[10px] font-bold text-slate-300">
+                    {lang === 'bn' ? 'ই-মেইল সেল' : 'Email Sale'}
+                  </span>
+                  <span className="text-base md:text-lg font-black text-blue-400 font-mono mt-1">
+                    ৳৪০
+                  </span>
+                </div>
+
+                {/* Micro Job 55 Taka */}
+                <div className="bg-slate-800/90 hover:bg-slate-800 p-2.5 rounded-2xl border border-amber-400/40 flex flex-col items-center justify-between transition-all">
+                  <span className="text-[10px] font-bold text-slate-300">
+                    {lang === 'bn' ? 'মাইক্রো জব' : 'Micro Job'}
+                  </span>
+                  <span className="text-base md:text-lg font-black text-amber-400 font-mono mt-1">
+                    ৳৫৫
+                  </span>
+                </div>
               </div>
             </div>
-          </div>
+
+            {/* Task Stats Card (Requested: মোট কাজ ৬৪০, সফল কাজ ৬৩২, পেন্ডিং ৮) */}
+            <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm space-y-3">
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-black text-slate-900 flex items-center gap-1.5">
+                  <Icons.CheckCircle2 className="w-4.5 h-4.5 text-emerald-600" />
+                  {lang === 'bn' ? 'আমার কাজের বিবরণী ও রেকর্ড' : 'Work Status Summary'}
+                </h3>
+              </div>
+
+              <div className="grid grid-cols-3 gap-2.5 text-center">
+                <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                  <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-0.5">
+                    {lang === 'bn' ? 'মোট কাজ' : 'Total'}
+                  </span>
+                  <span className="text-base font-black text-slate-800 font-mono">৬৪০</span>
+                </div>
+                <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl">
+                  <span className="text-[10px] text-emerald-700 font-bold uppercase tracking-wider block mb-0.5">
+                    {lang === 'bn' ? 'সফল কাজ' : 'Successful'}
+                  </span>
+                  <span className="text-base font-black text-emerald-700 font-mono">৬৩২</span>
+                </div>
+                <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl">
+                  <span className="text-[10px] text-amber-700 font-bold uppercase tracking-wider block mb-0.5">
+                    {lang === 'bn' ? 'পেন্ডিং' : 'Pending'}
+                  </span>
+                  <span className="text-base font-black text-amber-700 font-mono">৮</span>
+                </div>
+              </div>
+            </div>
 
           <div className="space-y-4">
             <h3 className="font-bold text-slate-800 text-sm px-1">
@@ -401,12 +492,16 @@ export default function App() {
         {currentTab === 'daily-work' && (
           <DailyWorkTab
             lang={lang}
+            profile={profile}
+            updateProfile={handleUpdateProfile}
+            addLog={handleAddLog}
           />
         )}
 
         {/* 3.6 RANKING TAB (Accessible from Header) */}
         {currentTab === 'ranking' && (
           <RankingTab
+            profile={profile}
             lang={lang}
           />
         )}
@@ -439,6 +534,8 @@ export default function App() {
             addLog={handleAddLog}
             taskLogs={taskLogs}
             lang={lang}
+            onLogout={() => setIsPortalLoggedIn(false)}
+            onOpenNotifications={() => setShowNotificationModal(true)}
           />
         )}
       </main>
@@ -460,61 +557,23 @@ export default function App() {
 
       {/* --- SUPPORT / HELP MODAL --- */}
       {showSupportModal && (
-        <div className="fixed inset-0 bg-[#0f172a]/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white w-full max-w-sm rounded-2xl shadow-2xl p-6 border border-slate-200 animate-slide-up">
-            <div className="flex justify-between items-center border-b border-slate-200 pb-3 mb-4">
-              <h3 className="font-extrabold text-base text-[#0f172a] flex items-center gap-1.5">
-                <Icons.LifeBuoy className="w-5 h-5 text-blue-600" />
-                {lang === 'bn' ? '২৪/৭ লাইভ হেল্পডেস্ক সাপোর্ট' : 'Unity Support Center'}
-              </h3>
-              <button
-                onClick={() => setShowSupportModal(false)}
-                className="w-8 h-8 rounded-full hover:bg-slate-100 text-slate-400 flex items-center justify-center"
-              >
-                <Icons.X className="w-4 h-4" />
-              </button>
-            </div>
-
-            <div className="space-y-4">
-              <div className="bg-emerald-50 border border-emerald-100 p-3 rounded-xl text-[11px] text-emerald-800 font-medium leading-relaxed text-center">
-                {lang === 'bn'
-                  ? 'আপনার কাজ বা পেমেন্ট সংক্রান্ত যেকোনো সমস্যায় আমাদের সাপোর্ট টিমের সাহায্য নিন। নিচে দেওয়া যেকোনো একজন কাউন্সিলরের সাথে হোয়াটসঅ্যাপে যোগাযোগ করুন।'
-                  : 'Having queries with typing speeds or lead sheets? Contact our live support counselors on WhatsApp.'}
-              </div>
-
-              <div className="flex flex-col gap-3 mt-4">
-                <a
-                  href="https://wa.me/message/YOUR_WHATSAPP_LINK_1"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full bg-[#25D366] hover:bg-[#1ebd5a] text-white font-bold py-3 px-4 rounded-xl text-xs transition-all active:scale-95 shadow-md flex items-center justify-center gap-2 cursor-pointer"
-                >
-                  <Icons.MessageCircle className="w-4 h-4" />
-                  {lang === 'bn' ? 'কাউন্সিলর ১ (WhatsApp)' : 'Counselor 1 (WhatsApp)'}
-                </a>
-
-                <a
-                  href="https://wa.me/message/YOUR_WHATSAPP_LINK_2"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full bg-[#25D366] hover:bg-[#1ebd5a] text-white font-bold py-3 px-4 rounded-xl text-xs transition-all active:scale-95 shadow-md flex items-center justify-center gap-2 cursor-pointer"
-                >
-                  <Icons.MessageCircle className="w-4 h-4" />
-                  {lang === 'bn' ? 'কাউন্সিলর ২ (WhatsApp)' : 'Counselor 2 (WhatsApp)'}
-                </a>
-
-                <a
-                  href="tel:+8801712345678"
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl text-xs transition-all active:scale-95 shadow-md flex items-center justify-center gap-2 cursor-pointer"
-                >
-                  <Icons.Phone className="w-4 h-4" />
-                  {lang === 'bn' ? 'সরাসরি কল করুন' : 'Direct Call'}
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
+        <SupportModal
+          onClose={() => setShowSupportModal(false)}
+          lang={lang}
+        />
       )}
+
+      {/* --- NOTIFICATION HUB MODAL --- */}
+      {showNotificationModal && (
+        <NotificationModal
+          lang={lang}
+          onClose={() => setShowNotificationModal(false)}
+        />
+      )}
+
+      {/* Floating Gift Box Offer Widget */}
+      <GiftOfferWidget lang={lang} onStartWork={() => setCurrentTab('work')} />
+
     </div>
   );
 }

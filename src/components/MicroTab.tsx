@@ -104,32 +104,20 @@ export default function MicroTab({ profile, updateProfile, addLog, lang }: Micro
   return (
     <div className="space-y-6 pb-24 animate-fade-in" id="micro-container">
       {/* Intro block */}
-      <div className="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm relative overflow-hidden">
-        <h2 className="text-lg font-bold text-[#0f172a] flex items-center gap-2">
-          <Icons.Zap className="w-5 h-5 text-amber-500 fill-amber-400" />
-          {lang === 'bn' ? '⚡ ইন্সট্যান্ট মাইক্রো টাস্কস' : '⚡ Instant Micro Tasks'}
+      <div className="clay-card bg-white rounded-3xl p-6 relative overflow-hidden border border-blue-100/80">
+        <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+          <Icons.Zap className="w-5 h-5 text-blue-600 fill-blue-500" />
+          {lang === 'bn' ? 'মাইক্রো টাস্ক' : 'Instant Micro Tasks'}
         </h2>
         <p className="text-slate-500 text-xs mt-1 leading-relaxed">
           {lang === 'bn'
-            ? 'সহজ কাজগুলো সম্পন্ন করে তাৎক্ষণিক আয় করুন।'
+            ? 'সহজ কাজগুলো সম্পন্ন করে আয় করুন।'
             : 'Complete simple tasks to earn instantly.'}
         </p>
-
-        {/* Short Stats */}
-        <div className="grid grid-cols-2 gap-3 mt-4 pt-4 border-t border-slate-100 text-center">
-          <div className="p-2 bg-slate-50 rounded-xl border border-slate-100">
-            <span className="text-[9px] text-slate-400 block font-bold uppercase">{lang === 'bn' ? 'মোট কাজ' : 'Total'}</span>
-            <span className="text-sm font-extrabold text-slate-800 font-mono">{toBnNum(tasks.length)}</span>
-          </div>
-          <div className="p-2 bg-emerald-50/40 rounded-xl border border-emerald-100">
-            <span className="text-[9px] text-emerald-600 block font-bold uppercase">{lang === 'bn' ? 'আপনার কাজ' : 'Completed'}</span>
-            <span className="text-sm font-extrabold text-emerald-700 font-mono">{toBnNum(tasks.filter(t => t.completed).length)}</span>
-          </div>
-        </div>
       </div>
 
       {/* Filter and Search Box */}
-      <div className="space-y-4 bg-white p-4 rounded-3xl border border-slate-200 shadow-sm">
+      <div className="clay-card space-y-3 bg-white p-4 rounded-3xl border border-blue-100/80">
         {/* Search */}
         <div className="relative">
           <Icons.Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -137,8 +125,8 @@ export default function MicroTab({ profile, updateProfile, addLog, lang }: Micro
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder={lang === 'bn' ? 'টাস্ক কিওয়ার্ড সার্চ করুন...' : 'Search tasks...'}
-            className="w-full bg-slate-50 border border-slate-200 rounded-2xl pl-10 pr-4 py-2.5 text-xs text-slate-700 focus:bg-white focus:border-amber-400 outline-none transition-all"
+            placeholder={lang === 'bn' ? 'সার্চ করুন...' : 'Search tasks...'}
+            className="w-full clay-input bg-slate-50/70 border border-slate-200 rounded-2xl pl-10 pr-4 py-2 text-xs text-slate-700 focus:bg-white focus:border-blue-400 outline-none transition-all"
           />
           {searchTerm && (
             <button
@@ -164,8 +152,8 @@ export default function MicroTab({ profile, updateProfile, addLog, lang }: Micro
                 }}
                 className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
                   isSelected
-                    ? 'bg-[#0f172a] text-white shadow-sm'
-                    : 'bg-slate-50 text-slate-500 border border-slate-200 hover:bg-slate-100'
+                    ? 'clay-btn-primary bg-blue-600 text-white'
+                    : 'bg-slate-50 text-slate-600 border border-slate-200/80 hover:bg-slate-100'
                 }`}
               >
                 <PlatIcon className="w-3.5 h-3.5" />

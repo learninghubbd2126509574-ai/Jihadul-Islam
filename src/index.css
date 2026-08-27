@@ -1,12 +1,126 @@
-@import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Space Grotesk", "Hind Siliguri", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Plus Jakarta Sans", "Hind Siliguri", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
 }
 
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes bg-shimmer {
+  0% {
+    background-position: 200% center;
+  }
+  100% {
+    background-position: -200% center;
+  }
+}
+
 body {
-  background-color: #f8fafc;
+  background-color: #eef3f8;
+  color: #1e293b;
   font-family: var(--font-sans);
 }
+
+/* Claymorphism Utility Classes */
+.clay-card {
+  background: #ffffff;
+  border-radius: 1.5rem;
+  box-shadow: 
+    8px 8px 18px rgba(166, 180, 200, 0.35),
+    -8px -8px 18px rgba(255, 255, 255, 0.95),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.8),
+    inset -2px -2px 4px rgba(0, 0, 0, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+}
+
+.clay-card-blue {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: #ffffff;
+  border-radius: 1.5rem;
+  box-shadow: 
+    8px 8px 20px rgba(37, 99, 235, 0.35),
+    -4px -4px 14px rgba(255, 255, 255, 0.3),
+    inset 3px 3px 6px rgba(255, 255, 255, 0.35),
+    inset -3px -3px 6px rgba(0, 0, 0, 0.2);
+}
+
+.clay-card-subtle {
+  background: #f8fafc;
+  border-radius: 1.25rem;
+  box-shadow: 
+    4px 4px 10px rgba(166, 180, 200, 0.25),
+    -4px -4px 10px rgba(255, 255, 255, 0.8),
+    inset 2px 2px 3px rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+}
+
+.clay-btn-primary {
+  background: linear-gradient(145deg, #3b82f6, #1d4ed8);
+  color: #ffffff;
+  border-radius: 9999px;
+  box-shadow: 
+    4px 4px 10px rgba(37, 99, 235, 0.35),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.4),
+    inset -2px -2px 4px rgba(0, 0, 0, 0.2);
+  transition: all 0.15s ease-in-out;
+}
+
+.clay-btn-primary:active {
+  transform: scale(0.97);
+  box-shadow: 
+    inset 3px 3px 6px rgba(0, 0, 0, 0.3),
+    inset -2px -2px 4px rgba(255, 255, 255, 0.2);
+}
+
+.clay-btn-emerald {
+  background: linear-gradient(145deg, #10b981, #047857);
+  color: #ffffff;
+  border-radius: 9999px;
+  box-shadow: 
+    4px 4px 10px rgba(16, 185, 129, 0.35),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.4),
+    inset -2px -2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.clay-btn-secondary {
+  background: linear-gradient(145deg, #ffffff, #e2e8f0);
+  color: #334155;
+  border-radius: 9999px;
+  box-shadow: 
+    4px 4px 10px rgba(166, 180, 200, 0.3),
+    -4px -4px 10px rgba(255, 255, 255, 0.9),
+    inset 2px 2px 3px rgba(255, 255, 255, 0.9);
+}
+
+.clay-pill {
+  background: #f1f5f9;
+  border-radius: 9999px;
+  box-shadow: 
+    inset 2px 2px 4px rgba(166, 180, 200, 0.25),
+    inset -2px -2px 4px rgba(255, 255, 255, 0.9);
+}
+
+.clay-input {
+  background: #f8fafc;
+  border-radius: 1rem;
+  box-shadow: 
+    inset 3px 3px 6px rgba(166, 180, 200, 0.25),
+    inset -3px -3px 6px rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(203, 213, 225, 0.6);
+}
+
+.clay-nav {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(12px);
+  box-shadow: 
+    0 -8px 24px rgba(166, 180, 200, 0.25),
+    inset 0 2px 3px rgba(255, 255, 255, 0.9);
+  border-top: 1px solid rgba(255, 255, 255, 0.9);
+}
+

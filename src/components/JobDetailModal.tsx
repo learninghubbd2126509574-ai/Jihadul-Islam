@@ -4,6 +4,11 @@ import { Job, UserProfile } from '../types';
 import { MicroTask, getLocalMicroTasks, saveLocalMicroTasks } from '../data/microJobs';
 import { getSubTasks, productCodeEntryData, clientsData, SubTask } from '../data/jobSubtasks';
 import { INITIAL_RESELLING_PRODUCTS, ResellingProduct } from '../data/resellingProducts';
+import LuckySpinFeed from './LuckySpinFeed';
+import GamingTournamentWorkspace from './GamingTournamentWorkspace';
+import SimOfferWorkspace from './SimOfferWorkspace';
+import ContentWritingWorkspace from './ContentWritingWorkspace';
+import DropshippingWorkspace from './DropshippingWorkspace';
 
 interface JobDetailModalProps {
   job: Job;
@@ -29,11 +34,37 @@ export default function JobDetailModal({
   const [editingSubmitLink, setEditingSubmitLink] = useState('');
   const [successEarnings, setSuccessEarnings] = useState(0);
   const [activeSubTaskId, setActiveSubTaskId] = useState<string | null>(null);
+  const [activeWorkers, setActiveWorkers] = useState(() => Math.floor(Math.random() * 85) + 265);
+
+  // Live active worker count dynamic fluctuation
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveWorkers((prev) => {
+        const delta = Math.floor(Math.random() * 5) - 2; // -2, -1, 0, 1, 2
+        const next = prev + delta;
+        return next < 210 ? 210 : next > 450 ? 450 : next;
+      });
+    }, 3500);
+
+    return () => clearInterval(interval);
+  }, []);
 
   // Code entry states
   const [codeCurrentStep, setCodeCurrentStep] = useState(0);
   const [codeInputValue, setCodeInputValue] = useState('');
   const [codeCompletedSteps, setCodeCompletedSteps] = useState<boolean[]>([false, false, false, false]);
+
+  // Website Visit states
+  const [webVisitTimer, setWebVisitTimer] = useState(60);
+  const [webVisitTimerActive, setWebVisitTimerActive] = useState(false);
+  const [webVisitVisited, setWebVisitVisited] = useState(false);
+
+  // Social Media Management Application states
+  const [selectedModJob, setSelectedModJob] = useState<SubTask | null>(null);
+  const [modApplicantName, setModApplicantName] = useState('');
+  const [modApplicantPhone, setModApplicantPhone] = useState('');
+  const [modApplicantProfile, setModApplicantProfile] = useState('');
+  const [modSubmitted, setModSubmitted] = useState(false);
 
   // Micro jobs states for Form Fillup integration
   const [modalMicroTasks, setModalMicroTasks] = useState<MicroTask[]>([]);
@@ -180,6 +211,18 @@ export default function JobDetailModal({
   const [formEmergency, setFormEmergency] = useState('');
   const [formNominee, setFormNominee] = useState('');
   const [formNomineeRelation, setFormNomineeRelation] = useState('');
+  const [formNationality, setFormNationality] = useState('বাংলাদেশী');
+  const [formReligion, setFormReligion] = useState('ইসলাম');
+  const [formHeight, setFormHeight] = useState('');
+  const [formWeight, setFormWeight] = useState('');
+  const [formEyeColor, setFormEyeColor] = useState('কালো');
+  const [formIdentification, setFormIdentification] = useState('');
+  const [formPassport, setFormPassport] = useState('');
+  const [formTin, setFormTin] = useState('');
+  const [formBankName, setFormBankName] = useState('');
+  const [formBankAccount, setFormBankAccount] = useState('');
+  const [formBankBranch, setFormBankBranch] = useState('');
+  const [formRoutingNumber, setFormRoutingNumber] = useState('');
   const [formTerms, setFormTerms] = useState(false);
 
   // We still provide rawFormSource / getFormSource mock returns to avoid syntax errors if referenced elsewhere
@@ -246,8 +289,38 @@ export default function JobDetailModal({
         uid,
         name,
         phone,
-        gender: i % 2 === 0 ? 'পুরুষ' : 'মহিলা',
+        father: i % 2 === 0 ? 'মো: আবুল কাসেম' : 'মো: শফিকুল ইসলাম',
+        mother: i % 2 === 0 ? 'মোসাম্মাৎ রহিমা খাতুন' : 'মোসা: হাসিনা বেগম',
+        email: `client${i}@gmail.com`,
+        gender: i % 2 === 0 ? 'পুরুষ' : 'নারী',
+        dob: `${10 + (i % 18)}/0${(i % 9) + 1}/19${70 + (i % 30)}`,
+        nid: `1234567${100 + i}`,
+        blood: ['A+', 'B+', 'O+', 'AB+'][i % 4],
         division,
+        district: ['গাজীপুর', 'সাভার', 'নারায়ণগঞ্জ', 'কুমিল্লা'][i % 4],
+        thana: ['সদর', 'শ্রীপুর', 'কালিয়াকৈর', 'কাপাসিয়া'][i % 4],
+        post: ['মাওনা', 'শ্রীপুর', 'তেলিহাটি', 'বরমী'][i % 4],
+        postcode: `174${i % 10}`,
+        village: i % 2 === 0 ? 'উত্তরা পাড়া' : 'দক্ষিণ পাড়া',
+        education: ['মাধ্যমিক', 'উচ্চ মাধ্যমিক', 'স্নাতক'][i % 3],
+        occupation: ['চাকুরীজীবী', 'ব্যবসায়ী', 'কৃষক', 'ছাত্র'][i % 4],
+        income: `${15000 + (i * 200)} টাকা`,
+        marital: i % 3 === 0 ? 'অবিবাহিত' : 'বিবাহিত',
+        emergency: `01912-${String(200000 + i).slice(1)}`,
+        nominee: i % 2 === 0 ? 'মোসাঃ আসমা বেগম' : 'মো: ইব্রাহিম হোসেন',
+        nomineeRelation: i % 2 === 0 ? 'মাতা' : 'পিতা',
+        nationality: 'বাংলাদেশী',
+        religion: i % 10 === 0 ? 'অন্যান্য' : 'ইসলাম',
+        height: `${5 + (i % 2)}' ${i % 12}"`,
+        weight: `${50 + (i % 40)} কেজি`,
+        eyeColor: 'কালো',
+        identification: i % 3 === 0 ? 'তিল আছে' : 'কোন চিহ্ন নেই',
+        passport: i % 5 === 0 ? `BW00${1000 + i}` : 'N/A',
+        tin: `123-456-${1000 + i}`,
+        bankName: ['Sonali Bank', 'Islami Bank', 'Dutch Bangla Bank'][i % 3],
+        bankAccount: `1234567890${i}`,
+        bankBranch: 'Main Branch',
+        routing: `0123456${i}`,
         grid: clientGrid,
         submitted: false,
         reportLink: ''
@@ -558,8 +631,32 @@ export default function JobDetailModal({
             : 'Identify the correct shortcut combination for 4 operational office desk prompts.'
         ]);
       }
+    } else if (activeSubTaskId && activeSubTaskId.startsWith('wv-')) {
+      const is2Min = activeSubTaskId === 'wv-10';
+      setWebVisitTimer(is2Min ? 120 : 60);
+      setWebVisitTimerActive(false);
+      setWebVisitVisited(false);
+      setTaskStatus('idle');
+      setErrorMessage('');
     }
   }, [activeSubTaskId, lang]);
+
+  // Website Visit Timer interval countdown
+  useEffect(() => {
+    let interval: any;
+    if (webVisitTimerActive && webVisitTimer > 0) {
+      interval = setInterval(() => {
+        setWebVisitTimer((prev) => {
+          if (prev <= 1) {
+            setWebVisitTimerActive(false);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [webVisitTimerActive, webVisitTimer]);
 
   // --- LOGIC IMPLEMENTATIONS ---
 
@@ -776,15 +873,23 @@ export default function JobDetailModal({
       return;
     }
     if (!formNid.trim() || formNid.trim().length < 10) {
-      setErrorMessage(lang === 'bn' ? 'দয়া করে ১০ ডিজিটের সঠিক NID নম্বরটি লিখুন!' : 'Please enter a valid 10-digit NID number!');
+      setErrorMessage(lang === 'bn' ? 'দয়া করে সঠিক NID নম্বরটি লিখুন!' : 'Please enter a valid NID number!');
       return;
     }
     if (!formVillage.trim()) {
       setErrorMessage(lang === 'bn' ? 'দয়া করে গ্রাম বা রাস্তার নাম লিখুন!' : 'Please enter village or road details!');
       return;
     }
+    if (!formNominee.trim()) {
+      setErrorMessage(lang === 'bn' ? 'দয়া করে নমিনীর নাম লিখুন!' : 'Please enter nominee name!');
+      return;
+    }
+    if (!formBankName.trim() || !formBankAccount.trim()) {
+      setErrorMessage(lang === 'bn' ? 'ব্যাংক তথ্য সঠিক ভাবে পূরণ করুন!' : 'Please fill bank details correctly!');
+      return;
+    }
     if (!formTerms) {
-      setErrorMessage(lang === 'bn' ? 'দয়া করে ডিক্লারেশন এবং শর্তাবলী চেক করুন!' : 'Please check the declaration terms checkbox!');
+      setErrorMessage(lang === 'bn' ? 'দয়া করে শপথবাক্য এবং শর্তাবলী চেক করুন!' : 'Please check the declaration checkbox!');
       return;
     }
 
@@ -1129,51 +1234,158 @@ export default function JobDetailModal({
     }, 1500);
   };
 
+  // Handle Website Visit Submission
+  const handleWebsiteVisitSubmit = () => {
+    if (!webVisitVisited) {
+      setErrorMessage(
+        lang === 'bn'
+          ? 'অনুগ্রহ করে প্রথমে "ওয়েবসাইট ভিজিট করুন" বাটনে ক্লিক করে ওয়েবসাইটটি ভিজিট করুন!'
+          : 'Please click "Visit Website" button first to visit the target page!'
+      );
+      return;
+    }
+
+    if (webVisitTimer > 0) {
+      setErrorMessage(
+        lang === 'bn'
+          ? `ওয়েবসাইটে অবস্থান করার সময় এখনও বাকি! আর মাত্র ${webVisitTimer} সেকেন্ড অপেক্ষা করুন।`
+          : `Website visit timer not finished! Please wait ${webVisitTimer} seconds more.`
+      );
+      return;
+    }
+
+    setErrorMessage('');
+    setTaskStatus('running');
+
+    setTimeout(() => {
+      const reward = activeSubTask ? activeSubTask.rewardNum : 0.15;
+      setSuccessEarnings(reward);
+      setTaskStatus('success');
+
+      updateProfile({
+        balance: profile.balance + reward,
+        tasksCompleted: profile.tasksCompleted + 1,
+      });
+
+      addLog({
+        jobId: job.id,
+        jobTitleBn: activeSubTask ? activeSubTask.titleBn : job.titleBn,
+        jobTitleEn: activeSubTask ? activeSubTask.titleEn : job.titleEn,
+        reward,
+      });
+    }, 1200);
+  };
+
+  // Handle Social Media Moderator Application Submit
+  const handleModApplySubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!modApplicantName.trim() || !modApplicantPhone.trim()) {
+      setErrorMessage(
+        lang === 'bn'
+          ? 'অনুগ্রহ করে আপনার নাম ও ফোন নম্বর প্রদান করুন!'
+          : 'Please enter your name and phone number!'
+      );
+      return;
+    }
+    setErrorMessage('');
+    setModSubmitted(true);
+  };
+
   const IconComponent = (Icons as any)[job.iconName] || Icons.Briefcase;
 
   return (
-    <div className="fixed inset-0 bg-slate-900 flex items-center justify-center z-50 md:p-4 overflow-y-auto animate-fade-in">
-      <div className="bg-white w-full h-full md:h-auto md:max-w-4xl md:rounded-3xl shadow-2xl flex flex-col md:max-h-[95vh] overflow-hidden border border-slate-100 animate-slide-up" id="job-detail-container">
+    <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 md:p-6 overflow-y-auto animate-fade-in">
+      <div className="bg-white w-full h-full md:h-auto md:max-w-7xl md:rounded-3xl shadow-2xl flex flex-col md:max-h-[92vh] overflow-hidden border border-slate-100 animate-slide-up" id="job-detail-container">
         {/* Modal Header */}
-        <div className="bg-slate-900 text-white p-5 flex items-center justify-between border-b border-slate-800 relative">
-          <div className="flex items-center gap-3">
-            <div className={`w-10 h-10 rounded-xl ${job.bgColor} flex items-center justify-center`}>
-              <IconComponent className={`w-6 h-6 ${job.iconColor}`} />
-            </div>
-            <div>
-              <h2 className="font-bold text-lg leading-tight flex items-center gap-2">
-                {lang === 'bn' ? job.titleBn : job.titleEn}
-                <span className="flex items-center gap-1 bg-rose-500/20 text-rose-500 border border-rose-500/30 px-2 py-0.5 rounded text-[10px] uppercase font-black tracking-wider animate-pulse">
+        <div className="bg-slate-900 text-white px-3 sm:px-5 py-2.5 flex items-center justify-between border-b border-slate-800 relative shadow-md gap-2 shrink-0 min-h-[48px]">
+          {activeSubTaskId ? (
+            /* Minimal header when inside a task */
+            <div className="flex items-center justify-between gap-2 flex-1 min-w-0 py-0.5">
+              <div className="flex items-center gap-2 shrink-0">
+                <button
+                  onClick={() => setActiveSubTaskId(null)}
+                  className="flex items-center gap-1 text-xs font-bold text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 px-2.5 py-1.5 rounded-lg border border-slate-700 transition-all active:scale-95 shrink-0 whitespace-nowrap"
+                >
+                  <Icons.ArrowLeft className="w-3.5 h-3.5" />
+                  <span>{lang === 'bn' ? 'ফিরে যান' : 'Back'}</span>
+                </button>
+
+                <span className="flex items-center gap-1 bg-rose-500/20 text-rose-400 border border-rose-500/30 px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] uppercase font-black tracking-wider animate-pulse whitespace-nowrap">
                   <span className="w-1.5 h-1.5 bg-rose-500 rounded-full"></span>
                   LIVE
                 </span>
-              </h2>
-              <div className="flex items-center gap-3 mt-1.5 text-[11px] md:text-xs text-slate-300 font-medium">
-                <span className="flex items-center gap-1 font-mono text-emerald-400">
-                  <Icons.Banknote className="w-3.5 h-3.5" /> 
-                  {lang === 'bn' ? job.rewardBn : job.rewardEn}
+              </div>
+
+              <span className="flex items-center gap-1.5 font-black text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 rounded-lg text-xs sm:text-sm whitespace-nowrap">
+                <Icons.Banknote className="w-4 h-4 text-emerald-400 shrink-0" />
+                <span>
+                  {lang === 'bn'
+                    ? (activeSubTask ? `পাবেন: ${activeSubTask.rewardBn}` : `পাবেন: ${job.rewardBn}`)
+                    : (activeSubTask ? `Earn: ${activeSubTask.rewardEn}` : `Earn: ${job.rewardEn}`)}
                 </span>
-                <span className="flex items-center gap-1 text-blue-300">
-                  <Icons.Clock className="w-3.5 h-3.5" /> 
-                  {lang === 'bn' ? job.estimatedTimeBn : job.estimatedTimeEn}
-                </span>
+              </span>
+            </div>
+          ) : (
+            /* Standard job header when browsing tasks */
+            <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+              <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-xl ${job.bgColor} flex items-center justify-center shrink-0`}>
+                <IconComponent className={`w-4 h-4 sm:w-6 sm:h-6 ${job.iconColor}`} />
+              </div>
+              <div className="min-w-0">
+                <h2 className="font-bold text-sm sm:text-base md:text-lg leading-tight flex items-center gap-2 truncate">
+                  <span className="truncate">{lang === 'bn' ? job.titleBn : job.titleEn}</span>
+                  <span className="flex items-center gap-1 bg-rose-500/20 text-rose-400 border border-rose-500/30 px-2 py-0.5 rounded text-[10px] uppercase font-black tracking-wider animate-pulse shrink-0">
+                    <span className="w-1.5 h-1.5 bg-rose-500 rounded-full"></span>
+                    LIVE
+                  </span>
+                </h2>
+                <div className="flex items-center gap-3 mt-0.5 text-[11px] md:text-xs text-slate-300 font-medium truncate">
+                  <span className="flex items-center gap-1 font-mono text-emerald-400 shrink-0">
+                    <Icons.Banknote className="w-3.5 h-3.5" /> 
+                    {lang === 'bn' ? job.rewardBn : job.rewardEn}
+                  </span>
+                  <span className="flex items-center gap-1 text-blue-300 shrink-0">
+                    <Icons.Clock className="w-3.5 h-3.5" /> 
+                    {lang === 'bn' ? job.estimatedTimeBn : job.estimatedTimeEn}
+                  </span>
+                </div>
               </div>
             </div>
-          </div>
+          )}
           <button
             onClick={onClose}
-            className="w-9 h-9 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center transition-all active:scale-95 z-10 relative"
+            className="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center transition-all active:scale-95 z-10 relative shrink-0 ml-1"
             aria-label="Close modal"
           >
-            <Icons.X className="w-5 h-5" />
+            <Icons.X className="w-4 h-4" />
           </button>
         </div>
 
+        {/* Secondary Sub-Header Live Workers Bar */}
+        <div className="bg-slate-800/95 text-slate-200 px-3 sm:px-5 py-2 flex items-center justify-between border-b border-slate-700/70 text-xs shrink-0 font-medium shadow-inner">
+          <div className="flex items-center gap-1.5 text-sky-300 font-bold">
+            <Icons.Users className="w-3.5 h-3.5 text-sky-400 shrink-0" />
+            <span>{lang === 'bn' ? `বর্তমানে ${activeWorkers} জন কাজ করছেন` : `Currently ${activeWorkers} members working`}</span>
+          </div>
+          <span className="text-[10px] bg-slate-900/80 text-emerald-400 font-mono font-bold px-2.5 py-0.5 rounded-full border border-slate-700/60 flex items-center gap-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+            {lang === 'bn' ? 'লাইভ সিঙ্ক' : 'LIVE SYNC'}
+          </span>
+        </div>
+
         {/* Modal Scrollable Content */}
-        <div className="p-6 overflow-y-auto flex-1 bg-slate-50/50">
-          <div className="space-y-6">
+        <div className="p-3 sm:p-4 md:p-5 overflow-y-auto flex-1 bg-slate-50/50">
+          <div className="space-y-4">
               {!activeSubTaskId ? (
-                job.id === 'daily-work' ? (
+                job.id === 'gaming-tournament' ? (
+                  <GamingTournamentWorkspace
+                    lang={lang}
+                    profile={profile}
+                    updateProfile={updateProfile}
+                    addLog={addLog}
+                    onBack={onClose}
+                  />
+                ) : job.id === 'daily-work' ? (
                   <div className="bg-orange-500 rounded-3xl p-6 shadow-xl relative overflow-hidden animate-fade-in">
                     <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
                     <div className="absolute bottom-0 left-0 w-40 h-40 bg-black/5 rounded-full blur-2xl pointer-events-none -ml-10 -mb-10" />
@@ -1187,6 +1399,8 @@ export default function JobDetailModal({
 
                     <div className="grid grid-cols-3 sm:grid-cols-4 gap-y-6 gap-x-2 relative z-10">
                       {[
+                        { id: 'dw-like-earning', nameEn: 'Like Earning', nameBn: 'লাইক আর্নিং', icon: 'Heart', color: 'text-rose-500' },
+                        { id: 'dw-lucky-spin', nameEn: 'Lucky Spin', nameBn: 'লাকি স্পিন', icon: 'Dices', color: 'text-amber-500' },
                         { id: 'dw-mobile-recharge', nameEn: 'Mobile Recharge', nameBn: 'মোবাইল রিচার্জ', icon: 'Smartphone', color: 'text-blue-500' },
                         { id: 'dw-drive-offer', nameEn: 'Drive Offer', nameBn: 'ড্রাইভ অফার', icon: 'Radio', color: 'text-teal-500' },
                         { id: 'dw-online-shop', nameEn: 'Online Shop', nameBn: 'অনলাইন শপ', icon: 'ShoppingCart', color: 'text-emerald-500' },
@@ -1282,7 +1496,8 @@ export default function JobDetailModal({
                               setEditingSubmitLink('');
                               setCodeCurrentStep(0);
                               setCodeInputValue('');
-                              setCodeCompletedSteps([false, false, false, false]);
+                              const dataset = productCodeEntryData[sub.id] || productCodeEntryData['code-1'] || [];
+                              setCodeCompletedSteps(new Array(dataset.length || 4).fill(false));
                             }}
                             className="bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition-all active:scale-95 flex items-center gap-1.5 cursor-pointer"
                           >
@@ -1654,49 +1869,60 @@ export default function JobDetailModal({
                       )}
                     </div>
                   )}
+                    </div>
+                  )
+                }
 
                   {/* 5. FORM FILLUP SIMULATION */}
                   {job.id === 'form-fillup-work' && (
                     <div className="space-y-4">
                       {/* Client Selector Cards */}
-                      <div className="bg-slate-50 border border-slate-200 rounded-2xl p-3.5 space-y-2">
-                        <label className="text-[11px] font-extrabold text-slate-600 uppercase tracking-wider block">
-                          {lang === 'bn' ? '১. ক্লায়েন্ট ডাটা শিট নির্বাচন করুন (৬ জন ক্লায়েন্ট উপলব্ধ):' : '1. Select Client Data Sheet (6 Clients available):'}
-                        </label>
-                        <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
-                          {clientsData.map((client, index) => (
+                      <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 sm:p-4 space-y-2.5 shadow-inner">
+                        <div className="flex items-center justify-between">
+                          <label className="text-xs font-bold text-slate-700 uppercase tracking-wide block">
+                            {lang === 'bn' ? '১. ক্লায়েন্ট ডাটা শিট নির্বাচন করুন' : '1. Select Client Data Sheet'}
+                          </label>
+                          <span className="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full border border-indigo-100">
+                            {lang === 'bn' ? '২০ জন উপলব্ধ' : '20 Available'}
+                          </span>
+                        </div>
+                        <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-10 gap-1.5 max-h-32 overflow-y-auto pr-1 custom-scrollbar">
+                          {clientsData.slice(0, 20).map((client, index) => (
                             <button
-                              key={client.id}
+                              key={`form-client-${client.uid || index}`}
                               type="button"
                               onClick={() => {
                                 setSelectedClientIndex(index);
                                 setErrorMessage('');
                               }}
-                              className={`p-2 rounded-xl border text-center transition-all cursor-pointer ${
+                              className={`p-1.5 rounded-lg border text-center transition-all cursor-pointer flex flex-col items-center justify-center min-h-[44px] ${
                                 selectedClientIndex === index
-                                  ? 'bg-slate-900 border-slate-900 text-white shadow-md shadow-slate-900/20 scale-[1.02]'
-                                  : 'bg-white border-slate-200 hover:border-slate-300 text-slate-700 hover:bg-slate-100'
+                                  ? 'bg-indigo-600 border-indigo-600 text-white shadow-md scale-[1.02] z-10 font-bold'
+                                  : 'bg-white border-slate-200 hover:border-indigo-200 text-slate-700 hover:bg-indigo-50/40'
                               }`}
                             >
-                              <div className="text-[11px] font-bold truncate">{client.name.split(' ')[0]}</div>
-                              <div className="text-[9px] opacity-75 font-mono">{client.phone.slice(-4)}</div>
+                              <div className="text-[10px] font-bold truncate w-full">{client.name.split(' ')[0]}</div>
+                              <div className={`text-[8px] font-mono ${selectedClientIndex === index ? 'text-indigo-200' : 'text-slate-400'}`}>ID: {client.phone.slice(-4)}</div>
                             </button>
                           ))}
                         </div>
                       </div>
 
                       {/* Current Client Card Details */}
-                      <div className="bg-slate-950 text-white rounded-2xl p-4 shadow-xl border border-slate-800 relative overflow-hidden">
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl pointer-events-none" />
-                        <div className="absolute bottom-0 left-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none" />
-                        
-                        <div className="flex justify-between items-center border-b border-slate-800 pb-2.5 mb-3">
+                      <div className="bg-[#0f172a] text-white rounded-xl p-3.5 sm:p-5 shadow-lg border border-slate-800 relative overflow-hidden">
+                        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-slate-800/80 pb-3 mb-3">
                           <div>
-                            <span className="text-[8px] bg-amber-500/20 text-amber-400 font-extrabold px-1.5 py-0.5 rounded uppercase tracking-wider">
-                              {lang === 'bn' ? 'অফিসিয়াল ক্লায়েন্ট ফাইল' : 'Official Client File'}
-                            </span>
-                            <h4 className="text-sm font-bold text-slate-100 mt-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="text-[9px] bg-amber-400 text-slate-950 font-bold px-2 py-0.5 rounded uppercase tracking-wider">
+                                {lang === 'bn' ? 'অফিশিয়াল ক্লায়েন্ট ফাইল' : 'Official Client File'}
+                              </span>
+                              <span className="text-[9px] bg-indigo-500/20 text-indigo-300 font-mono font-bold px-2 py-0.5 rounded border border-indigo-500/30">
+                                {clientsData[selectedClientIndex].uid}
+                              </span>
+                            </div>
+                            <h4 className="text-base sm:text-lg font-bold text-white tracking-tight flex items-center gap-2">
                               {clientsData[selectedClientIndex].name}
+                              <Icons.ShieldCheck className="w-4 h-4 text-emerald-400 inline shrink-0" />
                             </h4>
                           </div>
                           <button
@@ -1725,169 +1951,224 @@ export default function JobDetailModal({
                               setFormEmergency(c.emergency);
                               setFormNominee(c.nominee);
                               setFormNomineeRelation(c.nomineeRelation);
+                              setFormNationality(c.nationality || 'বাংলাদেশী');
+                              setFormReligion(c.religion || 'ইসলাম');
+                              setFormHeight(c.height || "5' 6\"");
+                              setFormWeight(c.weight || '৬৫ কেজি');
+                              setFormEyeColor(c.eyeColor || 'কালো');
+                              setFormIdentification(c.identification || 'কোন চিহ্ন নেই');
+                              setFormPassport(c.passport || 'N/A');
+                              setFormTin(c.tin || 'N/A');
+                              setFormBankName(c.bankName || 'Sonali Bank');
+                              setFormBankAccount(c.bankAccount || '12345678');
+                              setFormBankBranch(c.bankBranch || 'Main Branch');
+                              setFormRoutingNumber(c.routing || '0123456');
                               setFormTerms(true);
                             }}
-                            className="text-[10px] bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-3 py-1.5 rounded-lg transition-all flex items-center gap-1 active:scale-[0.98] cursor-pointer"
+                            className="w-full sm:w-auto text-xs bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-2 rounded-lg transition-all flex items-center justify-center gap-1.5 active:scale-95 cursor-pointer shadow-md"
                           >
-                            <span>⚡ {lang === 'bn' ? 'অটো-ফিল করুন' : 'Auto-Fill'}</span>
+                            <Icons.Zap className="w-3.5 h-3.5 fill-current" />
+                            <span>{lang === 'bn' ? 'অটো-ফিল করুন' : 'Auto-Fill Details'}</span>
                           </button>
                         </div>
 
-                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3.5 text-[11px] font-sans">
+                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-2.5 text-xs">
                           <div>
-                            <span className="text-slate-400 block text-[9px] uppercase font-mono">পিতার নাম (Father):</span>
-                            <span className="font-semibold text-slate-200">{clientsData[selectedClientIndex].father}</span>
-                          </div>
-                          <div>
-                            <span className="text-slate-400 block text-[9px] uppercase font-mono">মাতার নাম (Mother):</span>
-                            <span className="font-semibold text-slate-200">{clientsData[selectedClientIndex].mother}</span>
+                            <span className="text-slate-400 block text-[9px] uppercase font-semibold">পিতার নাম:</span>
+                            <span className="font-semibold text-slate-100 text-xs sm:text-sm">{clientsData[selectedClientIndex].father}</span>
                           </div>
                           <div>
-                            <span className="text-slate-400 block text-[9px] uppercase font-mono">মোবাইল (Phone):</span>
-                            <span className="font-mono font-semibold text-slate-200 select-all">{clientsData[selectedClientIndex].phone}</span>
+                            <span className="text-slate-400 block text-[9px] uppercase font-semibold">মাতার নাম:</span>
+                            <span className="font-semibold text-slate-100 text-xs sm:text-sm">{clientsData[selectedClientIndex].mother}</span>
                           </div>
                           <div>
-                            <span className="text-slate-400 block text-[9px] uppercase font-mono">ইমেইল (Email):</span>
-                            <span className="font-mono font-semibold text-slate-200 select-all">{clientsData[selectedClientIndex].email}</span>
+                            <span className="text-slate-400 block text-[9px] uppercase font-semibold">মোবাইল:</span>
+                            <span className="font-mono font-bold text-indigo-300 text-xs bg-indigo-500/10 px-1.5 py-0.5 rounded border border-indigo-500/20">{clientsData[selectedClientIndex].phone}</span>
                           </div>
                           <div>
-                            <span className="text-slate-400 block text-[9px] uppercase font-mono">NID কার্ড নং:</span>
-                            <span className="font-mono font-semibold text-slate-200 select-all">{clientsData[selectedClientIndex].nid}</span>
+                            <span className="text-slate-400 block text-[9px] uppercase font-semibold">ইমেইল:</span>
+                            <span className="font-mono font-bold text-indigo-300 text-xs truncate block bg-indigo-500/10 px-1.5 py-0.5 rounded border border-indigo-500/20">{clientsData[selectedClientIndex].email}</span>
                           </div>
                           <div>
-                            <span className="text-slate-400 block text-[9px] uppercase font-mono">জন্ম তারিখ (DOB):</span>
-                            <span className="font-mono font-semibold text-slate-200">{clientsData[selectedClientIndex].dob}</span>
+                            <span className="text-slate-400 block text-[9px] uppercase font-semibold">NID কার্ড নং:</span>
+                            <span className="font-mono font-bold text-slate-200 text-xs">{clientsData[selectedClientIndex].nid}</span>
                           </div>
                           <div>
-                            <span className="text-slate-400 block text-[9px] uppercase font-mono">লিঙ্গ / রক্ত (Gender/Blood):</span>
-                            <span className="font-semibold text-slate-200">{clientsData[selectedClientIndex].gender} ({clientsData[selectedClientIndex].blood})</span>
+                            <span className="text-slate-400 block text-[9px] uppercase font-semibold">জন্ম তারিখ:</span>
+                            <span className="font-mono font-bold text-slate-200 text-xs">{clientsData[selectedClientIndex].dob}</span>
                           </div>
                           <div>
-                            <span className="text-slate-400 block text-[9px] uppercase font-mono">পেশা / আয় (Job/Income):</span>
-                            <span className="font-semibold text-slate-200">{clientsData[selectedClientIndex].occupation} ({clientsData[selectedClientIndex].income})</span>
+                            <span className="text-slate-400 block text-[9px] uppercase font-semibold">লিঙ্গ / রক্ত:</span>
+                            <span className="font-semibold text-slate-200 text-xs">{clientsData[selectedClientIndex].gender} ({clientsData[selectedClientIndex].blood})</span>
                           </div>
                           <div>
-                            <span className="text-slate-400 block text-[9px] uppercase font-mono">শিক্ষা / বৈবাহিক:</span>
-                            <span className="font-semibold text-slate-200">{clientsData[selectedClientIndex].education} / {clientsData[selectedClientIndex].marital}</span>
+                            <span className="text-slate-400 block text-[9px] uppercase font-semibold">পেশা / আয়:</span>
+                            <span className="font-semibold text-slate-200 text-xs">{clientsData[selectedClientIndex].occupation} ({clientsData[selectedClientIndex].income})</span>
                           </div>
-                          <div className="col-span-2 sm:col-span-3 border-t border-slate-800 pt-2.5 mt-1">
-                            <span className="text-slate-400 block text-[9px] uppercase font-mono">ঠিকানা (Address):</span>
-                            <span className="font-semibold text-slate-200">
-                              গ্রাম: {clientsData[selectedClientIndex].village}, পোস্ট: {clientsData[selectedClientIndex].post} ({clientsData[selectedClientIndex].postcode}), থানা: {clientsData[selectedClientIndex].thana}, জেলা: {clientsData[selectedClientIndex].district}, বিভাগ: {clientsData[selectedClientIndex].division}
-                            </span>
+                          <div>
+                            <span className="text-slate-400 block text-[9px] uppercase font-semibold">শিক্ষা / বৈবাহিক:</span>
+                            <span className="font-semibold text-slate-200 text-xs">{clientsData[selectedClientIndex].education} / {clientsData[selectedClientIndex].marital}</span>
                           </div>
-                          <div className="col-span-2 sm:col-span-3 border-t border-slate-800 pt-2.5">
-                            <span className="text-slate-400 block text-[9px] uppercase font-mono">জরুরি যোগাযোগ ও নমিনী (Emergency/Nominee):</span>
-                            <span className="font-semibold text-slate-200">
-                              জরুরি: {clientsData[selectedClientIndex].emergency} | নমিনী: {clientsData[selectedClientIndex].nominee} ({clientsData[selectedClientIndex].nomineeRelation})
-                            </span>
+                          <div>
+                            <span className="text-slate-400 block text-[9px] uppercase font-semibold">জাতীয়তা / ধর্ম:</span>
+                            <span className="font-semibold text-slate-200 text-xs">{clientsData[selectedClientIndex].nationality} / {clientsData[selectedClientIndex].religion}</span>
+                          </div>
+                          <div>
+                            <span className="text-slate-400 block text-[9px] uppercase font-semibold">উচ্চতা / ওজন:</span>
+                            <span className="font-semibold text-slate-200 text-xs">{clientsData[selectedClientIndex].height} / {clientsData[selectedClientIndex].weight}</span>
+                          </div>
+                          <div>
+                            <span className="text-slate-400 block text-[9px] uppercase font-semibold">চোখের রঙ / চিহ্ন:</span>
+                            <span className="font-semibold text-slate-200 text-xs">{clientsData[selectedClientIndex].eyeColor} / {clientsData[selectedClientIndex].identification}</span>
+                          </div>
+                          
+                          <div className="col-span-2 sm:col-span-3 lg:col-span-4 border-t border-slate-800/80 pt-2.5 mt-1 grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
+                            <div>
+                              <span className="text-slate-400 block text-[9px] uppercase font-semibold">স্থায়ী ঠিকানা:</span>
+                              <span className="text-slate-200 text-[11px] leading-tight block">
+                                গ্রাম: {clientsData[selectedClientIndex].village}, পোস্ট: {clientsData[selectedClientIndex].post} ({clientsData[selectedClientIndex].postcode}), থানা: {clientsData[selectedClientIndex].thana}, জেলা: {clientsData[selectedClientIndex].district}, বিভাগ: {clientsData[selectedClientIndex].division}
+                              </span>
+                            </div>
+                            <div>
+                              <span className="text-slate-400 block text-[9px] uppercase font-semibold">ব্যাংক তথ্য:</span>
+                              <span className="text-slate-200 text-[11px] leading-tight block">
+                                {clientsData[selectedClientIndex].bankName} ({clientsData[selectedClientIndex].bankBranch}) | A/C: {clientsData[selectedClientIndex].bankAccount} | Routing: {clientsData[selectedClientIndex].routing}
+                              </span>
+                            </div>
                           </div>
                         </div>
                       </div>
 
                       {/* Interactive Form Submission Sections */}
-                      <div className="border border-slate-200 rounded-2xl p-4 bg-white shadow-sm space-y-4 max-h-[480px] overflow-y-auto">
-                        <div className="flex justify-between items-center border-b border-slate-100 pb-2">
-                          <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
-                            <Icons.FileSpreadsheet className="w-4 h-4 text-emerald-600" />
-                            {lang === 'bn' ? 'অনলাইন ডাটা এন্ট্রি পোর্টাল' : 'Online Data Entry Portal'}
-                          </h4>
-                          <span className="text-[10px] text-emerald-600 font-extrabold bg-emerald-50 px-2 py-0.5 rounded-full">
-                            {lang === 'bn' ? 'আয়: ২০০ টাকা' : 'Earn: ৳200'}
-                          </span>
+                      <div className="border border-slate-200 rounded-xl p-3.5 sm:p-5 bg-white shadow-sm space-y-4">
+                        <div className="flex flex-row justify-between items-center gap-2 border-b border-slate-100 pb-3">
+                          <div className="flex items-center gap-2">
+                            <div className="p-1.5 bg-indigo-600 rounded-lg text-white">
+                              <Icons.FileText className="w-4 h-4" />
+                            </div>
+                            <div>
+                              <h4 className="text-xs sm:text-sm font-bold text-slate-900">
+                                {lang === 'bn' ? 'স্মার্ট ডিজিটাল ডাটা এন্ট্রি ফরম' : 'Data Entry Control Panel'}
+                              </h4>
+                              <p className="text-[10px] text-slate-400">
+                                {lang === 'bn' ? 'নিখুঁতভাবে তথ্য পূরণ করুন' : 'Ensure 100% Accuracy in Entry'}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="bg-emerald-600 text-white font-bold px-3 py-1 rounded-lg text-xs shadow-sm">
+                            {lang === 'bn' ? 'আয়: ২০০ টাকা' : 'Commission: ৳200'}
+                          </div>
                         </div>
 
                         {/* Section 1: Personal Details */}
-                        <div className="space-y-3">
-                          <h5 className="text-[11px] font-extrabold text-indigo-600 uppercase tracking-wider border-b border-slate-100 pb-1">
-                            {lang === 'bn' ? '১. ব্যক্তিগত তথ্য বিবরণী (Personal Details)' : '1. Personal Details'}
-                          </h5>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                            <div className="space-y-1">
-                              <label className="text-[10px] font-bold text-slate-500 block">{lang === 'bn' ? 'আবেদনকারীর নাম (Full Name):' : 'Full Name:'}</label>
+                        <div className="space-y-2.5">
+                          <div className="flex items-center gap-2">
+                             <div className="w-5 h-5 rounded bg-indigo-600 text-white flex items-center justify-center font-bold text-xs">১</div>
+                             <h5 className="text-xs font-bold text-slate-800">
+                               {lang === 'bn' ? 'ব্যক্তিগত তথ্য বিবরণী' : 'Personal Identity Details'}
+                             </h5>
+                             <div className="h-px flex-1 bg-slate-100"></div>
+                          </div>
+                          
+                          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
+                            <div>
+                              <label className="text-[11px] font-semibold text-slate-600 block mb-0.5">{lang === 'bn' ? 'আবেদনকারীর নাম:' : 'Full Name:'}</label>
                               <input
                                 type="text"
                                 value={formName}
                                 onChange={(e) => setFormName(e.target.value)}
                                 placeholder="উদাঃ মোঃ আব্দুর রহমান"
-                                className="w-full border border-slate-200 rounded-lg p-2 text-xs text-slate-700 focus:border-indigo-400 outline-none"
+                                className="w-full border border-slate-200 bg-slate-50/50 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:bg-white focus:border-indigo-500 outline-none"
                               />
                             </div>
-                            <div className="space-y-1">
-                              <label className="text-[10px] font-bold text-slate-500 block">{lang === 'bn' ? 'পিতার নাম (Father\'s Name):' : 'Father\'s Name:'}</label>
+                            <div>
+                              <label className="text-[11px] font-semibold text-slate-600 block mb-0.5">{lang === 'bn' ? 'পিতার নাম:' : 'Father\'s Name:'}</label>
                               <input
                                 type="text"
                                 value={formFather}
                                 onChange={(e) => setFormFather(e.target.value)}
-                                placeholder="উদাঃ মোঃ মজিবুর রহমান"
-                                className="w-full border border-slate-200 rounded-lg p-2 text-xs text-slate-700 focus:border-indigo-400 outline-none"
+                                className="w-full border border-slate-200 bg-slate-50/50 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:bg-white focus:border-indigo-500 outline-none"
                               />
                             </div>
-                            <div className="space-y-1">
-                              <label className="text-[10px] font-bold text-slate-500 block">{lang === 'bn' ? 'মাতার নাম (Mother\'s Name):' : 'Mother\'s Name:'}</label>
+                            <div>
+                              <label className="text-[11px] font-semibold text-slate-600 block mb-0.5">{lang === 'bn' ? 'মাতার নাম:' : 'Mother\'s Name:'}</label>
                               <input
                                 type="text"
                                 value={formMother}
                                 onChange={(e) => setFormMother(e.target.value)}
-                                placeholder="উদাঃ মোসাঃ রহিমা বেগম"
-                                className="w-full border border-slate-200 rounded-lg p-2 text-xs text-slate-700 focus:border-indigo-400 outline-none"
+                                className="w-full border border-slate-200 bg-slate-50/50 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:bg-white focus:border-indigo-500 outline-none"
                               />
                             </div>
-                            <div className="space-y-1">
-                              <label className="text-[10px] font-bold text-slate-500 block">{lang === 'bn' ? 'জন্ম তারিখ (Date of Birth - DD/MM/YYYY):' : 'Date of Birth:'}</label>
+                            <div>
+                              <label className="text-[11px] font-semibold text-slate-600 block mb-0.5">{lang === 'bn' ? 'জন্ম তারিখ:' : 'Date of Birth:'}</label>
                               <input
                                 type="text"
                                 value={formDob}
                                 onChange={(e) => setFormDob(e.target.value)}
                                 placeholder="DD/MM/YYYY"
-                                className="w-full border border-slate-200 rounded-lg p-2 text-xs text-slate-700 focus:border-indigo-400 outline-none font-mono"
+                                className="w-full border border-slate-200 bg-slate-50/50 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:bg-white focus:border-indigo-500 outline-none font-mono"
                               />
                             </div>
-                            <div className="space-y-1">
-                              <label className="text-[10px] font-bold text-slate-500 block">{lang === 'bn' ? 'জাতীয় পরিচয়পত্র নং (NID Number):' : 'NID Number:'}</label>
+                            <div>
+                              <label className="text-[11px] font-semibold text-slate-600 block mb-0.5">{lang === 'bn' ? 'জাতীয় পরিচয়পত্র নং (NID):' : 'NID Number:'}</label>
                               <input
                                 type="text"
                                 value={formNid}
                                 onChange={(e) => setFormNid(e.target.value)}
-                                placeholder="১০ ডিজিটের এনআইডি নং"
-                                className="w-full border border-slate-200 rounded-lg p-2 text-xs text-slate-700 focus:border-indigo-400 outline-none font-mono"
+                                className="w-full border border-slate-200 bg-slate-50/50 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:bg-white focus:border-indigo-500 outline-none"
                               />
                             </div>
-                            <div className="space-y-1">
-                              <label className="text-[10px] font-bold text-slate-500 block">{lang === 'bn' ? 'লিঙ্গ (Gender):' : 'Gender:'}</label>
+                            <div>
+                              <label className="text-[11px] font-semibold text-slate-600 block mb-0.5">{lang === 'bn' ? 'জাতীয়তা:' : 'Nationality:'}</label>
+                              <input
+                                type="text"
+                                value={formNationality}
+                                onChange={(e) => setFormNationality(e.target.value)}
+                                className="w-full border border-slate-200 bg-slate-50/50 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:bg-white focus:border-indigo-500 outline-none"
+                              />
+                            </div>
+                            <div>
+                              <label className="text-[11px] font-semibold text-slate-600 block mb-0.5">{lang === 'bn' ? 'ধর্ম:' : 'Religion:'}</label>
+                              <select
+                                value={formReligion}
+                                onChange={(e) => setFormReligion(e.target.value)}
+                                className="w-full border border-slate-200 bg-slate-50/50 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:bg-white focus:border-indigo-500 outline-none"
+                              >
+                                <option value="ইসলাম">ইসলাম</option>
+                                <option value="হিন্দু">হিন্দু</option>
+                                <option value="খ্রিস্টান">খ্রিস্টান</option>
+                                <option value="বৌদ্ধ">বৌদ্ধ</option>
+                                <option value="অন্যান্য">অন্যান্য</option>
+                              </select>
+                            </div>
+                            <div>
+                              <label className="text-[11px] font-semibold text-slate-600 block mb-0.5">{lang === 'bn' ? 'লিঙ্গ:' : 'Gender:'}</label>
                               <select
                                 value={formGender}
                                 onChange={(e) => setFormGender(e.target.value)}
-                                className="w-full border border-slate-200 bg-white rounded-lg p-2 text-xs text-slate-700 outline-none"
+                                className="w-full border border-slate-200 bg-slate-50/50 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:bg-white focus:border-indigo-500 outline-none"
                               >
-                                <option value="পুরুষ">पुरुष (Male)</option>
+                                <option value="পুরুষ">পুরুষ (Male)</option>
                                 <option value="নারী">নারী (Female)</option>
                                 <option value="অন্যান্য">অন্যান্য (Other)</option>
                               </select>
                             </div>
-                            <div className="space-y-1">
-                              <label className="text-[10px] font-bold text-slate-500 block">{lang === 'bn' ? 'রক্তের গ্রুপ (Blood Group):' : 'Blood Group:'}</label>
+                            <div>
+                              <label className="text-[11px] font-semibold text-slate-600 block mb-0.5">{lang === 'bn' ? 'রক্তের গ্রুপ:' : 'Blood Group:'}</label>
                               <select
                                 value={formBlood}
                                 onChange={(e) => setFormBlood(e.target.value)}
-                                className="w-full border border-slate-200 bg-white rounded-lg p-2 text-xs text-slate-700 outline-none font-mono"
+                                className="w-full border border-slate-200 bg-slate-50/50 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:bg-white focus:border-indigo-500 outline-none"
                               >
-                                <option value="A+">A+</option>
-                                <option value="A-">A-</option>
-                                <option value="B+">B+</option>
-                                <option value="B-">B-</option>
-                                <option value="O+">O+</option>
-                                <option value="O-">O-</option>
-                                <option value="AB+">AB+</option>
-                                <option value="AB-">AB-</option>
+                                {['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-'].map(b => <option key={b} value={b}>{b}</option>)}
                               </select>
                             </div>
-                            <div className="space-y-1">
-                              <label className="text-[10px] font-bold text-slate-500 block">{lang === 'bn' ? 'বৈবাহিক অবস্থা (Marital Status):' : 'Marital Status:'}</label>
+                            <div>
+                              <label className="text-[11px] font-semibold text-slate-600 block mb-0.5">{lang === 'bn' ? 'বৈবাহিক অবস্থা:' : 'Marital Status:'}</label>
                               <select
                                 value={formMarital}
                                 onChange={(e) => setFormMarital(e.target.value)}
-                                className="w-full border border-slate-200 bg-white rounded-lg p-2 text-xs text-slate-700 outline-none"
+                                className="w-full border border-slate-200 bg-slate-50/50 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:bg-white focus:border-indigo-500 outline-none"
                               >
                                 <option value="অবিবাহিত">অবিবাহিত (Single)</option>
                                 <option value="বিবাহিত">বিবাহিত (Married)</option>
@@ -1897,126 +2178,209 @@ export default function JobDetailModal({
                           </div>
                         </div>
 
-                        {/* Section 2: Contact Details */}
-                        <div className="space-y-3 pt-2">
-                          <h5 className="text-[11px] font-extrabold text-indigo-600 uppercase tracking-wider border-b border-slate-100 pb-1">
-                            {lang === 'bn' ? '২. যোগাযোগের বিবরণ (Contact Details)' : '2. Contact Details'}
-                          </h5>
-                          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                            <div className="space-y-1">
-                              <label className="text-[10px] font-bold text-slate-500 block">{lang === 'bn' ? 'মোবাইল নম্বর (Mobile Phone):' : 'Mobile Phone:'}</label>
+                        {/* Section 2: Body & Identity */}
+                        <div className="space-y-2.5 pt-3 border-t border-slate-100">
+                          <div className="flex items-center gap-2">
+                             <div className="w-5 h-5 rounded bg-indigo-600 text-white flex items-center justify-center font-bold text-xs">২</div>
+                             <h5 className="text-xs font-bold text-slate-800">
+                               {lang === 'bn' ? 'শারীরিক ও পরিচয় বিবরণ' : 'Body & ID Details'}
+                             </h5>
+                             <div className="h-px flex-1 bg-slate-100"></div>
+                          </div>
+                          
+                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                            <div>
+                              <label className="text-[11px] font-semibold text-slate-600 block mb-0.5">{lang === 'bn' ? 'উচ্চতা:' : 'Height:'}</label>
+                              <input
+                                type="text"
+                                value={formHeight}
+                                onChange={(e) => setFormHeight(e.target.value)}
+                                placeholder="৫ ফুট ৬ ইঞ্চি"
+                                className="w-full border border-slate-200 bg-slate-50/50 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:bg-white focus:border-indigo-500 outline-none"
+                              />
+                            </div>
+                            <div>
+                              <label className="text-[11px] font-semibold text-slate-600 block mb-0.5">{lang === 'bn' ? 'ওজন:' : 'Weight:'}</label>
+                              <input
+                                type="text"
+                                value={formWeight}
+                                onChange={(e) => setFormWeight(e.target.value)}
+                                placeholder="উদাঃ ৬৫ কেজি"
+                                className="w-full border border-slate-200 bg-slate-50/50 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:bg-white focus:border-indigo-500 outline-none"
+                              />
+                            </div>
+                            <div>
+                              <label className="text-[11px] font-semibold text-slate-600 block mb-0.5">{lang === 'bn' ? 'চোখের রঙ:' : 'Eye Color:'}</label>
+                              <input
+                                type="text"
+                                value={formEyeColor}
+                                onChange={(e) => setFormEyeColor(e.target.value)}
+                                placeholder="উদাঃ কালো"
+                                className="w-full border border-slate-200 bg-slate-50/50 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:bg-white focus:border-indigo-500 outline-none"
+                              />
+                            </div>
+                            <div>
+                              <label className="text-[11px] font-semibold text-slate-600 block mb-0.5">{lang === 'bn' ? 'সনাক্তকরণ চিহ্ন:' : 'ID Mark:'}</label>
+                              <input
+                                type="text"
+                                value={formIdentification}
+                                onChange={(e) => setFormIdentification(e.target.value)}
+                                placeholder="তিল / কাটা দাগ"
+                                className="w-full border border-slate-200 bg-slate-50/50 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:bg-white focus:border-indigo-500 outline-none"
+                              />
+                            </div>
+                            <div className="col-span-2">
+                              <label className="text-[11px] font-semibold text-slate-600 block mb-0.5">{lang === 'bn' ? 'পাসপোর্ট নম্বর:' : 'Passport Number:'}</label>
+                              <input
+                                type="text"
+                                value={formPassport}
+                                onChange={(e) => setFormPassport(e.target.value)}
+                                placeholder="পাসপোর্ট নং (যদি থাকে)"
+                                className="w-full border border-slate-200 bg-slate-50/50 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:bg-white focus:border-indigo-500 outline-none font-mono"
+                              />
+                            </div>
+                            <div className="col-span-2">
+                              <label className="text-[11px] font-semibold text-slate-600 block mb-0.5">{lang === 'bn' ? 'TIN নম্বর:' : 'TIN Number:'}</label>
+                              <input
+                                type="text"
+                                value={formTin}
+                                onChange={(e) => setFormTin(e.target.value)}
+                                placeholder="১২ ডিজিটের ই-টিন নম্বর"
+                                className="w-full border border-slate-200 bg-slate-50/50 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:bg-white focus:border-indigo-500 outline-none font-mono"
+                              />
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Section 3: Contact Details */}
+                        <div className="space-y-2.5 pt-3 border-t border-slate-100">
+                           <div className="flex items-center gap-2">
+                             <div className="w-5 h-5 rounded bg-indigo-600 text-white flex items-center justify-center font-bold text-xs">৩</div>
+                             <h5 className="text-xs font-bold text-slate-800">
+                               {lang === 'bn' ? 'যোগাযোগের বিবরণ' : 'Contact Details'}
+                             </h5>
+                             <div className="h-px flex-1 bg-slate-100"></div>
+                          </div>
+                          
+                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                            <div>
+                              <label className="text-[11px] font-semibold text-slate-600 block mb-0.5">{lang === 'bn' ? 'মোবাইল নম্বর:' : 'Mobile Phone:'}</label>
                               <input
                                 type="text"
                                 value={formPhone}
                                 onChange={(e) => setFormPhone(e.target.value)}
                                 placeholder="017xxxxxxxx"
-                                className="w-full border border-slate-200 rounded-lg p-2 text-xs text-slate-700 focus:border-indigo-400 outline-none font-mono"
+                                className="w-full border border-slate-200 bg-slate-50/50 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:bg-white focus:border-indigo-500 outline-none font-mono"
                               />
                             </div>
-                            <div className="space-y-1">
-                              <label className="text-[10px] font-bold text-slate-500 block">{lang === 'bn' ? 'ইমেইল অ্যাড্রেস (Email Address):' : 'Email Address:'}</label>
+                            <div>
+                              <label className="text-[11px] font-semibold text-slate-600 block mb-0.5">{lang === 'bn' ? 'ইমেইল অ্যাড্রেস:' : 'Email Address:'}</label>
                               <input
                                 type="email"
                                 value={formEmail}
                                 onChange={(e) => setFormEmail(e.target.value)}
                                 placeholder="email@gmail.com"
-                                className="w-full border border-slate-200 rounded-lg p-2 text-xs text-slate-700 focus:border-indigo-400 outline-none font-mono"
+                                className="w-full border border-slate-200 bg-slate-50/50 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:bg-white focus:border-indigo-500 outline-none font-mono"
                               />
                             </div>
-                            <div className="space-y-1">
-                              <label className="text-[10px] font-bold text-slate-500 block">{lang === 'bn' ? 'জরুরি যোগাযোগ নম্বর (Emergency Phone):' : 'Emergency Phone:'}</label>
+                            <div>
+                              <label className="text-[11px] font-semibold text-slate-600 block mb-0.5">{lang === 'bn' ? 'জরুরি যোগাযোগ:' : 'Emergency Phone:'}</label>
                               <input
                                 type="text"
                                 value={formEmergency}
                                 onChange={(e) => setFormEmergency(e.target.value)}
                                 placeholder="জরুরি নাম্বার"
-                                className="w-full border border-slate-200 rounded-lg p-2 text-xs text-slate-700 focus:border-indigo-400 outline-none font-mono"
+                                className="w-full border border-slate-200 bg-slate-50/50 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:bg-white focus:border-indigo-500 outline-none font-mono"
                               />
                             </div>
                           </div>
                         </div>
 
-                        {/* Section 3: Address Details */}
-                        <div className="space-y-3 pt-2">
-                          <h5 className="text-[11px] font-extrabold text-indigo-600 uppercase tracking-wider border-b border-slate-100 pb-1">
-                            {lang === 'bn' ? '৩. স্থায়ী ঠিকানা বিবরণী (Permanent Address)' : '3. Permanent Address'}
-                          </h5>
-                          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                            <div className="space-y-1">
-                              <label className="text-[10px] font-bold text-slate-500 block">{lang === 'bn' ? 'বিভাগ (Division):' : 'Division:'}</label>
+                        {/* Section 4: Address Details */}
+                        <div className="space-y-2.5 pt-3 border-t border-slate-100">
+                           <div className="flex items-center gap-2">
+                             <div className="w-5 h-5 rounded bg-indigo-600 text-white flex items-center justify-center font-bold text-xs">৪</div>
+                             <h5 className="text-xs font-bold text-slate-800">
+                               {lang === 'bn' ? 'স্থায়ী ঠিকানা বিবরণী' : 'Permanent Address'}
+                             </h5>
+                             <div className="h-px flex-1 bg-slate-100"></div>
+                          </div>
+                          
+                          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
+                            <div>
+                              <label className="text-[11px] font-semibold text-slate-600 block mb-0.5">{lang === 'bn' ? 'বিভাগ:' : 'Division:'}</label>
                               <input
                                 type="text"
                                 value={formDivision}
                                 onChange={(e) => setFormDivision(e.target.value)}
-                                placeholder="উদাঃ ঢাকা"
-                                className="w-full border border-slate-200 rounded-lg p-2 text-xs text-slate-700 focus:border-indigo-400 outline-none"
+                                className="w-full border border-slate-200 bg-slate-50/50 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:bg-white focus:border-indigo-500 outline-none"
                               />
                             </div>
-                            <div className="space-y-1">
-                              <label className="text-[10px] font-bold text-slate-500 block">{lang === 'bn' ? 'জেলা (District):' : 'District:'}</label>
+                            <div>
+                              <label className="text-[11px] font-semibold text-slate-600 block mb-0.5">{lang === 'bn' ? 'জেলা:' : 'District:'}</label>
                               <input
                                 type="text"
                                 value={formDistrict}
                                 onChange={(e) => setFormDistrict(e.target.value)}
-                                placeholder="উদাঃ গাজীপুর"
-                                className="w-full border border-slate-200 rounded-lg p-2 text-xs text-slate-700 focus:border-indigo-400 outline-none"
+                                className="w-full border border-slate-200 bg-slate-50/50 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:bg-white focus:border-indigo-500 outline-none"
                               />
                             </div>
-                            <div className="space-y-1">
-                              <label className="text-[10px] font-bold text-slate-500 block">{lang === 'bn' ? 'থানা / উপজেলা (Thana/Upazila):' : 'Thana/Upazila:'}</label>
+                            <div>
+                              <label className="text-[11px] font-semibold text-slate-600 block mb-0.5">{lang === 'bn' ? 'থানা:' : 'Thana:'}</label>
                               <input
                                 type="text"
                                 value={formThana}
                                 onChange={(e) => setFormThana(e.target.value)}
-                                placeholder="উদাঃ শ্রীপুর"
-                                className="w-full border border-slate-200 rounded-lg p-2 text-xs text-slate-700 focus:border-indigo-400 outline-none"
+                                className="w-full border border-slate-200 bg-slate-50/50 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:bg-white focus:border-indigo-500 outline-none"
                               />
                             </div>
-                            <div className="space-y-1">
-                              <label className="text-[10px] font-bold text-slate-500 block">{lang === 'bn' ? 'ডাকঘর (Post Office):' : 'Post Office:'}</label>
+                            <div>
+                              <label className="text-[11px] font-semibold text-slate-600 block mb-0.5">{lang === 'bn' ? 'ডাকঘর:' : 'Post Office:'}</label>
                               <input
                                 type="text"
                                 value={formPost}
                                 onChange={(e) => setFormPost(e.target.value)}
-                                placeholder="উদাঃ মাওনা"
-                                className="w-full border border-slate-200 rounded-lg p-2 text-xs text-slate-700 focus:border-indigo-400 outline-none"
+                                className="w-full border border-slate-200 bg-slate-50/50 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:bg-white focus:border-indigo-500 outline-none"
                               />
                             </div>
-                            <div className="space-y-1">
-                              <label className="text-[10px] font-bold text-slate-500 block">{lang === 'bn' ? 'পোস্ট কোড (Postcode):' : 'Postcode:'}</label>
+                            <div>
+                              <label className="text-[11px] font-semibold text-slate-600 block mb-0.5">{lang === 'bn' ? 'কোড:' : 'Postcode:'}</label>
                               <input
                                 type="text"
                                 value={formPostcode}
                                 onChange={(e) => setFormPostcode(e.target.value)}
-                                placeholder="উদাঃ ১৭৪০"
-                                className="w-full border border-slate-200 rounded-lg p-2 text-xs text-slate-700 focus:border-indigo-400 outline-none font-mono"
+                                className="w-full border border-slate-200 bg-slate-50/50 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:bg-white focus:border-indigo-500 outline-none font-mono"
                               />
                             </div>
-                            <div className="space-y-1">
-                              <label className="text-[10px] font-bold text-slate-500 block">{lang === 'bn' ? 'গ্রাম/মহল্লা/রাস্তা (Village/Road):' : 'Village/Road:'}</label>
+                            <div>
+                              <label className="text-[11px] font-semibold text-slate-600 block mb-0.5">{lang === 'bn' ? 'গ্রাম/রাস্তা:' : 'Village/Road:'}</label>
                               <input
                                 type="text"
                                 value={formVillage}
                                 onChange={(e) => setFormVillage(e.target.value)}
-                                placeholder="উদাঃ উত্তরা পাড়া"
-                                className="w-full border border-slate-200 rounded-lg p-2 text-xs text-slate-700 focus:border-indigo-400 outline-none"
+                                className="w-full border border-slate-200 bg-slate-50/50 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:bg-white focus:border-indigo-500 outline-none"
                               />
                             </div>
                           </div>
                         </div>
 
-                        {/* Section 4: Education, Nominee and Other Details */}
-                        <div className="space-y-3 pt-2">
-                          <h5 className="text-[11px] font-extrabold text-indigo-600 uppercase tracking-wider border-b border-slate-100 pb-1">
-                            {lang === 'bn' ? '৪. শিক্ষাগত যোগ্যতা ও নমিনী বিবরণ (Education & Nominee Details)' : '4. Education & Nominee Details'}
-                          </h5>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                            <div className="space-y-1">
-                              <label className="text-[10px] font-bold text-slate-500 block">{lang === 'bn' ? 'শিক্ষাগত যোগ্যতা (Education):' : 'Education Level:'}</label>
+                        {/* Section 5: Career & Nominee */}
+                        <div className="space-y-2.5 pt-3 border-t border-slate-100">
+                           <div className="flex items-center gap-2">
+                             <div className="w-5 h-5 rounded bg-indigo-600 text-white flex items-center justify-center font-bold text-xs">৫</div>
+                             <h5 className="text-xs font-bold text-slate-800">
+                               {lang === 'bn' ? 'পেশা ও নমিনী বিবরণ' : 'Career & Nominee'}
+                             </h5>
+                             <div className="h-px flex-1 bg-slate-100"></div>
+                          </div>
+                          
+                          <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-2.5">
+                            <div>
+                              <label className="text-[11px] font-semibold text-slate-600 block mb-0.5">{lang === 'bn' ? 'শিক্ষাগত যোগ্যতা:' : 'Education:'}</label>
                               <select
                                 value={formEducation}
                                 onChange={(e) => setFormEducation(e.target.value)}
-                                className="w-full border border-slate-200 bg-white rounded-lg p-2 text-xs text-slate-700 outline-none"
+                                className="w-full border border-slate-200 bg-slate-50/50 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:bg-white focus:border-indigo-500 outline-none"
                               >
                                 <option value="মাধ্যমিক">মাধ্যমিক (SSC)</option>
                                 <option value="উচ্চ মাধ্যমিক">উচ্চ মাধ্যমিক (HSC)</option>
@@ -2025,202 +2389,149 @@ export default function JobDetailModal({
                                 <option value="অন্যান্য">অন্যান্য (Other)</option>
                               </select>
                             </div>
-                            <div className="space-y-1">
-                              <label className="text-[10px] font-bold text-slate-500 block">{lang === 'bn' ? 'বর্তমান পেশা (Occupation):' : 'Current Occupation:'}</label>
+                            <div>
+                              <label className="text-[11px] font-semibold text-slate-600 block mb-0.5">{lang === 'bn' ? 'বর্তমান পেশা:' : 'Occupation:'}</label>
                               <input
                                 type="text"
                                 value={formOccupation}
                                 onChange={(e) => setFormOccupation(e.target.value)}
-                                placeholder="উদাঃ চাকুরীজীবী"
-                                className="w-full border border-slate-200 rounded-lg p-2 text-xs text-slate-700 focus:border-indigo-400 outline-none"
+                                className="w-full border border-slate-200 bg-slate-50/50 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:bg-white focus:border-indigo-500 outline-none"
                               />
                             </div>
-                            <div className="space-y-1">
-                              <label className="text-[10px] font-bold text-slate-500 block">{lang === 'bn' ? 'মাসিক আয় (Monthly Income):' : 'Monthly Income:'}</label>
+                            <div>
+                              <label className="text-[11px] font-semibold text-slate-600 block mb-0.5">{lang === 'bn' ? 'মাসিক আয়:' : 'Monthly Income:'}</label>
                               <input
                                 type="text"
                                 value={formIncome}
                                 onChange={(e) => setFormIncome(e.target.value)}
-                                placeholder="উদাঃ ৩৫,০০০ টাকা"
-                                className="w-full border border-slate-200 rounded-lg p-2 text-xs text-slate-700 focus:border-indigo-400 outline-none"
+                                className="w-full border border-slate-200 bg-slate-50/50 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:bg-white focus:border-indigo-500 outline-none"
                               />
                             </div>
-                            <div className="space-y-1">
-                              <label className="text-[10px] font-bold text-slate-500 block">{lang === 'bn' ? 'নমিনির পূর্ণ নাম (Nominee Name):' : 'Nominee Name:'}</label>
+                            <div>
+                              <label className="text-[11px] font-semibold text-slate-600 block mb-0.5">{lang === 'bn' ? 'নমিনির নাম:' : 'Nominee Name:'}</label>
                               <input
                                 type="text"
                                 value={formNominee}
                                 onChange={(e) => setFormNominee(e.target.value)}
-                                placeholder="উদাঃ মোসাঃ রহিমা বেগম"
-                                className="w-full border border-slate-200 rounded-lg p-2 text-xs text-slate-700 focus:border-indigo-400 outline-none"
+                                className="w-full border border-slate-200 bg-slate-50/50 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:bg-white focus:border-indigo-500 outline-none"
                               />
                             </div>
-                            <div className="space-y-1">
-                              <label className="text-[10px] font-bold text-slate-500 block">{lang === 'bn' ? 'নমিনির সাথে সম্পর্ক (Nominee Relation):' : 'Nominee Relation:'}</label>
+                            <div>
+                              <label className="text-[11px] font-semibold text-slate-600 block mb-0.5">{lang === 'bn' ? 'নমিনির সম্পর্ক:' : 'Nominee Relation:'}</label>
                               <input
                                 type="text"
                                 value={formNomineeRelation}
                                 onChange={(e) => setFormNomineeRelation(e.target.value)}
-                                placeholder="উদাঃ মাতা / পিতা / স্ত্রী"
-                                className="w-full border border-slate-200 rounded-lg p-2 text-xs text-slate-700 focus:border-indigo-400 outline-none"
+                                className="w-full border border-slate-200 bg-slate-50/50 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:bg-white focus:border-indigo-500 outline-none"
                               />
                             </div>
                           </div>
                         </div>
 
-                        {/* Section 5: Technical Meta-fields (Read-Only) to make 50 sections total */}
-                        <div className="border border-slate-100 rounded-xl p-3 bg-slate-50 space-y-2.5 pt-3">
-                          <div className="flex items-center gap-1.5 border-b border-slate-200 pb-1.5">
-                            <span className="w-2 h-2 rounded-full bg-indigo-600 animate-pulse" />
-                            <h5 className="text-[10px] font-extrabold text-slate-700 uppercase tracking-wider">
-                              {lang === 'bn' ? '৫. সিস্টেম ও ডাটাবেজ মেটাডাটা (System & DB Protocols - স্বয়ংক্রিয় সেশন)' : '5. System & DB Protocols (Auto-session):'}
-                            </h5>
+                        {/* Section 6: Bank Details */}
+                        <div className="space-y-2.5 pt-3 border-t border-slate-100">
+                           <div className="flex items-center gap-2">
+                             <div className="w-5 h-5 rounded bg-indigo-600 text-white flex items-center justify-center font-bold text-xs">৬</div>
+                             <h5 className="text-xs font-bold text-slate-800">
+                               {lang === 'bn' ? 'ব্যাংক তথ্য বিবরণী' : 'Bank Account Details'}
+                             </h5>
+                             <div className="h-px flex-1 bg-slate-100"></div>
                           </div>
-                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[9px] font-mono">
-                            <div className="bg-white p-1.5 rounded-lg border border-slate-100">
-                              <span className="text-slate-400 block text-[7px] uppercase">Form ID:</span>
-                              <span className="text-slate-700 font-bold">FRM-9941-TX</span>
+                          
+                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                            <div>
+                              <label className="text-[11px] font-semibold text-slate-600 block mb-0.5">{lang === 'bn' ? 'ব্যাংকের নাম:' : 'Bank Name:'}</label>
+                              <input
+                                type="text"
+                                value={formBankName}
+                                onChange={(e) => setFormBankName(e.target.value)}
+                                className="w-full border border-slate-200 bg-slate-50/50 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:bg-white focus:border-indigo-500 outline-none"
+                              />
                             </div>
-                            <div className="bg-white p-1.5 rounded-lg border border-slate-100">
-                              <span className="text-slate-400 block text-[7px] uppercase">Encryption:</span>
-                              <span className="text-slate-700 font-bold">SHA-256 (SALT)</span>
+                            <div>
+                              <label className="text-[11px] font-semibold text-slate-600 block mb-0.5">{lang === 'bn' ? 'অ্যাকাউন্ট নং:' : 'Account Number:'}</label>
+                              <input
+                                type="text"
+                                value={formBankAccount}
+                                onChange={(e) => setFormBankAccount(e.target.value)}
+                                className="w-full border border-slate-200 bg-slate-50/50 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:bg-white focus:border-indigo-500 outline-none font-mono"
+                              />
                             </div>
-                            <div className="bg-white p-1.5 rounded-lg border border-slate-100">
-                              <span className="text-slate-400 block text-[7px] uppercase">API Version:</span>
-                              <span className="text-slate-700 font-bold">v3.42-Stable</span>
+                            <div>
+                              <label className="text-[11px] font-semibold text-slate-600 block mb-0.5">{lang === 'bn' ? 'ব্রাঞ্চের নাম:' : 'Branch Name:'}</label>
+                              <input
+                                type="text"
+                                value={formBankBranch}
+                                onChange={(e) => setFormBankBranch(e.target.value)}
+                                className="w-full border border-slate-200 bg-slate-50/50 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:bg-white focus:border-indigo-500 outline-none"
+                              />
                             </div>
-                            <div className="bg-white p-1.5 rounded-lg border border-slate-100">
-                              <span className="text-slate-400 block text-[7px] uppercase">IP Signature:</span>
-                              <span className="text-slate-700 font-bold">192.168.12.7</span>
-                            </div>
-                            <div className="bg-white p-1.5 rounded-lg border border-slate-100">
-                              <span className="text-slate-400 block text-[7px] uppercase">DB Cluster:</span>
-                              <span className="text-slate-700 font-bold">BD-EAST-MAIN</span>
-                            </div>
-                            <div className="bg-white p-1.5 rounded-lg border border-slate-100">
-                              <span className="text-slate-400 block text-[7px] uppercase">Routing Port:</span>
-                              <span className="text-slate-700 font-bold">TCP_3000</span>
-                            </div>
-                            <div className="bg-white p-1.5 rounded-lg border border-slate-100">
-                              <span className="text-slate-400 block text-[7px] uppercase">Node Status:</span>
-                              <span className="text-emerald-600 font-bold">● ACTIVE</span>
-                            </div>
-                            <div className="bg-white p-1.5 rounded-lg border border-slate-100">
-                              <span className="text-slate-400 block text-[7px] uppercase">Sync Mode:</span>
-                              <span className="text-slate-700 font-bold">ASYNCHRONOUS</span>
-                            </div>
-                            <div className="bg-white p-1.5 rounded-lg border border-slate-100">
-                              <span className="text-slate-400 block text-[7px] uppercase">Client Hash:</span>
-                              <span className="text-slate-700 font-bold">0x8A9F...2E1C</span>
-                            </div>
-                            <div className="bg-white p-1.5 rounded-lg border border-slate-100">
-                              <span className="text-slate-400 block text-[7px] uppercase">Replication:</span>
-                              <span className="text-slate-700 font-bold">3x Redundant</span>
-                            </div>
-                            <div className="bg-white p-1.5 rounded-lg border border-slate-100">
-                              <span className="text-slate-400 block text-[7px] uppercase">Nationality:</span>
-                              <span className="text-slate-700 font-bold">Bangladeshi</span>
-                            </div>
-                            <div className="bg-white p-1.5 rounded-lg border border-slate-100">
-                              <span className="text-slate-400 block text-[7px] uppercase">Security Level:</span>
-                              <span className="text-slate-700 font-bold">SECURE_LVL_4</span>
-                            </div>
-                            <div className="bg-white p-1.5 rounded-lg border border-slate-100">
-                              <span className="text-slate-400 block text-[7px] uppercase">User Agent ID:</span>
-                              <span className="text-slate-700 font-bold">UA-918239</span>
-                            </div>
-                            <div className="bg-white p-1.5 rounded-lg border border-slate-100">
-                              <span className="text-slate-400 block text-[7px] uppercase">Country Code:</span>
-                              <span className="text-slate-700 font-bold">BD (+880)</span>
-                            </div>
-                            <div className="bg-white p-1.5 rounded-lg border border-slate-100">
-                              <span className="text-slate-400 block text-[7px] uppercase">Currency Key:</span>
-                              <span className="text-slate-700 font-bold">BDT (৳)</span>
-                            </div>
-                            <div className="bg-white p-1.5 rounded-lg border border-slate-100">
-                              <span className="text-slate-400 block text-[7px] uppercase">System Timeout:</span>
-                              <span className="text-slate-700 font-bold">3600 seconds</span>
-                            </div>
-                            <div className="bg-white p-1.5 rounded-lg border border-slate-100">
-                              <span className="text-slate-400 block text-[7px] uppercase">Data Channel:</span>
-                              <span className="text-slate-700 font-bold">SECURE_SSL</span>
-                            </div>
-                            <div className="bg-white p-1.5 rounded-lg border border-slate-100">
-                              <span className="text-slate-400 block text-[7px] uppercase">Session Hash:</span>
-                              <span className="text-slate-700 font-bold">SESS-77402B</span>
-                            </div>
-                            <div className="bg-white p-1.5 rounded-lg border border-slate-100">
-                              <span className="text-slate-400 block text-[7px] uppercase">Audit Trail Ref:</span>
-                              <span className="text-slate-700 font-bold">AUD-TR-8422</span>
-                            </div>
-                            <div className="bg-white p-1.5 rounded-lg border border-slate-100">
-                              <span className="text-slate-400 block text-[7px] uppercase">Schema Version:</span>
-                              <span className="text-slate-700 font-bold">v9.2_Relational</span>
-                            </div>
-                            <div className="bg-white p-1.5 rounded-lg border border-slate-100">
-                              <span className="text-slate-400 block text-[7px] uppercase">Latency Status:</span>
-                              <span className="text-emerald-600 font-bold">12 ms (Excellent)</span>
-                            </div>
-                            <div className="bg-white p-1.5 rounded-lg border border-slate-100">
-                              <span className="text-slate-400 block text-[7px] uppercase">Replication Sync:</span>
-                              <span className="text-emerald-600 font-bold">✓ SYNCHRONIZED</span>
-                            </div>
-                            <div className="bg-white p-1.5 rounded-lg border border-slate-100">
-                              <span className="text-slate-400 block text-[7px] uppercase">Flow Rate:</span>
-                              <span className="text-slate-700 font-bold">124 kbps</span>
-                            </div>
-                            <div className="bg-white p-1.5 rounded-lg border border-slate-100">
-                              <span className="text-slate-400 block text-[7px] uppercase">Clearance Level:</span>
-                              <span className="text-slate-700 font-bold">ISO-27001 Certified</span>
-                            </div>
-                            <div className="bg-white p-1.5 rounded-lg border border-slate-100">
-                              <span className="text-slate-400 block text-[7px] uppercase">DB Engine:</span>
-                              <span className="text-slate-700 font-bold">PostgreSQL Master</span>
-                            </div>
-                            <div className="bg-white p-1.5 rounded-lg border border-slate-100">
-                              <span className="text-slate-400 block text-[7px] uppercase">Cloud Gateway:</span>
-                              <span className="text-slate-700 font-bold">GW-CloudRun-BD</span>
-                            </div>
-                            <div className="bg-white p-1.5 rounded-lg border border-slate-100">
-                              <span className="text-slate-400 block text-[7px] uppercase">Ingress Protocol:</span>
-                              <span className="text-slate-700 font-bold">NGINX Reverse Proxy</span>
-                            </div>
-                            <div className="bg-white p-1.5 rounded-lg border border-slate-100">
-                              <span className="text-slate-400 block text-[7px] uppercase">Load Balancer:</span>
-                              <span className="text-emerald-600 font-bold">100% HEALTHY</span>
+                            <div>
+                              <label className="text-[11px] font-semibold text-slate-600 block mb-0.5">{lang === 'bn' ? 'রাউটিং নম্বর:' : 'Routing No:'}</label>
+                              <input
+                                type="text"
+                                value={formRoutingNumber}
+                                onChange={(e) => setFormRoutingNumber(e.target.value)}
+                                className="w-full border border-slate-200 bg-slate-50/50 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:bg-white focus:border-indigo-500 outline-none font-mono"
+                              />
                             </div>
                           </div>
                         </div>
 
-                        <div className="flex items-center gap-2 pt-2">
-                          <input
-                            type="checkbox"
-                            id="terms"
-                            checked={formTerms}
-                            onChange={(e) => setFormTerms(e.target.checked)}
-                            className="w-4 h-4 text-emerald-600 border-slate-300 rounded cursor-pointer"
-                          />
-                          <label htmlFor="terms" className="text-[10px] text-slate-500 font-medium cursor-pointer">
-                            {lang === 'bn' ? 'আমি ঘোষণা করছি যে উপরের সকল তথ্য সোর্স ডাটা শিটের সাথে শতভাগ মিল রেখে পূরণ করা হয়েছে।' : 'I declare that the information is filled accurately matching the source.'}
+                        {/* Section 7: Final Metadata (Auto) */}
+                        <div className="border border-slate-200 rounded-lg p-2.5 bg-slate-50/60 flex flex-wrap items-center justify-between gap-2 text-[10px] font-mono">
+                          <div className="flex items-center gap-1.5 text-slate-600 font-semibold">
+                            <Icons.ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+                            <span>{lang === 'bn' ? 'নিরাপত্তা মেটাডাটা:' : 'Security Meta:'}</span>
+                          </div>
+                          <div className="flex items-center gap-3 text-slate-700">
+                            <span>ID: <strong className="text-slate-900">X-2026-772</strong></span>
+                            <span>Sec: <strong className="text-slate-900">SHA-512</strong></span>
+                            <span>Prot: <strong className="text-slate-900">E2E</strong></span>
+                            <span className="text-emerald-700 font-bold">LIVE</span>
+                          </div>
+                        </div>
+
+                        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2 bg-indigo-50/50 p-3 rounded-xl border border-indigo-100">
+                          <label htmlFor="terms" className="flex items-center gap-2 cursor-pointer select-none text-xs text-slate-700 font-medium">
+                            <input
+                              type="checkbox"
+                              id="terms"
+                              checked={formTerms}
+                              onChange={(e) => setFormTerms(e.target.checked)}
+                              className="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 accent-indigo-600"
+                            />
+                            <span>
+                              {lang === 'bn' 
+                                ? 'আমি নিশ্চিত করছি যে প্রদত্ত সকল তথ্য সঠিক ও নিখুঁত।' 
+                                : 'I declare all provided information is accurate and verified.'}
+                            </span>
                           </label>
+                          
+                          <button
+                            type="button"
+                            onClick={handleFormSubmit}
+                            disabled={taskStatus === 'running' || !formTerms}
+                            className={`w-full sm:w-auto px-5 py-2 rounded-lg font-bold text-xs transition-all flex items-center justify-center gap-2 shadow-sm ${
+                              formTerms && taskStatus !== 'running'
+                                ? 'bg-emerald-600 hover:bg-emerald-500 text-white cursor-pointer active:scale-95'
+                                : 'bg-slate-200 text-slate-400 cursor-not-allowed'
+                            }`}
+                          >
+                            {taskStatus === 'running' ? (
+                              <>
+                                <Icons.Loader2 className="w-4 h-4 animate-spin" />
+                                <span>{lang === 'bn' ? 'সঞ্চয় হচ্ছে...' : 'Verifying...'}</span>
+                              </>
+                            ) : (
+                              <>
+                                <Icons.Send className="w-4 h-4" />
+                                <span>{lang === 'bn' ? 'ফাইনাল সাবমিট করুন (৳২০০)' : 'Confirm Submission (৳200)'}</span>
+                              </>
+                            )}
+                          </button>
                         </div>
                       </div>
-
-                      <button
-                        type="button"
-                        onClick={handleFormSubmit}
-                        disabled={taskStatus === 'running'}
-                        className="w-full bg-emerald-600 text-white font-bold py-3.5 rounded-xl text-xs hover:bg-emerald-700 transition-all active:scale-[0.99] flex items-center justify-center gap-2 cursor-pointer shadow-md shadow-emerald-600/20"
-                      >
-                        {taskStatus === 'running' ? (
-                          <>
-                            <Icons.Loader2 className="w-4 h-4 animate-spin" />
-                            {lang === 'bn' ? 'ফরম ফিল্ড এনক্রিপশন ও সিঙ্ক্রোনাইজেশন হচ্ছে...' : 'Verifying Form Fields...'}
-                          </>
-                        ) : (
-                          lang === 'bn' ? 'ফরম সাবমিট করুন (২০০ টাকা পাবেন)' : 'Submit Completed Form (Earn ৳200)'
-                        )}
-                      </button>
 
                       {/* Embedded Micro Jobs under Form Fillup as requested */}
                       <div className="mt-8 border-t border-dashed border-slate-200 pt-6 space-y-4">
@@ -2631,409 +2942,14 @@ export default function JobDetailModal({
                     </div>
                   )}
 
-                  {/* 8. PRODUCT SELLING WORK SIMULATION */}
+                  {/* 8. PRODUCT SELLING WORK SIMULATION (SIM OFFER WORKSPACE) */}
                   {job.id === 'product-selling-work' && (
-                    <div className="space-y-6">
-                      {/* Premium E-commerce Affiliate Banner */}
-                      <div className="bg-gradient-to-r from-[#0f172a] via-[#1e293b] to-[#334155] text-white p-5 rounded-3xl relative overflow-hidden shadow-lg border border-slate-700/50">
-                        <div className="absolute right-0 bottom-0 opacity-10 translate-x-4 translate-y-4">
-                          <Icons.Rss className="w-48 h-48" />
-                        </div>
-                        <div className="relative z-10 space-y-1">
-                          <span className="bg-amber-500 text-slate-950 text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase tracking-wider inline-block shadow-sm">
-                            {lang === 'bn' ? '২৫% - ৩৫% মেগা লাভ অফার' : '25% - 35% Mega Profit'}
-                          </span>
-                          <h3 className="text-lg font-extrabold leading-tight">
-                            {lang === 'bn' ? 'টেলিকম সিম অফার ও এমবি রিসেলিং পোর্টাল' : 'Telecom SIM Offer & MB Reselling Portal'}
-                          </h3>
-                          <p className="text-white/85 text-xs">
-                            {lang === 'bn' ? 'জিপি, বাংলালিংক, রবি, এয়ারটেল ও টেলিটকের ইন্টারনেট অফার বিক্রি করে ইনস্ট্যান্ট ডিল কমিশন সরাসরি আয় করুন।' : 'Resell top operator packages below and earn instant commission directly into your account.'}
-                          </p>
-                        </div>
-                      </div>
-
-                      {/* Search Bar & Add Product Toggle Button */}
-                      <div className="flex flex-col sm:flex-row gap-3">
-                        <div className="relative flex-1">
-                          <Icons.Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-                          <input
-                            type="text"
-                            value={productSearch}
-                            onChange={(e) => setProductSearch(e.target.value)}
-                            placeholder={lang === 'bn' ? 'অপারেটর বা অফার খুঁজুন (যেমন: GP, Robi, ৩০ জিবি)...' : 'Search operators or offers...'}
-                            className="w-full bg-slate-50 border border-slate-200 rounded-2xl pl-10 pr-4 py-2.5 text-xs text-slate-700 focus:bg-white focus:border-amber-400 outline-none transition-all"
-                          />
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setShowAddProductForm(!showAddProductForm);
-                            setErrorMessage('');
-                          }}
-                          className={`px-4 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
-                            showAddProductForm
-                              ? 'bg-rose-50 text-rose-600 border border-rose-200'
-                              : 'bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100'
-                          }`}
-                        >
-                          {showAddProductForm ? <Icons.X className="w-4 h-4" /> : <Icons.Plus className="w-4 h-4" />}
-                          <span>{lang === 'bn' ? 'কাস্টম অফার এড করুন' : 'Add Custom Offer'}</span>
-                        </button>
-                      </div>
-
-                      {/* Expandable "Add your own product" Form */}
-                      {showAddProductForm && (
-                        <div className="bg-slate-50 rounded-3xl border border-slate-200 p-5 space-y-4 animate-fade-in relative">
-                          <div className="absolute top-4 right-4 text-[10px] bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded">
-                            {lang === 'bn' ? '৩০% লাভ সিস্টেম' : 'System: 30% Profit'}
-                          </div>
-                          <h4 className="text-xs font-extrabold text-slate-700 uppercase flex items-center gap-1.5">
-                            <Icons.PackagePlus className="w-4 h-4 text-emerald-600" />
-                            {lang === 'bn' ? 'নতুন অফার আপলোড ফর্ম' : 'Upload Your Custom SIM Offer'}
-                          </h4>
-
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {/* Product Name Bn */}
-                            <div className="space-y-1">
-                              <label className="text-[10px] font-bold text-slate-500 block">
-                                {lang === 'bn' ? 'অফারের নাম (বাংলা):' : 'Offer Name (Bengali):'}
-                              </label>
-                              <input
-                                type="text"
-                                value={newProdNameBn}
-                                onChange={(e) => setNewProdNameBn(e.target.value)}
-                                placeholder="যেমন: জিপি ৪০ জিবি + ১০০০ মিনিট (৩০ দিন)"
-                                className="w-full border border-slate-200 rounded-xl p-2.5 text-xs text-slate-700 bg-white focus:border-emerald-400 outline-none"
-                              />
-                            </div>
-
-                            {/* Product Name En */}
-                            <div className="space-y-1">
-                              <label className="text-[10px] font-bold text-slate-500 block">
-                                {lang === 'bn' ? 'অফারের নাম (ইংরেজি):' : 'Offer Name (English):'}
-                              </label>
-                              <input
-                                type="text"
-                                value={newProdNameEn}
-                                onChange={(e) => setNewProdNameEn(e.target.value)}
-                                placeholder="e.g. GP 40 GB + 1000 Min (30 Days)"
-                                className="w-full border border-slate-200 rounded-xl p-2.5 text-xs text-slate-700 bg-white focus:border-emerald-400 outline-none"
-                              />
-                            </div>
-
-                            {/* Product Price */}
-                            <div className="space-y-1">
-                              <label className="text-[10px] font-bold text-slate-500 block">
-                                {lang === 'bn' ? 'অফারের মূল্য (টাকা):' : 'Offer Price (BDT):'}
-                              </label>
-                              <div className="relative">
-                                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-bold font-mono">৳</span>
-                                <input
-                                  type="number"
-                                  value={newProdPrice}
-                                  onChange={(e) => setNewProdPrice(e.target.value)}
-                                  placeholder="e.g. 499"
-                                  className="w-full border border-slate-200 rounded-xl pl-8 pr-3 py-2.5 text-xs text-slate-700 bg-white focus:border-emerald-400 outline-none font-mono"
-                                />
-                              </div>
-                              {newProdPrice && !isNaN(Number(newProdPrice)) && (
-                                <p className="text-[10px] text-emerald-600 font-bold mt-1">
-                                  {lang === 'bn' 
-                                    ? `✨ ৩০% রিসেলার প্রফিট হিসেবে আপনি পাবেন: ৳${modalToBnNum(Math.round(Number(newProdPrice) * 0.3))}`
-                                    : `✨ 30% Reseller Profit: ৳${Math.round(Number(newProdPrice) * 0.3)}`}
-                                </p>
-                              )}
-                            </div>
-
-                            {/* Product Link */}
-                            <div className="space-y-1">
-                              <label className="text-[10px] font-bold text-slate-500 block">
-                                {lang === 'bn' ? 'ডিলার সোর্স লিংক / ইউআরএল:' : 'Dealer Source Link / URL:'}
-                              </label>
-                              <input
-                                type="text"
-                                value={newProdLink}
-                                onChange={(e) => setNewProdLink(e.target.value)}
-                                placeholder="https://telecom-portal.com/pack"
-                                className="w-full border border-slate-200 rounded-xl p-2.5 text-xs text-slate-700 bg-white focus:border-emerald-400 outline-none font-mono"
-                              />
-                            </div>
-                          </div>
-
-                          {/* Operator Brand Selection */}
-                          <div className="space-y-2">
-                            <label className="text-[10px] font-bold text-slate-500 block">
-                              {lang === 'bn' ? 'মোবাইল অপারেটর নির্বাচন করুন:' : 'Select Mobile Operator:'}
-                            </label>
-                            <div className="grid grid-cols-5 gap-2">
-                              {[
-                                { code: 'GP', name: 'Grameenphone', color: 'bg-blue-600' },
-                                { code: 'BL', name: 'Banglalink', color: 'bg-orange-500' },
-                                { code: 'Robi', name: 'Robi', color: 'bg-red-500' },
-                                { code: 'Airtel', name: 'Airtel', color: 'bg-rose-600' },
-                                { code: 'Teletalk', name: 'Teletalk', color: 'bg-emerald-600' }
-                              ].map((op) => (
-                                <button
-                                  type="button"
-                                  key={op.code}
-                                  onClick={() => {
-                                    setNewProdOperator(op.code);
-                                    setNewProdImage('');
-                                  }}
-                                  className={`py-2 px-1 rounded-xl text-[10px] font-extrabold text-white transition-all cursor-pointer text-center ${op.color} ${
-                                    newProdOperator === op.code ? 'ring-4 ring-slate-900/30 scale-105' : 'opacity-70'
-                                  }`}
-                                >
-                                  {op.code}
-                                </button>
-                              ))}
-                            </div>
-                          </div>
-
-                          <button
-                            type="button"
-                            onClick={() => {
-                              if (!newProdNameBn.trim() || !newProdNameEn.trim() || !newProdPrice.trim()) {
-                                setErrorMessage(lang === 'bn' ? 'দয়া করে নাম এবং মূল্য প্রদান করুন!' : 'Please fill out product names and price!');
-                                return;
-                              }
-                              const parsedPrice = Number(newProdPrice);
-                              if (isNaN(parsedPrice) || parsedPrice <= 0) {
-                                setErrorMessage(lang === 'bn' ? 'মূল্য সঠিক সংখ্যা হতে হবে!' : 'Price must be a valid positive number!');
-                                return;
-                              }
-
-                              const commission = Math.round(parsedPrice * 0.3);
-                              const newProduct = {
-                                id: `custom_${Date.now()}`,
-                                nameBn: newProdNameBn,
-                                nameEn: newProdNameEn,
-                                price: parsedPrice,
-                                commission,
-                                image: '',
-                                operator: newProdOperator,
-                                link: newProdLink.trim() || 'https://telecom-portal.com/pack',
-                                custom: true
-                              };
-
-                              setResellingProducts((prev) => [newProduct, ...prev]);
-                              setNewProdNameBn('');
-                              setNewProdNameEn('');
-                              setNewProdPrice('');
-                              setNewProdLink('');
-                              setNewProdImage('');
-                              setShowAddProductForm(false);
-                              setErrorMessage('');
-                            }}
-                            className="w-full bg-[#0f172a] text-white font-bold py-2.5 rounded-xl text-xs hover:bg-slate-800 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
-                          >
-                            <Icons.CheckCircle className="w-4 h-4 text-emerald-400" />
-                            <span>{lang === 'bn' ? 'অফার যুক্ত করুন' : 'Add SIM Offer to Listing'}</span>
-                          </button>
-                        </div>
-                      )}
-
-                      {/* Product selector - e-Commerce Grid */}
-                      <div className="space-y-2">
-                        <label className="text-xs font-bold text-slate-600 block flex items-center gap-1.5">
-                          <Icons.ShoppingBag className="w-4 h-4 text-amber-500" />
-                          {lang === 'bn' ? 'পছন্দের সিম অফারটি সিলেক্ট করুন:' : 'Select Mobile Operator SIM Offer:'}
-                        </label>
-                        
-                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3.5 max-h-[420px] overflow-y-auto pr-1 no-scrollbar border border-slate-100 p-2 rounded-2xl bg-slate-50/50">
-                          {resellingProducts
-                            .filter((p) => {
-                              const match =
-                                p.nameBn.toLowerCase().includes(productSearch.toLowerCase()) ||
-                                p.nameEn.toLowerCase().includes(productSearch.toLowerCase()) ||
-                                (p.operator && p.operator.toLowerCase().includes(productSearch.toLowerCase()));
-                              return match;
-                            })
-                            .map((p, idx) => {
-                              // Find true global index in state array to update selectedProductIndex correctly
-                              const originalIdx = resellingProducts.findIndex(item => item.id === p.id);
-                              const isSelected = selectedProductIndex === originalIdx;
-
-                              return (
-                                <button
-                                  type="button"
-                                  key={p.id}
-                                  onClick={() => {
-                                    setSelectedProductIndex(originalIdx);
-                                    setGeneratedLink('');
-                                  }}
-                                  className={`rounded-2xl border text-left flex flex-col overflow-hidden transition-all relative cursor-pointer group ${
-                                    isSelected
-                                      ? 'bg-amber-50/40 border-amber-400 ring-2 ring-amber-400/25 shadow-sm'
-                                      : 'bg-white border-slate-200 hover:border-slate-300 hover:shadow-xs'
-                                  }`}
-                                >
-                                  {/* Product Card Graphic / Image */}
-                                  <div className="relative w-full h-24 flex-shrink-0 overflow-hidden">
-                                    {p.operator ? (
-                                      <div className={`w-full h-full flex flex-col items-center justify-center p-2 text-white font-black text-center select-none group-hover:scale-105 transition-all duration-300 ${
-                                        p.operator === 'GP' ? 'bg-gradient-to-br from-blue-500 to-sky-600' :
-                                        p.operator === 'BL' ? 'bg-gradient-to-br from-orange-500 to-amber-600' :
-                                        p.operator === 'Robi' ? 'bg-gradient-to-br from-red-500 to-orange-600' :
-                                        p.operator === 'Airtel' ? 'bg-gradient-to-br from-red-600 to-rose-700' :
-                                        'bg-gradient-to-br from-emerald-600 to-teal-700'
-                                      }`}>
-                                        <div className="text-[9px] font-extrabold bg-white/20 px-2 py-0.5 rounded-full mb-1 tracking-wider uppercase">
-                                          {p.operator} 4G
-                                        </div>
-                                        <div className="text-[12px] font-black tracking-tight drop-shadow-sm truncate w-full px-1">
-                                          {p.nameEn.replace(/GP|BL|Robi|Airtel|Teletalk/g, '').trim()}
-                                        </div>
-                                        <div className="text-[8px] text-white/90 font-medium mt-0.5">
-                                          {p.nameEn.includes('30 Days') || p.nameEn.includes('৩০ দিন') ? '30 Days Validity' : '7 Days Validity'}
-                                        </div>
-                                      </div>
-                                    ) : (
-                                      <img
-                                        src={p.image}
-                                        alt={p.nameEn}
-                                        referrerPolicy="no-referrer"
-                                        className="w-full h-full object-cover group-hover:scale-105 transition-all duration-300"
-                                        onError={(e) => {
-                                          (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&q=80';
-                                        }}
-                                      />
-                                    )}
-                                    <div className="absolute top-1.5 left-1.5 bg-emerald-600 text-white text-[8px] font-extrabold px-1.5 py-0.5 rounded-md uppercase tracking-wider shadow-sm">
-                                      {lang === 'bn' ? `৳${modalToBnNum(p.commission)} লাভ` : `৳${p.commission} Profit`}
-                                    </div>
-                                    {p.custom && (
-                                      <div className="absolute top-1.5 right-1.5 bg-blue-600 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-md uppercase shadow-sm">
-                                        {lang === 'bn' ? 'কাস্টম' : 'My'}
-                                      </div>
-                                    )}
-                                  </div>
-
-                                  {/* Details */}
-                                  <div className="p-2.5 flex-1 flex flex-col justify-between">
-                                    <h4 className="font-extrabold text-[#0f172a] text-[10px] sm:text-xs leading-tight line-clamp-2">
-                                      {lang === 'bn' ? p.nameBn : p.nameEn}
-                                    </h4>
-                                    
-                                    <div className="mt-2 space-y-0.5">
-                                      <div className="flex justify-between items-center text-[10px]">
-                                        <span className="text-slate-400">{lang === 'bn' ? 'অফার মূল্য:' : 'Offer Price:'}</span>
-                                        <span className="text-slate-800 font-extrabold font-mono">৳{modalToBnNum(p.price)}</span>
-                                      </div>
-                                      <div className="flex justify-between items-center text-[10px] bg-emerald-50 px-1 py-0.5 rounded border border-emerald-100 text-emerald-800 font-bold">
-                                        <span>{lang === 'bn' ? 'আপনার লাভ:' : 'Your Profit:'}</span>
-                                        <span className="font-mono">৳{modalToBnNum(p.commission)}</span>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </button>
-                              );
-                            })}
-                        </div>
-                      </div>
-
-                      {/* Selected product tracking details panel */}
-                      {resellingProducts[selectedProductIndex] && (
-                        <div className="bg-slate-50 border border-slate-200/80 p-4.5 rounded-3xl space-y-4">
-                          <div className="flex gap-3 items-center">
-                            {resellingProducts[selectedProductIndex].operator ? (
-                              <div className={`w-12 h-12 rounded-xl flex flex-col items-center justify-center text-white font-extrabold text-[10px] select-none shadow-sm ${
-                                resellingProducts[selectedProductIndex].operator === 'GP' ? 'bg-blue-600' :
-                                resellingProducts[selectedProductIndex].operator === 'BL' ? 'bg-orange-500' :
-                                resellingProducts[selectedProductIndex].operator === 'Robi' ? 'bg-red-500' :
-                                resellingProducts[selectedProductIndex].operator === 'Airtel' ? 'bg-rose-600' :
-                                'bg-emerald-600'
-                              }`}>
-                                {resellingProducts[selectedProductIndex].operator}
-                              </div>
-                            ) : (
-                              <img
-                                src={resellingProducts[selectedProductIndex].image}
-                                alt="selected"
-                                referrerPolicy="no-referrer"
-                                className="w-12 h-12 rounded-xl object-cover border border-slate-200"
-                              />
-                            )}
-                            <div>
-                              <span className="text-[9px] text-amber-600 font-extrabold uppercase bg-amber-50 px-2 py-0.5 rounded border border-amber-100">
-                                {lang === 'bn' ? 'নির্বাচিত সিম অফার' : 'Selected SIM Offer'}
-                              </span>
-                              <h4 className="font-extrabold text-slate-800 text-xs mt-0.5">
-                                {lang === 'bn' ? resellingProducts[selectedProductIndex].nameBn : resellingProducts[selectedProductIndex].nameEn}
-                              </h4>
-                            </div>
-                          </div>
-
-                          {/* Generate tracking link */}
-                          <div className="space-y-2">
-                            <button
-                              type="button"
-                              onClick={handleResellingLinkGen}
-                              className="w-full bg-[#0f172a] hover:bg-slate-800 text-white font-bold py-2.5 rounded-xl text-xs transition-all cursor-pointer flex items-center justify-center gap-1.5"
-                            >
-                              <Icons.Link2 className="w-4 h-4 text-amber-400" />
-                              <span>{lang === 'bn' ? 'ইউনিক অফার ট্র্যাকিং লিঙ্ক তৈরি করুন' : 'Generate Offer Affiliate Link'}</span>
-                            </button>
-
-                            {generatedLink && (
-                              <div className="bg-indigo-50 border border-indigo-100 rounded-xl p-2.5 text-[10px] sm:text-xs font-mono select-all text-indigo-600 text-center flex items-center justify-center gap-1">
-                                <Icons.ExternalLink className="w-3.5 h-3.5 text-indigo-500" />
-                                <span>{generatedLink}</span>
-                              </div>
-                            )}
-                          </div>
-
-                          {/* Sales lead info */}
-                          <div className="space-y-3 bg-white p-3.5 rounded-2xl border border-slate-200">
-                            <h4 className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider flex items-center gap-1">
-                              <Icons.UserCheck className="w-3.5 h-3.5 text-indigo-500" />
-                              {lang === 'bn' ? 'ক্রেতার বুকিং এন্ট্রি (অফারের বিবরণ):' : 'Buyer Delivery & Order Booking Form:'}
-                            </h4>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                              <div className="space-y-1">
-                                <label className="text-[10px] font-bold text-slate-600 block">{lang === 'bn' ? 'ক্রেতার মোবাইল নম্বর:' : "Buyer's Phone Number:"}</label>
-                                <input
-                                  type="text"
-                                  value={buyerName}
-                                  onChange={(e) => setBuyerName(e.target.value)}
-                                  placeholder="e.g. 01712345678"
-                                  className="w-full border border-slate-200 rounded-xl p-2.5 text-xs text-slate-700 focus:border-amber-400 outline-none"
-                                />
-                              </div>
-                              <div className="space-y-1">
-                                <label className="text-[10px] font-bold text-slate-600 block">{lang === 'bn' ? 'অপারেটর বিভাগ / ডিভিশন:' : 'Operator Circle / Division:'}</label>
-                                <input
-                                  type="text"
-                                  value={buyerAddress}
-                                  onChange={(e) => setBuyerAddress(e.target.value)}
-                                  placeholder="e.g. Dhaka, Chittagong, All BD"
-                                  className="w-full border border-slate-200 rounded-xl p-2.5 text-xs text-slate-700 focus:border-amber-400 outline-none"
-                                />
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      )}
-
-                      <button
-                        type="button"
-                        onClick={handleResellingSubmit}
-                        disabled={taskStatus === 'running'}
-                        className="w-full bg-amber-500 text-white font-bold py-3.5 rounded-2xl text-xs hover:bg-amber-600 transition-all active:scale-[0.99] flex items-center justify-center gap-2 cursor-pointer shadow-sm"
-                      >
-                        {taskStatus === 'running' ? (
-                          <>
-                            <Icons.Loader2 className="w-4 h-4 animate-spin" />
-                            {lang === 'bn' ? 'অপারেটর পোর্টালে অফার সাকসেসফুলি একটিভেট হচ্ছে...' : 'Activating SIM offer in telecom portal...'}
-                          </>
-                        ) : (
-                          <>
-                            <Icons.BadgeCheck className="w-4 h-4" />
-                            <span>{lang === 'bn' ? 'সিম অফার অর্ডার সাবমিট ও কমিশন দাবি করুন' : 'Submit SIM Offer Order & Claim Profit'}</span>
-                          </>
-                        )}
-                      </button>
-                    </div>
+                    <SimOfferWorkspace
+                      lang={lang}
+                      profile={profile}
+                      updateProfile={updateProfile}
+                      addLog={addLog}
+                    />
                   )}
 
                   {/* 9. PHOTO EDITING SIMULATION */}
@@ -3337,97 +3253,167 @@ export default function JobDetailModal({
 
                   {/* 12. PRODUCT CODE ENTRY */}
                   {job.id === 'code-entry' && (
-                    <div className="space-y-5 bg-white p-6 rounded-2xl border border-slate-150 shadow-sm animate-scale-up">
-                      {/* Instructions / Progress */}
-                      <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                        <span className="text-xs font-bold text-slate-500">
-                          {lang === 'bn' ? `পণ্য কোড বসানোর ধাপ: ${codeCurrentStep + 1} / ৪` : `Product Step: ${codeCurrentStep + 1} of 4`}
-                        </span>
-                        <div className="flex gap-1">
-                          {[0, 1, 2, 3].map((stepIdx) => (
-                            <div
-                              key={stepIdx}
-                              className={`w-3.5 h-1.5 rounded-full transition-all duration-300 ${
-                                codeCompletedSteps[stepIdx]
-                                  ? 'bg-indigo-600'
-                                  : stepIdx === codeCurrentStep
-                                  ? 'bg-indigo-300 w-6'
-                                  : 'bg-slate-200'
-                              }`}
-                            />
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Current Product details & Image */}
+                    <div className="space-y-4 bg-white p-4 sm:p-5 rounded-2xl border border-slate-150 shadow-sm animate-scale-up">
                       {(() => {
                         const activeId = activeSubTaskId || 'code-1';
                         const dataset = productCodeEntryData[activeId] || productCodeEntryData['code-1'];
-                        const currentProduct = dataset[codeCurrentStep];
+                        const totalSteps = dataset.length;
+                        const currentProduct = dataset[codeCurrentStep] || dataset[0];
 
                         if (!currentProduct) return null;
 
                         return (
                           <div className="space-y-4">
-                            {/* Product Image Frame */}
-                            <div className="flex flex-col items-center justify-center bg-slate-50 border border-slate-200/60 p-4 rounded-xl shadow-sm text-center">
-                              <span className="text-[10px] text-indigo-600 font-extrabold uppercase tracking-wider bg-indigo-50 px-2 py-0.5 rounded-full mb-3">
-                                {lang === 'bn' ? 'সরাসরি প্রোডাক্টের ছবি' : 'Live Product Image'}
-                              </span>
-                              <img
-                                src={currentProduct.image}
-                                alt={currentProduct.nameEn}
-                                referrerPolicy="no-referrer"
-                                className="w-32 h-32 object-contain rounded-xl border border-slate-200 bg-white p-1 mb-2 shadow-sm animate-scale-up"
-                              />
-                              <h4 className="font-extrabold text-slate-800 text-sm">
-                                {lang === 'bn' ? currentProduct.nameBn : currentProduct.nameEn}
-                              </h4>
-                              <p className="text-xs text-slate-500 font-semibold mt-1">
-                                {lang === 'bn' ? `সিরিয়াল নাম্বার: ${currentProduct.serial}` : `Serial Number: ${currentProduct.serial}`}
-                              </p>
-                            </div>
-
-                            {/* Reference Table (সিরিয়াল নাম্বার এবং তাদের কোড তালিকা) */}
-                            <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
-                              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block mb-2.5">
-                                {lang === 'bn' ? '🔍 ডাটা সিক্রেট রেফারেন্স শিট (সसही কোড খুঁজুন):' : '🔍 Secret Reference Sheet (Find Correct Code):'}
-                              </span>
-                              <div className="grid grid-cols-2 gap-2 text-[11px]">
-                                {dataset.map((p, idx) => (
+                            {/* Instructions / Progress Header */}
+                            <div className="flex items-center justify-between border-b border-slate-100 pb-3 gap-2 flex-wrap">
+                              <div className="flex items-center gap-2">
+                                <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-indigo-600 text-white text-xs font-black">
+                                  {codeCurrentStep + 1}
+                                </span>
+                                <span className="text-xs font-bold text-slate-700">
+                                  {lang === 'bn' 
+                                    ? `প্রোডাক্ট কোড ম্যাচিং ধাপ: ${codeCurrentStep + 1} / ${totalSteps}` 
+                                    : `Product Code Step: ${codeCurrentStep + 1} of ${totalSteps}`}
+                                </span>
+                              </div>
+                              
+                              {/* Step indicator pills */}
+                              <div className="flex items-center gap-1.5">
+                                {dataset.map((_, stepIdx) => (
                                   <div
-                                    key={p.serial}
-                                    className={`flex items-center justify-between p-2 rounded-lg border transition-all ${
-                                      idx === codeCurrentStep
-                                        ? 'bg-indigo-50 border-indigo-200 text-indigo-900 font-bold ring-2 ring-indigo-200'
-                                        : 'bg-white border-slate-150 text-slate-600'
+                                    key={stepIdx}
+                                    className={`h-2 rounded-full transition-all duration-300 ${
+                                      codeCompletedSteps[stepIdx]
+                                        ? 'bg-emerald-500 w-4'
+                                        : stepIdx === codeCurrentStep
+                                        ? 'bg-indigo-600 w-6 ring-2 ring-indigo-200'
+                                        : 'bg-slate-200 w-2.5'
                                     }`}
-                                  >
-                                    <span className="font-mono">{p.serial}</span>
-                                    <span className="font-mono text-xs font-black tracking-wider text-indigo-700">{p.code}</span>
-                                  </div>
+                                    title={`Step ${stepIdx + 1}`}
+                                  />
                                 ))}
                               </div>
                             </div>
 
-                            {/* Input Field and Confirm Button */}
-                            <div className="space-y-2">
-                              <label className="text-xs font-bold text-slate-700 block">
-                                {lang === 'bn' ? 'উপরে রেফারেন্স শিট মিলিয়ে সঠিক কনফার্মেশন কোডটি বসান:' : 'Enter correct Confirmation Code from reference sheet:'}
-                              </label>
-                              <div className="flex gap-2">
-                                <input
-                                  type="text"
-                                  value={codeInputValue}
-                                  onChange={(e) => setCodeInputValue(e.target.value)}
-                                  placeholder="e.g. CONF-XXXX"
-                                  className="flex-1 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono font-black focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all text-slate-800 uppercase"
+                            {/* Product Frame Showcase */}
+                            <div className="flex flex-col sm:flex-row items-center gap-4 bg-gradient-to-br from-slate-50 to-indigo-50/40 border border-slate-200/80 p-4 rounded-xl shadow-xs">
+                              {/* Product Image Frame */}
+                              <div className="relative shrink-0 w-36 h-36 sm:w-40 sm:h-40 rounded-xl bg-white border border-slate-200 p-2 flex items-center justify-center shadow-xs overflow-hidden group">
+                                <img
+                                  src={currentProduct.image}
+                                  alt={currentProduct.nameEn}
+                                  referrerPolicy="no-referrer"
+                                  className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
                                 />
+                                <span className="absolute bottom-1.5 left-1.5 right-1.5 text-center text-[9px] font-black uppercase tracking-wider bg-slate-900/80 text-white py-0.5 rounded px-1 backdrop-blur-xs">
+                                  {lang === 'bn' ? 'লাইভ প্রোডাক্ট' : 'Verified SKU'}
+                                </span>
+                              </div>
+
+                              {/* Product Info & Target Serial */}
+                              <div className="flex-1 text-center sm:text-left space-y-2 min-w-0">
+                                <div className="inline-block">
+                                  <span className="text-[10px] text-indigo-700 font-extrabold uppercase tracking-wider bg-indigo-100/70 border border-indigo-200 px-2 py-0.5 rounded-md">
+                                    {lang === 'bn' ? `টার্গেট প্রোডাক্ট #${codeCurrentStep + 1}` : `Target Product #${codeCurrentStep + 1}`}
+                                  </span>
+                                </div>
+                                <h4 className="font-extrabold text-slate-800 text-sm sm:text-base leading-snug">
+                                  {lang === 'bn' ? currentProduct.nameBn : currentProduct.nameEn}
+                                </h4>
+                                <div className="pt-1 flex flex-wrap items-center justify-center sm:justify-start gap-2">
+                                  <span className="text-xs text-slate-500 font-bold">
+                                    {lang === 'bn' ? 'সিরিয়াল নাম্বার:' : 'Serial No:'}
+                                  </span>
+                                  <span className="font-mono text-xs font-black bg-slate-900 text-emerald-400 px-2.5 py-1 rounded-lg border border-slate-700 tracking-wider shadow-xs">
+                                    {currentProduct.serial}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Reference Table (সিরিয়াল নাম্বার এবং তাদের কোড তালিকা) */}
+                            <div className="bg-slate-50/80 p-3.5 sm:p-4 rounded-xl border border-slate-200">
+                              <div className="flex items-center justify-between mb-2">
+                                <span className="text-[11px] text-slate-600 font-bold flex items-center gap-1">
+                                  <span>🔍</span>
+                                  <span>{lang === 'bn' ? 'ডাটা সিক্রেট রেফারেন্স শিট (সঠিক কোড মিলিয়ে ক্লিক করুন):' : 'Secret Reference Sheet (Click matching row):'}</span>
+                                </span>
+                                <span className="text-[10px] text-indigo-600 font-semibold hidden sm:inline">
+                                  {lang === 'bn' ? 'ক্লিক করলে কোড বসে যাবে' : 'Click to auto-fill'}
+                                </span>
+                              </div>
+
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                                {dataset.map((p, idx) => {
+                                  const isCurrent = idx === codeCurrentStep;
+                                  return (
+                                    <div
+                                      key={p.serial}
+                                      onClick={() => {
+                                        setCodeInputValue(p.code);
+                                        setErrorMessage('');
+                                      }}
+                                      className={`flex items-center justify-between p-2.5 rounded-lg border transition-all cursor-pointer select-none active:scale-[0.99] ${
+                                        isCurrent
+                                          ? 'bg-indigo-50 border-indigo-300 text-indigo-950 font-bold ring-2 ring-indigo-400/40 shadow-xs'
+                                          : 'bg-white hover:bg-slate-100 border-slate-200 text-slate-700'
+                                      }`}
+                                    >
+                                      <div className="flex items-center gap-2 min-w-0">
+                                        {isCurrent && (
+                                          <span className="w-2 h-2 rounded-full bg-indigo-600 shrink-0 animate-pulse" />
+                                        )}
+                                        <span className="font-mono text-xs font-bold truncate">
+                                          {p.serial}
+                                        </span>
+                                      </div>
+                                      <span className="font-mono text-xs font-black tracking-wider text-indigo-700 bg-indigo-100/80 px-2 py-0.5 rounded border border-indigo-200/80 shrink-0 ml-2">
+                                        {p.code}
+                                      </span>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            </div>
+
+                            {/* Input Field and Confirm Button */}
+                            <div className="space-y-2 pt-1">
+                              <label className="text-xs font-bold text-slate-700 block">
+                                {lang === 'bn' ? 'রেফারেন্স শিট দেখে সিরিয়ালের সাথে মিল রেখে কনফার্মেশন কোডটি বসান:' : 'Enter matching Confirmation Code from reference sheet:'}
+                              </label>
+                              <div className="flex flex-col sm:flex-row gap-2">
+                                <div className="relative flex-1">
+                                  <input
+                                    type="text"
+                                    value={codeInputValue}
+                                    onChange={(e) => {
+                                      setCodeInputValue(e.target.value);
+                                      if (errorMessage) setErrorMessage('');
+                                    }}
+                                    placeholder={currentProduct ? `e.g. ${currentProduct.code}` : "e.g. CONF-XXXX"}
+                                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono font-black focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all text-slate-800 uppercase tracking-wider"
+                                  />
+                                  {codeInputValue && (
+                                    <button
+                                      type="button"
+                                      onClick={() => setCodeInputValue('')}
+                                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-xs font-bold p-1"
+                                      title="Clear"
+                                    >
+                                      ✕
+                                    </button>
+                                  )}
+                                </div>
                                 <button
                                   onClick={handleCodeConfirm}
-                                  className="px-6 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl transition-all cursor-pointer whitespace-nowrap active:scale-[0.98]"
+                                  className="px-6 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl transition-all cursor-pointer whitespace-nowrap active:scale-[0.98] shadow-xs flex items-center justify-center gap-1.5"
                                 >
-                                  {codeCurrentStep === 3 ? (lang === 'bn' ? 'ফাইনাল সাবমিট' : 'Final Submit') : (lang === 'bn' ? 'কনফার্ম করুন' : 'Confirm Code')}
+                                  <span>
+                                    {codeCurrentStep === totalSteps - 1 
+                                      ? (lang === 'bn' ? 'ফাইনাল সাবমিট ও রিওয়ার্ড গ্রহণ' : 'Final Submit & Claim') 
+                                      : (lang === 'bn' ? 'কনফার্ম ও পরের প্রোডাক্ট' : 'Confirm & Next')}
+                                  </span>
+                                  <Icons.ArrowRight className="w-3.5 h-3.5" />
                                 </button>
                               </div>
                             </div>
@@ -3437,39 +3423,447 @@ export default function JobDetailModal({
                     </div>
                   )}
 
-                  {/* 13. DAILY WORK GENERIC SCREEN */}
-                  {job.id === 'daily-work' && (
-                    <div className="space-y-6">
-                      <div className="bg-blue-50/50 p-8 rounded-3xl border border-blue-100 flex flex-col items-center justify-center text-center shadow-inner relative overflow-hidden min-h-[300px]">
-                        <div className="w-20 h-20 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mb-5 shadow-sm">
-                          <Icons.Settings className="w-10 h-10 animate-spin-slow" />
+                  {/* 13. WEBSITE VISIT WORKSPACE */}
+                  {job.id === 'website-visit' && (
+                    <div className="space-y-5 bg-white p-4 sm:p-6 rounded-2xl border border-slate-150 shadow-sm animate-scale-up max-w-full overflow-hidden">
+                      {/* Subtask Header & Title */}
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-gradient-to-r from-teal-50 to-emerald-50 p-4 rounded-xl border border-teal-100">
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="w-10 h-10 rounded-xl bg-teal-600 text-white flex items-center justify-center font-bold shrink-0 shadow-sm">
+                            <Icons.Globe className="w-5 h-5" />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <h4 className="font-extrabold text-slate-800 text-sm md:text-base leading-tight truncate">
+                              {lang === 'bn' ? (activeSubTask?.titleBn || 'ওয়েবসাইট ভিজিট ও অ্যাডস ভিউ') : (activeSubTask?.titleEn || 'Website Visit & Ad View')}
+                            </h4>
+                            <p className="text-xs text-slate-500 font-medium mt-0.5 truncate">
+                              {lang === 'bn' ? 'অফিসিয়াল ওয়েবসাইট: www.unityearning.com' : 'Official Website: www.unityearning.com'}
+                            </p>
+                          </div>
                         </div>
-                        
-                        <h3 className="text-xl md:text-2xl font-black text-slate-800 mb-2">
-                          {lang === 'bn' ? 'প্রজেক্টটি প্রক্রিয়াধীন আছে' : 'Project Under Maintenance'}
-                        </h3>
-                        <p className="text-slate-500 text-sm max-w-sm mx-auto leading-relaxed">
-                          {lang === 'bn' 
-                            ? 'এই সার্ভিসটির কাজ বর্তমানে মেইনটেনেন্স এবং আপডেটের অধীনে আছে। অনুগ্রহ করে পরবর্তী আপডেটের জন্য অপেক্ষা করুন।' 
-                            : 'This specific service module is currently undergoing updates and maintenance. Please check back later.'}
-                        </p>
-                        
-                        <div className="mt-8 flex gap-3">
+
+                        <div className="flex items-center gap-2 shrink-0">
+                          <span className="text-xs bg-emerald-600 text-white font-extrabold px-3 py-1.5 rounded-lg shadow-2xs font-mono">
+                            {lang === 'bn' ? `কমিশন: ${activeSubTask?.rewardBn || '৳১৫'}` : `Earn: ${activeSubTask?.rewardEn || '$0.15'}`}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Target URL & Visit Action Box */}
+                      <div className="bg-slate-900 text-white p-4 sm:p-5 rounded-2xl border border-slate-800 shadow-md space-y-4 max-w-full overflow-hidden">
+                        <div className="flex items-center justify-between border-b border-slate-800 pb-3 gap-2">
+                          <div className="flex items-center gap-2 text-xs font-bold text-teal-400 min-w-0">
+                            <Icons.ExternalLink className="w-4 h-4 shrink-0" />
+                            <span className="truncate">{lang === 'bn' ? 'টার্গেট লিঙ্ক:' : 'Target Link:'}</span>
+                          </div>
+                          <span className="text-[10px] bg-teal-500/20 text-teal-300 font-mono font-bold px-2 py-0.5 rounded border border-teal-500/30 shrink-0">
+                            VERIFIED LINK
+                          </span>
+                        </div>
+
+                        <div className="bg-slate-800/90 p-3.5 rounded-xl border border-slate-700/80 space-y-3">
+                          <div className="flex items-center gap-2 max-w-full overflow-hidden">
+                            <Icons.Globe className="w-4 h-4 text-emerald-400 shrink-0" />
+                            <span className="font-mono text-xs sm:text-sm font-bold text-emerald-300 break-all leading-tight">
+                              https://www.unityearning.com
+                            </span>
+                          </div>
+
                           <button
-                            onClick={() => setActiveSubTaskId(null)}
-                            className="bg-slate-900 hover:bg-slate-800 text-white font-bold px-6 py-2.5 rounded-xl text-xs transition-all active:scale-95"
+                            onClick={() => {
+                              window.open('https://www.unityearning.com', '_blank');
+                              setWebVisitVisited(true);
+                              setWebVisitTimerActive(true);
+                            }}
+                            className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-black text-xs sm:text-sm px-4 py-3 rounded-xl transition-all shadow-md active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
                           >
-                            {lang === 'bn' ? 'ফিরে যান' : 'Go Back'}
+                            <Icons.ExternalLink className="w-4 h-4 shrink-0" />
+                            <span className="truncate">{lang === 'bn' ? 'ওয়েবসাইট ভিজিট করুন (www.unityearning.com)' : 'Visit Website (www.unityearning.com)'}</span>
                           </button>
                         </div>
+
+                        <p className="text-[11px] text-slate-400 leading-relaxed bg-slate-800/40 p-3 rounded-lg border border-slate-700/50">
+                          {lang === 'bn'
+                            ? '💡 নোট: ওপরের বাটনে অথবা ভেতরের যেকোনো লিংকে ক্লিক করলে আপনি সরাসরি www.unityearning.com ওয়েবসাইটে চলে যাবেন। ওয়েবসাইটে কমপক্ষে ১-২ মিনিট ব্রাউজ করুন ও অ্যাডস ভিউ করুন।'
+                            : '💡 Note: Clicking the button or any link will directly navigate to www.unityearning.com. Stay active and browse ads for 1-2 minutes.'}
+                        </p>
+                      </div>
+
+                      {/* Live Timer & Progress Box */}
+                      <div className="bg-slate-50 p-4 sm:p-5 rounded-2xl border border-slate-200 space-y-3">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-bold text-slate-700 flex items-center gap-2">
+                            <Icons.Clock className="w-4 h-4 text-teal-600" />
+                            {lang === 'bn' ? 'ভিজিট টাইমার অগ্রগতি:' : 'Visit Timer Progress:'}
+                          </span>
+                          <span className="font-mono font-extrabold text-sm text-slate-800">
+                            {Math.floor(webVisitTimer / 60)}:{String(webVisitTimer % 60).padStart(2, '0')}
+                          </span>
+                        </div>
+
+                        {/* Progress bar */}
+                        <div className="w-full bg-slate-200 h-3 rounded-full overflow-hidden p-0.5">
+                          <div
+                            className={`h-full rounded-full transition-all duration-1000 ${
+                              webVisitTimer === 0
+                                ? 'bg-emerald-500'
+                                : webVisitTimerActive
+                                ? 'bg-gradient-to-r from-teal-500 to-emerald-500'
+                                : 'bg-slate-400'
+                            }`}
+                            style={{
+                              width: `${
+                                ((activeSubTaskId === 'wv-10' ? 120 - webVisitTimer : 60 - webVisitTimer) /
+                                  (activeSubTaskId === 'wv-10' ? 120 : 60)) *
+                                100
+                              }%`,
+                            }}
+                          />
+                        </div>
+
+                        <div className="text-center pt-1">
+                          {!webVisitVisited ? (
+                            <span className="text-xs font-semibold text-amber-600 bg-amber-50 px-3 py-1 rounded-lg border border-amber-200 inline-block">
+                              {lang === 'bn' ? '⚠️ আগে "ওয়েবসাইট ভিজিট করুন" বাটনে ক্লিক করে কাজ শুরু করুন।' : '⚠️ Click "Visit Website" button above to start task timer.'}
+                            </span>
+                          ) : webVisitTimer > 0 ? (
+                            <span className="text-xs font-semibold text-teal-700 bg-teal-50 px-3 py-1 rounded-lg border border-teal-200 inline-flex items-center gap-1.5 animate-pulse">
+                              <span className="w-2 h-2 rounded-full bg-teal-500 animate-ping" />
+                              {lang === 'bn' ? 'ওয়েবসাইটে অবস্থান করছেন... বিজ্ঞাপন ও পেজগুলো ঘুরে দেখুন।' : 'Stay active on site & view sponsored ads...'}
+                            </span>
+                          ) : (
+                            <span className="text-xs font-extrabold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-lg border border-emerald-200 inline-flex items-center gap-1.5">
+                              <Icons.CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                              {lang === 'bn' ? 'ভিজিট সময়কাল সম্পন্ন! এবার নিচে জমা দিয়ে কমিশন ক্লেইম করুন।' : 'Visit duration completed! Click submit below to claim earnings.'}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Claim Button */}
+                      <div className="pt-2">
+                        <button
+                          onClick={handleWebsiteVisitSubmit}
+                          disabled={!webVisitVisited || webVisitTimer > 0}
+                          className={`w-full py-3.5 rounded-xl font-extrabold text-sm transition-all shadow-md active:scale-98 flex items-center justify-center gap-2 ${
+                            webVisitVisited && webVisitTimer === 0
+                              ? 'bg-slate-900 hover:bg-slate-800 text-white cursor-pointer'
+                              : 'bg-slate-200 text-slate-400 cursor-not-allowed border border-slate-300/50'
+                          }`}
+                        >
+                          <Icons.CheckCircle className="w-4 h-4" />
+                          <span>{lang === 'bn' ? 'টাস্ক জমা দিন ও কমিশন ক্লেইম করুন' : 'Submit Task & Claim Commission'}</span>
+                        </button>
                       </div>
                     </div>
                   )}
+
+                  {/* 14. SOCIAL MEDIA MANAGEMENT WORKSPACE */}
+                  {job.id === 'social-media-management' && (
+                    <div className="space-y-6 animate-scale-up">
+                      {/* Header Info Banner */}
+                      <div className="bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white p-5 md:p-6 rounded-2xl border border-blue-800 shadow-lg relative overflow-hidden">
+                        <div className="absolute right-3 top-3 opacity-10 pointer-events-none">
+                          <Icons.Share2 className="w-32 h-32 text-blue-300" />
+                        </div>
+                        <div className="relative z-10 space-y-2">
+                          <div className="inline-flex items-center gap-2 bg-blue-500/20 text-blue-300 px-3 py-1 rounded-full border border-blue-500/30 text-xs font-bold">
+                            <Icons.ShieldCheck className="w-3.5 h-3.5" />
+                            <span>{lang === 'bn' ? 'অফিসিয়াল মডারেটর নিয়োগ পোর্টাল' : 'Official Moderator Hiring Portal'}</span>
+                          </div>
+                          <h3 className="text-lg md:text-xl font-black text-white">
+                            {lang === 'bn' ? 'সোশ্যাল মিডিয়া পেজ ও চ্যানেল মডারেটর পদে আবেদন' : 'Apply for Social Media Page & Channel Moderator Roles'}
+                          </h3>
+                          <p className="text-xs md:text-sm text-slate-300 leading-relaxed max-w-2xl">
+                            {lang === 'bn'
+                              ? 'বিভিন্ন জনপ্রিয় ফেসবুক পেজ, টিকটক চ্যানেল, আইডি, ইনস্টাগ্রাম ও ইউটিউবে ৩ দিন বা ৭ দিনের চুক্তিভিত্তিক মডারেটর হিসেবে নিযুক্ত হন। নির্ধারিত মেয়াদ শেষে পেমেন্ট দাবি করুন।'
+                              : 'Get contracted for 3 to 7 days as a moderator for popular Facebook pages, TikTok channels, IDs, Instagram & YouTube. Claim earnings upon contract completion.'}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Moderator Job Positions Grid */}
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between">
+                          <h4 className="font-extrabold text-slate-800 text-sm md:text-base flex items-center gap-2">
+                            <Icons.Briefcase className="w-4 h-4 text-blue-600" />
+                            <span>{lang === 'bn' ? 'উপলব্ধ মডারেটর পদসমূহ (১০টি টাস্ক)' : 'Available Moderator Positions (10 Tasks)'}</span>
+                          </h4>
+                          <span className="text-xs bg-blue-50 text-blue-700 font-bold px-2.5 py-1 rounded-lg border border-blue-100 font-mono">
+                            {subTasks.length} {lang === 'bn' ? 'টি পদ খালি' : 'roles active'}
+                          </span>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {subTasks.map((modTask) => {
+                            const isSelected = selectedModJob?.id === modTask.id;
+                            const durationLabel = modTask.titleBn.includes('৩ দিন') || modTask.titleEn.includes('3 Days')
+                              ? (lang === 'bn' ? '⏱️ ৩ দিন মেয়াদ' : '⏱️ 3 Days Term')
+                              : modTask.titleBn.includes('৫ দিন') || modTask.titleEn.includes('5 Days')
+                              ? (lang === 'bn' ? '⏱️ ৫ দিন মেয়াদ' : '⏱️ 5 Days Term')
+                              : (lang === 'bn' ? '⏱️ ৭ দিন মেয়াদ' : '⏱️ 7 Days Term');
+
+                            return (
+                              <div
+                                key={modTask.id}
+                                className={`bg-white p-4 rounded-2xl border transition-all shadow-sm flex flex-col justify-between gap-3 ${
+                                  isSelected ? 'border-blue-500 ring-2 ring-blue-500/20 bg-blue-50/20' : 'border-slate-200 hover:border-slate-300'
+                                }`}
+                              >
+                                <div className="space-y-2">
+                                  <div className="flex items-start justify-between gap-2">
+                                    <h5 className="font-extrabold text-slate-800 text-sm leading-snug">
+                                      {lang === 'bn' ? modTask.titleBn : modTask.titleEn}
+                                    </h5>
+                                    <span className="text-xs bg-emerald-600 text-white font-extrabold px-2.5 py-1 rounded-lg shrink-0 font-mono shadow-2xs">
+                                      {lang === 'bn' ? modTask.rewardBn : modTask.rewardEn}
+                                    </span>
+                                  </div>
+
+                                  <div className="flex flex-wrap items-center gap-2 text-[11px]">
+                                    <span className="bg-slate-100 text-slate-700 font-semibold px-2.5 py-0.5 rounded-md border border-slate-200">
+                                      {durationLabel}
+                                    </span>
+                                    <span className="bg-blue-50 text-blue-700 font-semibold px-2 py-0.5 rounded-md border border-blue-100">
+                                      {lang === 'bn' ? `ডিফিকাল্টি: ${modTask.difficultyBn}` : `Difficulty: ${modTask.difficultyEn}`}
+                                    </span>
+                                  </div>
+
+                                  <p className="text-xs text-slate-600 leading-relaxed bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                                    {modTask.descBn}
+                                  </p>
+                                </div>
+
+                                <button
+                                  onClick={() => {
+                                    setSelectedModJob(modTask);
+                                    setModSubmitted(false);
+                                    setErrorMessage('');
+                                  }}
+                                  className="w-full mt-1 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 active:scale-98 text-white font-extrabold text-xs py-2.5 px-4 rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer"
+                                >
+                                  <Icons.UserCheck className="w-4 h-4" />
+                                  <span>{lang === 'bn' ? 'এপ্লাই করুন (Apply)' : 'Apply Now'}</span>
+                                </button>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+
+                      {/* Application Form / Modal when a job is selected */}
+                      {selectedModJob && (
+                        <div className="bg-slate-900 text-white p-5 md:p-6 rounded-2xl border border-blue-800 shadow-xl space-y-5 animate-scale-up">
+                          <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+                            <div className="flex items-center gap-3">
+                              <div className="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white shrink-0 shadow-sm">
+                                <Icons.ShieldCheck className="w-5 h-5" />
+                              </div>
+                              <div>
+                                <h4 className="font-extrabold text-white text-sm md:text-base leading-tight">
+                                  {lang === 'bn' ? selectedModJob.titleBn : selectedModJob.titleEn}
+                                </h4>
+                                <p className="text-xs text-emerald-400 font-bold font-mono mt-0.5">
+                                  {lang === 'bn' ? `নির্ধারিত সম্মানী: ${selectedModJob.rewardBn}` : `Contract Payment: ${selectedModJob.rewardEn}`}
+                                </p>
+                              </div>
+                            </div>
+
+                            <button
+                              onClick={() => setSelectedModJob(null)}
+                              className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition-colors cursor-pointer"
+                            >
+                              <Icons.X className="w-5 h-5" />
+                            </button>
+                          </div>
+
+                          {!modSubmitted ? (
+                            <form onSubmit={handleModApplySubmit} className="space-y-4">
+                              {/* Direct Contact Button */}
+                              <div className="bg-slate-800/90 p-4 rounded-xl border border-blue-900/50 space-y-3">
+                                <div className="flex items-center gap-2 text-xs font-bold text-blue-300">
+                                  <Icons.MessageSquare className="w-4 h-4 text-blue-400 shrink-0" />
+                                  <span>{lang === 'bn' ? 'ধাপ ১: অফিশিয়াল ফেসবুক পেজে সরাসরি মেসেজ দিন' : 'Step 1: Message Direct Facebook Page'}</span>
+                                </div>
+                                <p className="text-xs text-slate-300 leading-relaxed">
+                                  {lang === 'bn'
+                                    ? 'মডারেটর অ্যাপয়েন্টমেন্ট ও ভেরিফিকেশনের জন্য নিচের লিংকে ক্লিক করে আমাদের অফিশিয়াল ফেসবুক পেজে সরাসরি যোগাযোগ করার জন্য বলা হচ্ছে।'
+                                    : 'Please click the link below to send a message to our official Facebook page for appointment verification.'}
+                                </p>
+                                <button
+                                  type="button"
+                                  onClick={() => window.open('https://www.facebook.com/unityearning', '_blank')}
+                                  className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-black text-xs sm:text-sm py-3 px-4 rounded-xl transition-all shadow-md active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
+                                >
+                                  <Icons.Facebook className="w-4 h-4 fill-current shrink-0" />
+                                  <span className="truncate">{lang === 'bn' ? 'ফেসবুক পেজে যোগাযোগ করুন (www.facebook.com/unityearning)' : 'Contact Official Facebook Page'}</span>
+                                  <Icons.ExternalLink className="w-3.5 h-3.5 shrink-0" />
+                                </button>
+                              </div>
+
+                              {/* Form Inputs */}
+                              <div className="space-y-3">
+                                <div className="text-xs font-bold text-slate-300 flex items-center gap-2">
+                                  <Icons.FileText className="w-4 h-4 text-blue-400 shrink-0" />
+                                  <span>{lang === 'bn' ? 'ধাপ ২: আবেদনকারীর তথ্য পূরণ করুন' : 'Step 2: Enter Applicant Details'}</span>
+                                </div>
+
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                  <div>
+                                    <label className="block text-[11px] font-semibold text-slate-400 mb-1">
+                                      {lang === 'bn' ? 'আপনার নাম:' : 'Full Name:'}
+                                    </label>
+                                    <input
+                                      type="text"
+                                      required
+                                      value={modApplicantName}
+                                      onChange={(e) => setModApplicantName(e.target.value)}
+                                      placeholder={lang === 'bn' ? 'যেমন: মোহাম্মদ রহিম' : 'e.g., Md. Rahim'}
+                                      className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500"
+                                    />
+                                  </div>
+
+                                  <div>
+                                    <label className="block text-[11px] font-semibold text-slate-400 mb-1">
+                                      {lang === 'bn' ? 'ফোন / হোয়াটসঅ্যাপ নম্বর:' : 'Phone / WhatsApp Number:'}
+                                    </label>
+                                    <input
+                                      type="text"
+                                      required
+                                      value={modApplicantPhone}
+                                      onChange={(e) => setModApplicantPhone(e.target.value)}
+                                      placeholder="017xxxxxxxx"
+                                      className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 font-mono"
+                                    />
+                                  </div>
+                                </div>
+
+                                <div>
+                                  <label className="block text-[11px] font-semibold text-slate-400 mb-1">
+                                    {lang === 'bn' ? 'ফেসবুক / সোশ্যাল মিডিয়া প্রোফাইল লিংক (ঐচ্ছিক):' : 'Facebook / Social Profile Link (Optional):'}
+                                  </label>
+                                  <input
+                                    type="text"
+                                    value={modApplicantProfile}
+                                    onChange={(e) => setModApplicantProfile(e.target.value)}
+                                    placeholder="https://facebook.com/yourprofile"
+                                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 font-mono"
+                                  />
+                                </div>
+                              </div>
+
+                              <button
+                                type="submit"
+                                className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs sm:text-sm py-3 rounded-xl transition-all shadow-md active:scale-98 flex items-center justify-center gap-2 cursor-pointer"
+                              >
+                                <Icons.CheckCircle className="w-4 h-4" />
+                                <span>{lang === 'bn' ? 'আবেদন জমা দিন (Submit Application)' : 'Submit Application'}</span>
+                              </button>
+                            </form>
+                          ) : (
+                            <div className="bg-emerald-950/80 border border-emerald-500/40 p-5 rounded-xl space-y-3 text-center animate-scale-up">
+                              <div className="w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto border border-emerald-500/40">
+                                <Icons.CheckCircle2 className="w-6 h-6" />
+                              </div>
+                              <h5 className="font-extrabold text-emerald-300 text-sm md:text-base">
+                                {lang === 'bn' ? 'আবেদন সফলভাবে গৃহীত হয়েছে!' : 'Application Submitted Successfully!'}
+                              </h5>
+                              <p className="text-xs text-slate-300 leading-relaxed max-w-md mx-auto">
+                                {lang === 'bn'
+                                  ? `ধন্যবাদ ${modApplicantName}! আপনার আবেদন রেকর্ড করা হয়েছে। অফিশিয়াল ফেসবুক পেজে মেসেজ দিয়ে আপনার জয়েনিং কনফার্ম করুন।`
+                                  : `Thank you ${modApplicantName}! Your application is recorded. Please message our official Facebook page to confirm onboarding.`}
+                              </p>
+                              <div className="pt-2">
+                                <button
+                                  type="button"
+                                  onClick={() => window.open('https://www.facebook.com/unityearning', '_blank')}
+                                  className="bg-blue-600 hover:bg-blue-500 text-white font-black text-xs py-2.5 px-5 rounded-xl transition-all shadow-md inline-flex items-center gap-2 cursor-pointer"
+                                >
+                                  <Icons.Facebook className="w-4 h-4 fill-current" />
+                                  <span>{lang === 'bn' ? 'ফেসবুক পেজে ইনবক্স করুন' : 'Inbox Facebook Page'}</span>
+                                </button>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* 14. GAMING TOURNAMENT SCREEN */}
+                  {job.id === 'gaming-tournament' && (
+                    <GamingTournamentWorkspace
+                      lang={lang}
+                      profile={profile}
+                      updateProfile={updateProfile}
+                      addLog={addLog}
+                      onBack={() => setActiveSubTaskId(null)}
+                    />
+                  )}
+
+                  {/* 15. CONTENT WRITING & STORY CREATION SCREEN */}
+                  {job.id === 'content-writing' && (
+                    <ContentWritingWorkspace
+                      lang={lang}
+                      profile={profile}
+                      updateProfile={updateProfile}
+                      addLog={addLog}
+                      onBack={() => setActiveSubTaskId(null)}
+                    />
+                  )}
+
+                  {/* 16. DROPSHIPPING & PRODUCT UPLOAD SCREEN */}
+                  {job.id === 'drop-shipping' && (
+                    <DropshippingWorkspace
+                      lang={lang}
+                      profile={profile}
+                      updateProfile={updateProfile}
+                      addLog={addLog}
+                      onBack={() => setActiveSubTaskId(null)}
+                    />
+                  )}
+
+                  {/* 17. DAILY WORK GENERIC SCREEN */}
+                  {job.id === 'daily-work' && (
+                    activeSubTaskId === 'dw-lucky-spin' ? (
+                      <LuckySpinFeed
+                        lang={lang}
+                        onBack={() => setActiveSubTaskId(null)}
+                        profile={profile}
+                        updateProfile={updateProfile}
+                        addLog={addLog}
+                      />
+                    ) : (
+                      <div className="space-y-6">
+                        <div className="bg-blue-50/50 p-8 rounded-3xl border border-blue-100 flex flex-col items-center justify-center text-center shadow-inner relative overflow-hidden min-h-[300px]">
+                          <div className="w-20 h-20 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mb-5 shadow-sm">
+                            <Icons.Settings className="w-10 h-10 animate-spin-slow" />
+                          </div>
+                          
+                          <h3 className="text-xl md:text-2xl font-black text-slate-800 mb-2">
+                            {lang === 'bn' ? 'প্রজেক্টটি প্রক্রিয়াধীন আছে' : 'Project Under Maintenance'}
+                          </h3>
+                          <p className="text-slate-500 text-sm max-w-sm mx-auto leading-relaxed">
+                            {lang === 'bn' 
+                              ? 'এই সার্ভিসটির কাজ বর্তমানে মেইনটেনেন্স এবং আপডেটের অধীনে আছে। অনুগ্রহ করে পরবর্তী আপডেটের জন্য অপেক্ষা করুন।' 
+                              : 'This specific service module is currently undergoing updates and maintenance. Please check back later.'}
+                          </p>
+                          
+                          <div className="mt-8 flex gap-3">
+                            <button
+                              onClick={() => setActiveSubTaskId(null)}
+                              className="bg-slate-900 hover:bg-slate-800 text-white font-bold px-6 py-2.5 rounded-xl text-xs transition-all active:scale-95"
+                            >
+                              {lang === 'bn' ? 'ফিরে যান' : 'Go Back'}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  )}
                 </div>
-              )}
+              </div>
             </div>
-        </div>
-      </div>
-    </div>
+          </div>
   );
 }
