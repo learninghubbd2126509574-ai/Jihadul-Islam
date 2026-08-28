@@ -89,19 +89,9 @@ export default function App() {
       localStorage.setItem('ue_profile', JSON.stringify(INITIAL_PROFILE));
     }
 
-    if (savedLogs) {
-      const parsedLogs = JSON.parse(savedLogs) as TaskLog[];
-      const hasVideoJob = parsedLogs.some((l) => l.jobId === 'video-job' || (l.jobTitleBn && l.jobTitleBn.includes('ভিডিও')));
-      if (!hasVideoJob || parsedLogs.length < 50) {
-        setTaskLogs(DEFAULT_TASK_LOGS);
-        localStorage.setItem('ue_logs', JSON.stringify(DEFAULT_TASK_LOGS));
-      } else {
-        setTaskLogs(parsedLogs);
-      }
-    } else {
-      setTaskLogs(DEFAULT_TASK_LOGS);
-      localStorage.setItem('ue_logs', JSON.stringify(DEFAULT_TASK_LOGS));
-    }
+    // Per user request: Task logs are fixed to the default 40 items. Never load dynamic/old logs.
+    setTaskLogs(DEFAULT_TASK_LOGS);
+    localStorage.setItem('ue_logs', JSON.stringify(DEFAULT_TASK_LOGS));
 
     if (savedShop) {
       setShopItems(JSON.parse(savedShop));
@@ -122,6 +112,10 @@ export default function App() {
   // Sync helpers
   const handleUpdateProfile = (updated: Partial<UserProfile>) => {
     const next = { ...profile, ...updated };
+    
+    // Per user request: Points are strictly fixed at 3250 and cannot be changed
+    next.points = 3250;
+
     if (updated.balance !== undefined && updated.totalIncome === undefined) {
       const diff = updated.balance - profile.balance;
       if (diff > 0) {
@@ -133,24 +127,8 @@ export default function App() {
   };
 
   const handleAddLog = (newLog: { jobId: string; jobTitleBn: string; jobTitleEn: string; reward: number }) => {
-    const logItem: TaskLog = {
-      id: `log-${Date.now()}`,
-      jobId: newLog.jobId,
-      jobTitleBn: newLog.jobTitleBn,
-      jobTitleEn: newLog.jobTitleEn,
-      reward: newLog.reward,
-      date: new Date().toLocaleDateString(lang === 'bn' ? 'bn-BD' : 'en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-      }),
-      status: 'Completed'
-    };
-    const nextLogs = [logItem, ...taskLogs];
-    setTaskLogs(nextLogs);
-    localStorage.setItem('ue_logs', JSON.stringify(nextLogs));
+    // Per user request: Task logs are fixed and should not be updated.
+    return;
   };
 
   const handleMockRegister = (e: React.FormEvent) => {
@@ -449,30 +427,31 @@ export default function App() {
                     {lang === 'bn' ? 'এখনো কোনো প্রজেক্ট প্র্যাকটিস করা হয়নি! হোম ট্যাব থেকে কাজ শুরু করুন।' : 'Workspace empty. Go to Home and click on a job to begin simulated work!'}
                   </div>
                 ) : (
-                  <div className="space-y-3">
-                    {taskLogs.map((log) => (
-                      <div key={log.id} className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm flex justify-between items-center hover:border-blue-400 transition-colors duration-200">
-                        <div className="space-y-1">
-                          <h4 className="font-bold text-slate-800 text-sm">
-                            {lang === 'bn' ? log.jobTitleBn : log.jobTitleEn}
-                          </h4>
-                          <div className="flex gap-2 text-[10px] text-slate-400 font-medium">
-                            <span className="font-mono">{log.date}</span>
-                            <span>•</span>
-                            <span className="text-indigo-600 font-bold">UID Match: Valid</span>
+              <div className="space-y-3">
+                    {taskLogs
+                      .map((log) => (
+                        <div key={log.id} className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm flex justify-between items-center hover:border-blue-400 transition-colors duration-200">
+                          <div className="space-y-1">
+                            <h4 className="font-bold text-slate-800 text-sm">
+                              {lang === 'bn' ? log.jobTitleBn : log.jobTitleEn}
+                            </h4>
+                            <div className="flex gap-2 text-[10px] text-slate-400 font-medium">
+                              <span className="font-mono">{log.date}</span>
+                              <span>•</span>
+                              <span className="text-indigo-600 font-bold">UID Match: Valid</span>
+                            </div>
+                          </div>
+
+                          <div className="text-right">
+                            <span className="text-sm font-black text-emerald-600 block">
+                              {lang === 'bn' ? `+৳${(log.reward * 100).toFixed(0)}` : `+$${log.reward.toFixed(2)}`}
+                            </span>
+                            <span className="inline-flex items-center gap-0.5 bg-emerald-50 text-emerald-800 font-bold text-[9px] px-1.5 py-0.5 rounded uppercase">
+                              ✓ {lang === 'bn' ? 'অনুমোদিত' : 'Approved'}
+                            </span>
                           </div>
                         </div>
-
-                        <div className="text-right">
-                          <span className="text-sm font-black text-emerald-600 block">
-                            {lang === 'bn' ? `+৳${(log.reward * 100).toFixed(0)}` : `+$${log.reward.toFixed(2)}`}
-                          </span>
-                          <span className="inline-flex items-center gap-0.5 bg-emerald-50 text-emerald-800 font-bold text-[9px] px-1.5 py-0.5 rounded uppercase">
-                            ✓ {lang === 'bn' ? 'অনুমোদিত' : 'Approved'}
-                          </span>
-                        </div>
-                      </div>
-                    ))}
+                      ))}
                   </div>
                 )}
               </div>

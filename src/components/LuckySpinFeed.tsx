@@ -96,49 +96,17 @@ export default function LuckySpinFeed({
     }, 4500);
   };
 
-  // Claim winning item
   const handleClaimReward = () => {
     if (!winningItem) return;
 
-    if (winningItem.type === 'points') {
-      // Per user request: top points should remain fixed at 2730 and not increase when winning points from spin
+    // Per user request: Task logs and points are fixed and should not be updated by spin.
 
-      if (addLog) {
-        addLog({
-          id: `spin-${Date.now()}`,
-          jobId: 'lucky-spin',
-          jobTitleBn: 'লাকি স্পিন হুইল বোনাস',
-          jobTitleEn: 'Lucky Spin Wheel Bonus',
-          reward: 0,
-          date: new Date().toLocaleDateString('bn-BD'),
-          status: 'Completed',
-        });
-      }
-
-      triggerToast(
-        lang === 'bn'
-          ? `অভিনন্দন! ${winningItem.labelBn} আপনার অ্যাকাউন্টে যোগ হয়েছে!`
-          : `Congrats! ${winningItem.labelEn} added to your account!`,
-        'success'
-      );
-    } else if (winningItem.type === 'cash') {
-      const newBalance = profile.balance + winningItem.amount;
-      updateProfile({ balance: newBalance });
-
-      triggerToast(
-        lang === 'bn'
-          ? `অভিনন্দন! ৳${winningItem.amount} আপনার মেইন ব্যালেন্সে যোগ হয়েছে!`
-          : `Congrats! ৳${winningItem.amount} added to your balance!`,
-        'success'
-      );
-    } else {
-      triggerToast(
-        lang === 'bn'
-          ? `অভিনন্দন! আপনার ${winningItem.labelBn} গিফট ক্লেইম সফল হয়েছে!`
-          : `Congrats! ${winningItem.labelEn} claimed!`,
-        'success'
-      );
-    }
+    triggerToast(
+      lang === 'bn'
+        ? `অভিনন্দন! আপনার ${winningItem.labelBn} গিফট ক্লেইম সফল হয়েছে!`
+        : `Congrats! ${winningItem.labelEn} claimed!`,
+      'success'
+    );
 
     setShowWinModal(false);
   };
@@ -157,25 +125,13 @@ export default function LuckySpinFeed({
     }
 
     const takaEarned = Math.floor((pts / 100) * 10);
-    const newPoints = currentPts - pts;
+    // Per user request: Points are fixed at 3250 and do not decrease upon exchange
     const newBalance = profile.balance + takaEarned;
 
     updateProfile({
-      points: newPoints,
       balance: newBalance,
+      // intentionally omitting points to keep it fixed
     });
-
-    if (addLog) {
-      addLog({
-        id: `exchange-${Date.now()}`,
-        jobId: 'point-exchange',
-        jobTitleBn: `${pts} পয়েন্ট এক্সচেঞ্জ (৳${takaEarned})`,
-        jobTitleEn: `${pts} Points Exchanged (৳${takaEarned})`,
-        reward: takaEarned,
-        date: new Date().toLocaleDateString('bn-BD'),
-        status: 'Completed',
-      });
-    }
 
     triggerToast(
       lang === 'bn'
