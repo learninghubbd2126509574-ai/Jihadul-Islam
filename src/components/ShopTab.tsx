@@ -319,28 +319,23 @@ export default function ShopTab({ profile, updateProfile, lang }: ShopTabProps) 
   };
 
   return (
-    <div className="space-y-6 pb-24 animate-fade-in" id="shop-container">
+    <div className="space-y-4 pb-24 animate-fade-in" id="shop-container">
       {/* Shop Intro Banner */}
-      <div className="bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#334155] text-white rounded-3xl p-6 shadow-xl relative overflow-hidden border border-slate-700/50">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-pink-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 right-10 opacity-10 pointer-events-none">
-          <Icons.ShoppingBag className="w-48 h-48 text-white" />
-        </div>
-
+      <div className="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white rounded-[1.25rem] p-4 shadow-sm relative overflow-hidden border border-slate-800">
         <div className="relative z-10 space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] bg-pink-500/20 border border-pink-400/30 text-pink-300 font-extrabold px-3 py-1 rounded-full uppercase tracking-wider">
+            <span className="text-[10px] bg-pink-500/20 border border-pink-400/30 text-pink-300 font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider leading-none">
               {lang === 'bn' ? 'ই-কমার্স এফিলিয়েট শপ' : 'E-Commerce Affiliate Shop'}
             </span>
-            <span className="text-xs text-amber-300 font-bold bg-amber-400/10 px-2.5 py-0.5 rounded-lg border border-amber-400/20">
+            <span className="text-xs text-amber-300 font-bold bg-amber-400/10 px-2.5 py-0.5 rounded-lg border border-amber-400/20 font-mono tabular-nums leading-none">
               {lang === 'bn' ? `${ECOMMERCE_PRODUCTS.length}টি হট প্রোডাক্ট` : `${ECOMMERCE_PRODUCTS.length} Hot Products`}
             </span>
           </div>
 
-          <h2 className="text-xl sm:text-2xl font-black text-white">
+          <h2 className="text-base sm:text-lg font-bold text-white tracking-tight leading-snug">
             {lang === 'bn' ? 'প্রোডাক্ট সেল করুন, ক্যাশ কমিশন আয় করুন!' : 'Sell Products & Earn Instant Cash!'}
           </h2>
-          <p className="text-slate-300 text-xs leading-relaxed max-w-xl">
+          <p className="text-slate-300 text-xs sm:text-sm leading-relaxed max-w-xl font-medium">
             {lang === 'bn'
               ? 'নিচের জনপ্রিয় ট্রেন্ডিং প্রোডাক্টগুলো গ্রাহকদের সাথে শেয়ার করুন। প্রতি সফল অর্ডারে আপনার অ্যাকাউন্টে সরাসরি ১০০৳ থেকে ৭৫০৳ পর্যন্ত কমিশন যুক্ত হবে।'
               : 'Promote trending fashion, electronics, gadgets and beauty products below. For every successful confirmed order, earn instant direct cash profit.'}
@@ -349,24 +344,24 @@ export default function ShopTab({ profile, updateProfile, lang }: ShopTabProps) 
       </div>
 
       {/* Category Pills & Search */}
-      <div className="flex flex-col sm:flex-row gap-3">
+      <div className="flex flex-col sm:flex-row gap-2.5 sm:gap-3">
         {/* Category Tabs */}
-        <div className="flex gap-1.5 overflow-x-auto no-scrollbar bg-slate-100 p-1.5 rounded-2xl border border-slate-200/80">
+        <div className="flex gap-1 overflow-x-auto no-scrollbar bg-slate-100 p-1 rounded-xl border border-slate-200/80">
           {[
             { id: 'ALL', labelBn: 'সকল প্রোডাক্ট', labelEn: 'All' },
             { id: 'fashion', labelBn: 'ফ্যাশন', labelEn: 'Fashion' },
-            { id: 'gadgets', labelBn: 'গ্যাজেট ও ইলেকট্রনিক্স', labelEn: 'Gadgets' },
-            { id: 'beauty', labelBn: 'বিউটি ও স্কিনকেয়ার', labelEn: 'Beauty' },
-            { id: 'home', labelBn: 'হোম ও কিচেন', labelEn: 'Home' }
+            { id: 'gadgets', labelBn: 'গ্যাজেট', labelEn: 'Gadgets' },
+            { id: 'beauty', labelBn: 'বিউটি', labelEn: 'Beauty' },
+            { id: 'home', labelBn: 'হোম', labelEn: 'Home' }
           ].map((cat) => (
             <button
               key={cat.id}
               type="button"
               onClick={() => setSelectedCategory(cat.id)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-extrabold whitespace-nowrap transition-all cursor-pointer ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors cursor-pointer active:scale-95 leading-normal ${
                 selectedCategory === cat.id
-                  ? 'bg-white text-slate-900 shadow-xs border border-slate-200/60'
-                  : 'text-slate-500 hover:text-slate-800'
+                  ? 'bg-white text-slate-900 shadow-2xs font-bold'
+                  : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               {lang === 'bn' ? cat.labelBn : cat.labelEn}
@@ -376,19 +371,19 @@ export default function ShopTab({ profile, updateProfile, lang }: ShopTabProps) 
 
         {/* Search */}
         <div className="relative flex-1">
-          <Icons.Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+          <Icons.Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={lang === 'bn' ? 'প্রোডাক্ট বা ক্যাটাগরি খুঁজুন...' : 'Search products or categories...'}
-            className="w-full bg-white border border-slate-200 rounded-2xl pl-10 pr-4 py-2 text-xs text-slate-700 focus:border-pink-400 outline-none transition-all shadow-2xs"
+            className="w-full bg-white border border-slate-200 rounded-xl pl-9 pr-8 py-2 text-xs sm:text-sm text-slate-800 focus:border-blue-500 outline-none transition-colors shadow-2xs font-medium"
           />
           {searchQuery && (
             <button
               type="button"
               onClick={() => setSearchQuery('')}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-xs"
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-xs p-1 cursor-pointer"
             >
               ✕
             </button>
@@ -398,65 +393,63 @@ export default function ShopTab({ profile, updateProfile, lang }: ShopTabProps) 
 
       {/* Alerts */}
       {sellSuccess && (
-        <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 p-4 rounded-2xl text-xs font-bold flex items-center gap-3 animate-fade-in shadow-sm">
-          <div className="w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center flex-shrink-0">
-            <Icons.CheckCircle className="w-5 h-5 text-emerald-600" />
-          </div>
+        <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 p-4 rounded-[1.25rem] text-xs sm:text-sm font-semibold flex items-center gap-2.5 animate-fade-in shadow-2xs leading-snug">
+          <Icons.CheckCircle className="w-5 h-5 text-emerald-600 shrink-0" />
           <span>{sellSuccess}</span>
         </div>
       )}
 
       {/* Grid listing */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3.5 md:gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
         {filteredProducts.map((product) => (
           <div
             key={product.id}
-            className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-xs hover:shadow-md transition-all duration-300 group flex flex-col justify-between"
+            className="bg-white rounded-[1.25rem] border border-slate-200/80 overflow-hidden shadow-2xs hover:shadow-sm transition-all duration-200 group flex flex-col justify-between"
           >
             {/* Image & Badge */}
-            <div className="relative h-40 w-full overflow-hidden bg-slate-100">
+            <div className="relative h-36 sm:h-40 w-full overflow-hidden bg-slate-100">
               <img
                 src={product.image}
                 alt={product.nameEn}
                 referrerPolicy="no-referrer"
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 onError={(e) => {
                   (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=300';
                 }}
               />
-              <div className="absolute top-2.5 left-2.5 bg-emerald-600 text-white text-[9px] font-black px-2 py-0.5 rounded-lg shadow-sm">
+              <div className="absolute top-2 left-2 bg-emerald-600 text-white text-[9.5px] font-bold px-2 py-0.5 rounded-md shadow-xs leading-tight">
                 {lang === 'bn' ? `৳${product.commission} লাভ` : `৳${product.commission} Profit`}
               </div>
-              <div className="absolute top-2.5 right-2.5 bg-white/90 backdrop-blur-xs px-2 py-0.5 rounded-lg shadow-2xs flex items-center gap-1">
+              <div className="absolute top-2 right-2 bg-white/95 backdrop-blur-xs px-1.5 py-0.5 rounded-md shadow-2xs flex items-center gap-1">
                 <Icons.Star className="w-3 h-3 text-amber-500 fill-amber-500" />
-                <span className="text-[10px] font-black text-slate-700">{product.rating}</span>
+                <span className="text-[10px] font-bold text-slate-800 leading-none">{product.rating}</span>
               </div>
             </div>
 
             {/* Details */}
-            <div className="p-3.5 flex flex-col flex-1 justify-between space-y-3">
+            <div className="p-4 flex flex-col flex-1 justify-between space-y-2.5">
               <div>
-                <span className="text-[9px] font-extrabold uppercase text-indigo-600 tracking-wider">
+                <span className="text-[9px] font-bold uppercase text-blue-600 tracking-wider leading-none block">
                   {product.categoryBn}
                 </span>
-                <h3 className="font-bold text-slate-800 text-xs leading-snug line-clamp-2 mt-0.5">
+                <h3 className="font-bold text-slate-900 text-xs sm:text-sm leading-snug line-clamp-2 mt-1 tracking-tight">
                   {lang === 'bn' ? product.nameBn : product.nameEn}
                 </h3>
               </div>
 
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <span className="text-[10px] text-slate-400 block line-through">৳{product.originalPrice}</span>
-                    <span className="text-sm font-black text-slate-900 font-mono">
+                  <div>
+                    <span className="text-[10px] text-slate-400 block line-through font-mono tabular-nums leading-tight">৳{product.originalPrice}</span>
+                    <span className="text-sm sm:text-base font-bold text-slate-900 font-mono tabular-nums leading-snug">
                       ৳{product.price}
                     </span>
                   </div>
                   <div className="text-right">
-                    <span className="text-[9px] text-emerald-600 font-extrabold block">
-                      {lang === 'bn' ? 'আপনার কমিশন' : 'Commission'}
+                    <span className="text-[9px] text-emerald-600 font-bold block leading-tight">
+                      {lang === 'bn' ? 'কমিশন' : 'Profit'}
                     </span>
-                    <span className="text-xs font-black text-emerald-700 font-mono">
+                    <span className="text-xs sm:text-sm font-bold text-emerald-700 font-mono tabular-nums leading-snug">
                       +৳{product.commission}
                     </span>
                   </div>
@@ -465,7 +458,7 @@ export default function ShopTab({ profile, updateProfile, lang }: ShopTabProps) 
                 <button
                   type="button"
                   onClick={() => openSellModal(product)}
-                  className="w-full bg-[#0f172a] hover:bg-slate-800 text-white font-extrabold py-2.5 rounded-2xl text-xs transition-all active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
+                  className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2 rounded-xl text-xs transition-colors active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer leading-none"
                 >
                   <Icons.Share2 className="w-3.5 h-3.5 text-amber-400" />
                   <span>{lang === 'bn' ? 'সেল করুন' : 'Sell Now'}</span>
@@ -479,7 +472,7 @@ export default function ShopTab({ profile, updateProfile, lang }: ShopTabProps) 
       {/* Selling Modal */}
       {selectedProduct && (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
-          <div className="bg-white rounded-3xl w-full max-w-md max-h-[90vh] flex flex-col shadow-2xl overflow-hidden animate-in zoom-in-95">
+          <div className="bg-white rounded-[1.25rem] w-full max-w-md max-h-[90vh] flex flex-col shadow-2xl overflow-hidden animate-in zoom-in-95">
             {/* Header */}
             <div className="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50 relative">
               <h3 className="font-extrabold text-slate-800 text-sm">

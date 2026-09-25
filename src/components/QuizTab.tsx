@@ -537,36 +537,36 @@ export default function QuizTab({ profile, updateProfile, addLog, lang }: QuizTa
   const activeQuestion = QUESTIONS[currentIndex];
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-4 pb-24 animate-fade-in">
       {/* HEADER HERO CARD */}
-      <div className="bg-gradient-to-br from-indigo-900 to-slate-900 text-white rounded-2xl p-6 border border-slate-800 shadow-xl relative overflow-hidden">
+      <div className="bg-gradient-to-br from-indigo-900 to-slate-900 text-white rounded-[1.25rem] p-4 sm:p-5 border border-slate-800 shadow-md relative overflow-hidden">
         <div className="absolute top-0 right-0 w-36 h-36 bg-indigo-500/10 rounded-full blur-2xl -mr-12 -mt-12" />
         <div className="relative z-10 flex justify-between items-center">
           <div className="space-y-1">
-            <span className="text-[10px] bg-indigo-500/30 text-indigo-300 font-extrabold uppercase px-2.5 py-1 rounded-full tracking-wider border border-indigo-400/20">
+            <span className="text-[10px] bg-indigo-500/30 text-indigo-300 font-extrabold uppercase px-2.5 py-0.5 rounded-full tracking-wider border border-indigo-400/20 leading-tight">
               {lang === 'bn' ? 'অনলাইন প্রতিযোগিতা' : 'Online Tournament'}
             </span>
-            <h2 className="text-xl font-black tracking-tight pt-1">
+            <h2 className="text-base sm:text-lg font-bold tracking-tight pt-1 leading-snug">
               {lang === 'bn' ? 'কুইজ মেগা প্রতিযোগিতা' : 'Mega Quiz Competition'}
             </h2>
-            <p className="text-xs text-slate-300">
+            <p className="text-xs text-slate-300 font-medium leading-relaxed">
               {lang === 'bn' ? '৫০টি প্রশ্নের সঠিক উত্তর দিয়ে জিতে নিন আকর্ষণীয় প্রাইজ!' : 'Answer 50 MCQ questions to claim instant bonus!'}
             </p>
           </div>
-          <Icons.Trophy className="w-12 h-12 text-amber-400 drop-shadow-[0_4px_10px_rgba(251,191,36,0.3)] shrink-0 ml-3 animate-pulse" />
+          <Icons.Trophy className="w-10 h-10 sm:w-11 sm:h-11 text-amber-400 drop-shadow-[0_4px_10px_rgba(251,191,36,0.3)] shrink-0 ml-3 animate-pulse" />
         </div>
       </div>
 
       {/* TOURNAMENT ANNOUNCEMENT BANNER */}
-      <div className="bg-gradient-to-r from-amber-500/10 via-orange-500/10 to-indigo-500/10 border border-amber-500/30 rounded-2xl p-4.5 flex items-start gap-3.5 shadow-md">
-        <div className="bg-amber-500/20 p-2.5 rounded-xl text-amber-700 shrink-0">
-          <Icons.Trophy className="w-5.5 h-5.5 animate-bounce" />
+      <div className="bg-gradient-to-r from-amber-500/10 via-orange-500/10 to-indigo-500/10 border border-amber-500/30 rounded-[1.25rem] p-4 flex items-start gap-3.5 shadow-xs">
+        <div className="bg-amber-500/20 p-2 rounded-xl text-amber-700 shrink-0">
+          <Icons.Trophy className="w-5 h-5 animate-bounce" />
         </div>
         <div className="space-y-0.5">
-          <h4 className="font-extrabold text-amber-950 text-xs md:text-sm uppercase tracking-wider flex items-center gap-1.5">
+          <h4 className="font-bold text-amber-950 text-xs sm:text-sm tracking-tight flex items-center gap-1.5 leading-snug">
             {lang === 'bn' ? '🏆 স্পেশাল কুইজ প্রতিযোগিতা অফার!' : '🏆 Special Quiz Competition Offer!'}
           </h4>
-          <p className="text-[11px] md:text-xs text-amber-900 font-extrabold leading-relaxed">
+          <p className="text-[11px] sm:text-xs text-amber-900 font-semibold leading-relaxed">
             {lang === 'bn' 
               ? '৫০টি কুইজের এই প্রতিযোগিতায় অংশগ্রহণকারী প্রথম ১০ জন বিজয়ী সরাসরি পাবেন ১৫০ টাকা করে বোনাস!' 
               : 'The first 10 winners to successfully complete this 50-question competition will receive ৳150 bonus each!'}
@@ -576,10 +576,10 @@ export default function QuizTab({ profile, updateProfile, addLog, lang }: QuizTa
 
       {/* 1. WELCOME SCREEN */}
       {gameState === 'welcome' && (
-        <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm space-y-4">
+        <div className="bg-white rounded-[1.25rem] p-4 sm:p-5 border border-slate-200 shadow-sm space-y-4">
           {/* Rules: super short and concise */}
           <div className="space-y-1">
-            <h3 className="font-extrabold text-[#0f172a] text-xs uppercase tracking-wide flex items-center gap-1">
+            <h3 className="font-bold text-[#0f172a] text-xs sm:text-sm uppercase tracking-wide flex items-center gap-1.5 leading-snug">
               <Icons.Award className="w-4 h-4 text-indigo-600" />
               {lang === 'bn' ? 'কুইজ তথ্য ও কমিশন রেট:' : 'Quiz Info & Commission Rate:'}
             </h3>
@@ -675,8 +675,8 @@ export default function QuizTab({ profile, updateProfile, addLog, lang }: QuizTa
           </div>
 
           {/* Question Card */}
-          <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm space-y-4">
-            <h3 className="font-extrabold text-slate-800 text-sm md:text-base leading-relaxed">
+          <div className="bg-white rounded-[1.25rem] p-4 sm:p-5 border border-slate-200 shadow-sm space-y-4">
+            <h3 className="font-bold text-slate-900 text-sm sm:text-base leading-snug tracking-tight">
               {lang === 'bn' ? activeQuestion.questionBn : activeQuestion.questionEn}
             </h3>
 
@@ -771,16 +771,16 @@ export default function QuizTab({ profile, updateProfile, addLog, lang }: QuizTa
       {/* 3. COMPLETED RESULT SCREEN */}
       {gameState === 'completed' && (
         <div className="space-y-4">
-          <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm text-center space-y-5">
-            <div className="w-16 h-16 bg-amber-50 text-amber-500 rounded-full flex items-center justify-center mx-auto shadow-inner border border-amber-100">
-              <Icons.Award className="w-9 h-9" />
+          <div className="bg-white rounded-[1.25rem] p-4 sm:p-6 border border-slate-200 shadow-sm text-center space-y-4">
+            <div className="w-14 h-14 bg-amber-50 text-amber-500 rounded-full flex items-center justify-center mx-auto shadow-inner border border-amber-100">
+              <Icons.Award className="w-8 h-8" />
             </div>
 
             <div className="space-y-1">
-              <h3 className="text-lg font-black text-slate-800">
+              <h3 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight leading-snug">
                 {lang === 'bn' ? 'অভিনন্দন! কুইজ সম্পন্ন হয়েছে' : 'Congratulations! Quiz Completed'}
               </h3>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-500 font-medium leading-relaxed">
                 {lang === 'bn' ? 'আপনার দক্ষতা পরীক্ষা সফলভাবে শেষ হয়েছে।' : 'Your skill validation session completed successfully.'}
               </p>
             </div>

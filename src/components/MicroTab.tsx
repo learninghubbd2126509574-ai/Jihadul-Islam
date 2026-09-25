@@ -78,7 +78,7 @@ export default function MicroTab({ profile, updateProfile, addLog, lang }: Micro
   const toBnNum = (num: number | string) => {
     if (lang !== 'bn') return String(num);
     const bnDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
-    return String(num).replace(/\d/g, (d) => bnDigits[parseInt(d)]);
+    return String(num).replace(/\d/g, (d) => bnDigits[parseInt(d, 10)]);
   };
 
   // Filter tasks
@@ -102,38 +102,39 @@ export default function MicroTab({ profile, updateProfile, addLog, lang }: Micro
   ];
 
   return (
-    <div className="space-y-6 pb-24 animate-fade-in" id="micro-container">
+    <div className="space-y-4 pb-24 animate-fade-in" id="micro-container">
       {/* Intro block */}
-      <div className="clay-card bg-white rounded-3xl p-6 relative overflow-hidden border border-blue-100/80">
-        <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+      <div className="bg-white rounded-[1.25rem] p-4 border border-slate-200/80 shadow-sm relative overflow-hidden">
+        <h2 className="text-base sm:text-lg font-bold text-slate-900 leading-snug tracking-tight flex items-center gap-2">
           <Icons.Zap className="w-5 h-5 text-blue-600 fill-blue-500" />
-          {lang === 'bn' ? 'মাইক্রো টাস্ক' : 'Instant Micro Tasks'}
+          <span>{lang === 'bn' ? 'মাইক্রো টাস্ক' : 'Instant Micro Tasks'}</span>
         </h2>
-        <p className="text-slate-500 text-xs mt-1 leading-relaxed">
+        <p className="text-slate-500 text-xs sm:text-sm mt-1 leading-relaxed font-medium">
           {lang === 'bn'
-            ? 'সহজ কাজগুলো সম্পন্ন করে আয় করুন।'
-            : 'Complete simple tasks to earn instantly.'}
+            ? 'সহজ কাজগুলো সম্পন্ন করে সাথে সাথে পয়েন্ট ও বোনাস আয় করুন।'
+            : 'Complete simple tasks to earn instant commission rewards.'}
         </p>
       </div>
 
       {/* Filter and Search Box */}
-      <div className="clay-card space-y-3 bg-white p-4 rounded-3xl border border-blue-100/80">
+      <div className="space-y-3 bg-white p-4 rounded-[1.25rem] border border-slate-200/80 shadow-sm">
         {/* Search */}
         <div className="relative">
-          <Icons.Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+          <Icons.Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder={lang === 'bn' ? 'সার্চ করুন...' : 'Search tasks...'}
-            className="w-full clay-input bg-slate-50/70 border border-slate-200 rounded-2xl pl-10 pr-4 py-2 text-xs text-slate-700 focus:bg-white focus:border-blue-400 outline-none transition-all"
+            className="w-full bg-slate-50/80 border border-slate-200 rounded-xl pl-9 pr-8 py-2 text-xs sm:text-sm text-slate-800 focus:bg-white focus:border-blue-500 outline-none transition-colors"
           />
           {searchTerm && (
             <button
               onClick={() => setSearchTerm('')}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1 cursor-pointer"
+              type="button"
             >
-              <Icons.X className="w-4 h-4" />
+              <Icons.X className="w-3.5 h-3.5" />
             </button>
           )}
         </div>
@@ -146,14 +147,15 @@ export default function MicroTab({ profile, updateProfile, addLog, lang }: Micro
             return (
               <button
                 key={plat.key}
+                type="button"
                 onClick={() => {
                   setSelectedPlatform(plat.key);
-                  setVisibleCount(15); // Reset load more
+                  setVisibleCount(15);
                 }}
-                className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all whitespace-nowrap cursor-pointer active:scale-95 leading-normal ${
                   isSelected
-                    ? 'clay-btn-primary bg-blue-600 text-white'
-                    : 'bg-slate-50 text-slate-600 border border-slate-200/80 hover:bg-slate-100'
+                    ? 'bg-blue-600 text-white shadow-xs font-bold'
+                    : 'bg-slate-50 text-slate-600 border border-slate-200/80 hover:bg-slate-100 hover:text-slate-900'
                 }`}
               >
                 <PlatIcon className="w-3.5 h-3.5" />
@@ -167,9 +169,9 @@ export default function MicroTab({ profile, updateProfile, addLog, lang }: Micro
       {/* Task Listing */}
       <div className="space-y-3">
         {displayedTasks.length === 0 ? (
-          <div className="bg-white rounded-3xl border border-slate-200 p-10 text-center">
-            <Icons.Layers className="w-10 h-10 text-slate-300 mx-auto mb-2" />
-            <p className="text-slate-400 text-xs font-bold">
+          <div className="bg-white rounded-[1.25rem] border border-slate-200/80 p-8 text-center">
+            <Icons.Layers className="w-8 h-8 text-slate-300 mx-auto mb-2" />
+            <p className="text-slate-500 text-xs sm:text-sm font-semibold">
               {lang === 'bn' ? 'কোনো কাজ খুঁজে পাওয়া যায়নি!' : 'No matching tasks found!'}
             </p>
           </div>
@@ -182,48 +184,50 @@ export default function MicroTab({ profile, updateProfile, addLog, lang }: Micro
             return (
               <div
                 key={task.id}
-                className={`bg-white rounded-2xl border p-4.5 flex flex-col transition-all duration-300 ${
+                className={`bg-white rounded-[1.25rem] border p-4 flex flex-col transition-all duration-200 shadow-2xs ${
                   task.completed
-                    ? 'border-emerald-200 bg-emerald-50/5'
-                    : 'border-slate-200 hover:border-slate-300'
+                    ? 'border-emerald-200 bg-emerald-50/20'
+                    : 'border-slate-200/80 hover:border-blue-400/80'
                 }`}
               >
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3 min-w-0">
-                    <div className={`w-10 h-10 rounded-xl ${task.bgColor} ${task.iconColor} flex items-center justify-center flex-shrink-0`}>
+                    <div className={`w-10 h-10 rounded-xl ${task.bgColor} ${task.iconColor} flex items-center justify-center shrink-0`}>
                       <IconComponent className="w-4.5 h-4.5" />
                     </div>
                     <div className="min-w-0">
-                      <h3 className="font-bold text-[#0f172a] text-xs md:text-sm leading-snug truncate">
+                      <h3 className="font-bold text-slate-900 text-xs sm:text-sm leading-snug tracking-tight truncate">
                         {lang === 'bn' ? task.titleBn : task.titleEn}
                       </h3>
                       <div className="flex items-center gap-2 mt-0.5">
-                        <span className="text-emerald-600 text-xs font-extrabold font-mono">
+                        <span className="text-emerald-600 text-xs font-bold font-mono tabular-nums leading-tight">
                           +৳{toBnNum((task.reward * 100).toFixed(0))}
                         </span>
                         <span className="text-slate-300">•</span>
-                        <span className="text-slate-400 text-[10px] font-bold">
+                        <span className="text-slate-400 text-[10px] font-medium font-mono tabular-nums leading-tight">
                           {lang === 'bn' ? `${toBnNum(task.timeSec)} সেকেন্ড` : `${task.timeSec}s`}
                         </span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="flex-shrink-0 ml-2">
+                  <div className="shrink-0">
                     {task.completed ? (
-                      <span className="bg-emerald-100 text-emerald-800 text-[10px] px-2.5 py-1.5 rounded-xl font-bold flex items-center gap-1">
+                      <span className="bg-emerald-50 text-emerald-800 text-[11px] px-2.5 py-1 rounded-lg font-bold flex items-center gap-1 border border-emerald-200 leading-none">
                         <Icons.Check className="w-3.5 h-3.5" />
-                        {lang === 'bn' ? 'সম্পন্ন' : 'Claimed'}
+                        <span>{lang === 'bn' ? 'সম্পন্ন' : 'Claimed'}</span>
                       </span>
                     ) : isRunning ? (
-                      <span className="text-[10px] font-extrabold text-amber-500 bg-amber-50 px-2.5 py-1.5 rounded-xl animate-pulse">
-                        {lang === 'bn' ? 'চলছে...' : 'Running...'}
+                      <span className="text-[11px] font-bold text-amber-600 bg-amber-50 border border-amber-200 px-2.5 py-1 rounded-lg animate-pulse flex items-center gap-1 leading-none">
+                        <Icons.Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        <span>{lang === 'bn' ? 'চলছে...' : 'Running...'}</span>
                       </span>
                     ) : (
                       <button
+                        type="button"
                         onClick={() => startTask(task)}
                         disabled={activeTaskId !== null}
-                        className="bg-[#0f172a] text-white font-bold px-4 py-1.5 rounded-xl text-xs hover:bg-slate-800 transition-all active:scale-95 disabled:opacity-40 cursor-pointer"
+                        className="bg-slate-900 text-white font-bold px-3.5 py-1.5 rounded-xl text-xs hover:bg-slate-800 transition-colors active:scale-95 disabled:opacity-40 cursor-pointer leading-none"
                       >
                         {lang === 'bn' ? 'ক্লেম করুন' : 'Claim'}
                       </button>
@@ -233,33 +237,32 @@ export default function MicroTab({ profile, updateProfile, addLog, lang }: Micro
 
                 {/* Progress bar inside task - ACTIVE EXECUTION */}
                 {isRunning && (
-                  <div className="mt-3.5 space-y-1">
-                    <div className="flex justify-between text-[10px] text-slate-400 font-bold">
+                  <div className="mt-3 space-y-1">
+                    <div className="flex justify-between text-[10px] text-slate-400 font-bold font-mono tabular-nums">
                       <span>{lang === 'bn' ? 'সরাসরি ভেরিফিকেশন চলছে...' : 'Validating redirection...'}</span>
                       <span>{Math.round(progress)}%</span>
                     </div>
                     <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-amber-500 rounded-full transition-all duration-100"
+                        className="h-full bg-blue-600 rounded-full transition-all duration-100"
                         style={{ width: `${progress}%` }}
                       />
                     </div>
                   </div>
                 )}
 
-                {/* Task Community Completion Progress Ratio (e.g. 300 / 1000 completed) */}
-                <div className="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
-                  <span className="font-semibold">
-                    {lang === 'bn' ? 'কমিউনিটি এনগেজমেন্ট রেশিও:' : 'Community ratio:'}
+                {/* Task Community Completion Progress Ratio */}
+                <div className="mt-2.5 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
+                  <span className="font-medium">
+                    {lang === 'bn' ? 'কমিউনিটি সম্পন্ন:' : 'Community completed:'}
                   </span>
-                  <span className="font-mono font-bold text-slate-500">
+                  <span className="font-mono font-bold text-slate-600 tabular-nums">
                     {toBnNum(task.completedCount)} / {toBnNum(task.maxTarget)} ({toBnNum(progressPercent)}%)
                   </span>
                 </div>
-                {/* Horizontal Progress bar for community engagement */}
-                <div className="w-full h-1 bg-slate-100 rounded-full overflow-hidden mt-1.5">
+                <div className="w-full h-1 bg-slate-100 rounded-full overflow-hidden mt-1">
                   <div
-                    className="h-full bg-slate-300 rounded-full"
+                    className="h-full bg-emerald-500 rounded-full"
                     style={{ width: `${progressPercent}%` }}
                   />
                 </div>
@@ -267,20 +270,20 @@ export default function MicroTab({ profile, updateProfile, addLog, lang }: Micro
             );
           })
         )}
-      </div>
 
-      {/* Load More Button */}
-      {filteredTasks.length > visibleCount && (
-        <div className="text-center pt-2">
-          <button
-            onClick={() => setVisibleCount((prev) => prev + 15)}
-            className="bg-white hover:bg-slate-50 text-slate-700 font-bold px-6 py-2.5 rounded-xl text-xs border border-slate-200 hover:border-slate-300 transition-all active:scale-95 shadow-sm inline-flex items-center gap-1.5 cursor-pointer"
-          >
-            <Icons.ChevronDown className="w-4 h-4" />
-            <span>{lang === 'bn' ? 'আরো লোড করুন' : 'Load More Tasks'}</span>
-          </button>
-        </div>
-      )}
+        {/* Load more if applicable */}
+        {filteredTasks.length > visibleCount && (
+          <div className="text-center pt-2">
+            <button
+              type="button"
+              onClick={() => setVisibleCount((prev) => prev + 15)}
+              className="bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs px-5 py-2 rounded-xl border border-slate-200/80 shadow-2xs transition-colors cursor-pointer"
+            >
+              {lang === 'bn' ? 'আরও কাজ দেখুন' : 'Load More Tasks'}
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

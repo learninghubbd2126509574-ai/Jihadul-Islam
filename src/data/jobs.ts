@@ -1,4 +1,5 @@
 import { Job, UserProfile, ShopItem, TaskLog } from '../types';
+import defaultFreelancerAvatar from '../assets/images/freelancer_girl_laptop_1790295106635.jpg';
 
 export const INITIAL_JOBS: Job[] = [
   {
@@ -130,9 +131,9 @@ export const INITIAL_JOBS: Job[] = [
     titleEn: 'Code Entry',
     titleBn: 'কোড বসানো (কোড এন্ট্রি)',
     tag: 'NEW',
-    iconName: 'Code',
-    bgColor: 'bg-indigo-50',
-    iconColor: 'text-indigo-600',
+    iconName: 'Code2',
+    bgColor: 'bg-amber-500',
+    iconColor: 'text-white',
     rewardEn: '$3.50 per dataset',
     rewardBn: '৳৩৫০ প্রতি কাজ',
     estimatedTimeEn: '5-8 mins',
@@ -161,9 +162,9 @@ export const INITIAL_JOBS: Job[] = [
     titleEn: 'Digital Marketing',
     titleBn: 'ডিজিটাল মার্কেটিং',
     tag: 'NEW',
-    iconName: 'Facebook',
-    bgColor: 'bg-sky-50',
-    iconColor: 'text-sky-600',
+    iconName: 'Megaphone',
+    bgColor: 'bg-blue-600',
+    iconColor: 'text-white',
     rewardEn: '$3.80 - $5.50 per campaign',
     rewardBn: '৳৩৮০ - ৳৫৫০ প্রতি কাজ',
     estimatedTimeEn: '10-15 mins',
@@ -539,7 +540,7 @@ export const INITIAL_PROFILE: UserProfile = {
   phone: '01712-345678',
   bio: 'প্রফেশনাল ডিজিটাল মাইক্রো-টাস্ক ও ইমেইল মার্কেটিং বিশেষজ্ঞ।',
   address: 'মিরপুর ২, ঢাকা ১২১৬, বাংলাদেশ',
-  avatarUrl: 'https://api.dicebear.com/7.x/adventurer/svg?seed=HabibaAkter',
+  avatarUrl: defaultFreelancerAvatar,
   balance: 3400,
   totalIncome: 66400,
   tasksCompleted: 632,
@@ -607,6 +608,6 @@ export const DEFAULT_TASK_LOGS: TaskLog[] = [
     jobTitleEn: i % 3 === 0 ? 'Video Editing: Reels & TikTok Shorts Edit' : i % 3 === 1 ? 'Form Fillup: Customer Data Entry' : 'Email Sale: Marketing Conversion',
     reward: i % 3 === 0 ? 2.0 : i % 3 === 1 ? 1.0 : 0.5,
     date: `2026-07-07, ${String(10 + Math.floor(i / 2)).padStart(2, '0')}:${String(10 + (i % 50)).padStart(2, '0')} AM`,
-    status: 'Completed'
+    status: 'Completed' as const
   }))
 ];

@@ -113,7 +113,7 @@ export default function LuckySpinFeed({
 
   // Execute Point Exchange (100 Points = ৳10 Taka)
   const handleExecuteExchange = (pts: number) => {
-    const currentPts = profile.points || 0;
+    const currentPts = profile.points || 3250;
     if (currentPts < pts) {
       triggerToast(
         lang === 'bn'
@@ -130,7 +130,7 @@ export default function LuckySpinFeed({
 
     updateProfile({
       balance: newBalance,
-      // intentionally omitting points to keep it fixed
+      points: 3250,
     });
 
     triggerToast(
@@ -225,20 +225,20 @@ export default function LuckySpinFeed({
       )}
 
       {/* Header Bar */}
-      <div className="bg-gradient-to-r from-amber-600 via-amber-500 to-yellow-500 rounded-3xl p-4 sm:p-5 text-white shadow-xl border border-amber-300/40 relative overflow-hidden">
+      <div className="bg-gradient-to-r from-amber-600 via-amber-500 to-yellow-500 rounded-[1.25rem] p-4 sm:p-5 text-white shadow-md border border-amber-300/40 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-48 h-48 bg-white/20 rounded-full blur-2xl pointer-events-none -mr-16 -mt-16" />
 
         <div className="flex items-center justify-between relative z-10 gap-2">
           <button
             onClick={onBack}
-            className="flex items-center gap-1.5 text-xs font-bold text-amber-950 bg-white/90 hover:bg-white px-3 py-2 rounded-xl border border-amber-200 shadow-sm transition-all active:scale-95 shrink-0"
+            className="flex items-center gap-1.5 text-xs font-bold text-amber-950 bg-white/90 hover:bg-white px-3 py-1.5 rounded-xl border border-amber-200 shadow-sm transition-all active:scale-95 shrink-0 leading-none"
           >
             <Icons.ArrowLeft className="w-4 h-4" />
             <span>{lang === 'bn' ? 'ফিরে যান' : 'Back'}</span>
           </button>
 
           <div className="flex items-center gap-2">
-            <span className="flex items-center gap-1 bg-amber-950/30 text-amber-100 border border-amber-200/40 px-3 py-1 rounded-full text-xs font-black tracking-wide uppercase">
+            <span className="flex items-center gap-1 bg-amber-950/30 text-amber-100 border border-amber-200/40 px-3 py-1 rounded-full text-xs font-bold tracking-wide uppercase leading-tight">
               <Icons.Sparkles className="w-3.5 h-3.5 text-yellow-300 animate-pulse" />
               <span>{lang === 'bn' ? 'লাকি স্পিন' : 'Lucky Spin'}</span>
             </span>
@@ -246,10 +246,10 @@ export default function LuckySpinFeed({
         </div>
 
         <div className="mt-4 relative z-10">
-          <h2 className="text-xl sm:text-2xl font-black text-amber-950 tracking-tight drop-shadow-xs">
+          <h2 className="text-base sm:text-xl font-bold text-amber-950 tracking-tight leading-snug drop-shadow-xs">
             {lang === 'bn' ? 'স্পিন করে জিতে নিন যেকোনো পুরস্কার!' : 'Spin & Win Awesome Prizes!'}
           </h2>
-          <p className="text-amber-900 text-xs sm:text-sm font-semibold mt-1">
+          <p className="text-amber-950/80 text-xs sm:text-sm font-medium mt-1 leading-relaxed">
             {lang === 'bn'
               ? 'প্রতিদিন একটি করে স্পিন করে পয়েন্ট ও আকর্ষণীয় পুরষ্কার সংগ্রহ করুন।'
               : 'Spin once every day to collect points and exciting rewards.'}
@@ -258,16 +258,16 @@ export default function LuckySpinFeed({
       </div>
 
       {/* User Points & Balance Info Bar */}
-      <div className="bg-slate-900 text-white rounded-3xl p-4 sm:p-5 border border-slate-800 shadow-lg flex items-center justify-between gap-3">
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center text-white shadow-lg border border-cyan-400/40 shrink-0">
-            <Icons.Coins className="w-6 h-6 text-yellow-300 animate-spin-slow" />
+      <div className="bg-slate-900 text-white rounded-[1.25rem] p-4 sm:p-5 border border-slate-800 shadow-sm flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3 sm:gap-4">
+          <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center text-white shadow-md border border-cyan-400/30 shrink-0">
+            <Icons.Coins className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-300" />
           </div>
           <div>
-            <div className="text-xs text-slate-400 font-medium">{lang === 'bn' ? 'আপনার মোট পয়েন্ট' : 'Your Total Points'}</div>
-            <div className="text-xl sm:text-2xl font-black text-amber-400 font-mono tracking-wide flex items-center gap-1.5">
-              <span>{profile.points || 0}</span>
-              <span className="text-xs text-amber-300/80 font-sans font-bold">{lang === 'bn' ? 'পয়েন্ট' : 'pts'}</span>
+            <div className="text-[11px] sm:text-xs text-slate-400 font-medium leading-tight">{lang === 'bn' ? 'আপনার মোট পয়েন্ট' : 'Your Total Points'}</div>
+            <div className="text-xl sm:text-2xl font-bold text-amber-400 font-mono tabular-nums tracking-wide flex items-center gap-1.5 leading-snug mt-0.5">
+              <span>3250</span>
+              <span className="text-xs text-amber-300/80 font-sans font-semibold">{lang === 'bn' ? 'পয়েন্ট (স্থির)' : 'pts (fixed)'}</span>
             </div>
           </div>
         </div>
@@ -275,15 +275,15 @@ export default function LuckySpinFeed({
         {/* Point Exchange Button */}
         <button
           onClick={() => setShowExchangeModal(true)}
-          className="flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white px-3.5 py-2.5 rounded-2xl font-extrabold text-xs sm:text-sm shadow-md transition-all active:scale-95 border border-emerald-400/30 shrink-0"
+          className="flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white px-3.5 py-2.5 rounded-xl font-bold text-xs sm:text-sm shadow-sm transition-all active:scale-95 border border-emerald-400/30 shrink-0 cursor-pointer leading-none"
         >
-          <Icons.RefreshCw className="w-4 h-4 text-emerald-200 animate-spin-slow" />
+          <Icons.RefreshCw className="w-4 h-4 text-emerald-200" />
           <span>{lang === 'bn' ? 'পয়েন্ট এক্সচেঞ্জ' : 'Exchange Points'}</span>
         </button>
       </div>
 
       {/* Lucky Wheel Main Interactive Container */}
-      <div className="bg-gradient-to-b from-slate-900 via-indigo-950 to-slate-950 rounded-3xl p-4 sm:p-5 border border-indigo-900/60 shadow-2xl relative overflow-hidden flex flex-col items-center justify-center">
+      <div className="bg-gradient-to-b from-slate-900 via-indigo-950 to-slate-950 rounded-[1.25rem] p-4 sm:p-5 border border-indigo-900/60 shadow-2xl relative overflow-hidden flex flex-col items-center justify-center">
         {/* Decorative background glow */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
 
@@ -357,7 +357,7 @@ export default function LuckySpinFeed({
       </div>
 
       {/* Prize List Grid Showcase */}
-      <div className="bg-slate-900 rounded-3xl p-5 border border-slate-800 shadow-lg">
+      <div className="bg-slate-900 rounded-[1.25rem] p-4 sm:p-5 border border-slate-800 shadow-lg">
         <h3 className="text-sm font-bold text-slate-300 mb-3 flex items-center gap-2">
           <Icons.Award className="w-4 h-4 text-amber-400" />
           <span>{lang === 'bn' ? 'স্পিন পুরষ্কারের তালিকা (১০টি আইটেম)' : 'Spin Reward Items (10 Items)'}</span>
@@ -389,33 +389,33 @@ export default function LuckySpinFeed({
       {/* Winning Celebration Modal */}
       {showWinModal && winningItem && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in">
-          <div className="bg-gradient-to-b from-slate-900 via-indigo-950 to-slate-900 border-2 border-amber-400/80 rounded-3xl p-6 sm:p-8 max-w-md w-full text-center relative shadow-[0_0_50px_rgba(245,158,11,0.4)] animate-scale-up">
-            <div className="w-20 h-20 bg-gradient-to-tr from-amber-400 to-yellow-300 rounded-full flex items-center justify-center mx-auto mb-4 shadow-xl border-4 border-amber-200 animate-bounce">
-              <Icons.Trophy className="w-10 h-10 text-amber-950" />
+          <div className="bg-gradient-to-b from-slate-900 via-indigo-950 to-slate-900 border-2 border-amber-400/80 rounded-[1.25rem] p-4 sm:p-6 max-w-md w-full text-center relative shadow-[0_0_50px_rgba(245,158,11,0.4)] animate-scale-up">
+            <div className="w-16 h-16 bg-gradient-to-tr from-amber-400 to-yellow-300 rounded-full flex items-center justify-center mx-auto mb-3 shadow-xl border-4 border-amber-200 animate-bounce">
+              <Icons.Trophy className="w-8 h-8 text-amber-950" />
             </div>
 
-            <span className="bg-amber-500/20 text-amber-300 border border-amber-400/30 px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider inline-block mb-2">
+            <span className="bg-amber-500/20 text-amber-300 border border-amber-400/30 px-3 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider inline-block mb-1.5 leading-none">
               🎉 {lang === 'bn' ? 'বিজয়ী পুরষ্কার' : 'Winning Reward'}
             </span>
 
-            <h3 className="text-2xl font-black text-white mb-1">
+            <h3 className="text-xl sm:text-2xl font-bold text-white mb-1 leading-snug">
               {lang === 'bn' ? 'অভিনন্দন!' : 'Congratulations!'}
             </h3>
 
-            <p className="text-slate-300 text-sm mb-4">
+            <p className="text-slate-300 text-xs sm:text-sm mb-3.5 font-medium leading-relaxed">
               {lang === 'bn'
                 ? `আপনি স্পিন করে পেয়েছেন:`
                 : `You spun and won:`}
             </p>
 
-            <div className="bg-amber-500/10 border-2 border-amber-400/40 rounded-2xl p-4 mb-6 text-amber-300 font-black text-2xl flex items-center justify-center gap-2">
-              <Icons.Sparkles className="w-6 h-6 text-yellow-400 animate-pulse" />
+            <div className="bg-amber-500/10 border-2 border-amber-400/40 rounded-xl p-3.5 mb-5 text-amber-300 font-bold text-xl flex items-center justify-center gap-2">
+              <Icons.Sparkles className="w-5 h-5 text-yellow-400 animate-pulse" />
               <span>{lang === 'bn' ? winningItem.labelBn : winningItem.labelEn}</span>
             </div>
 
             <button
               onClick={handleClaimReward}
-              className="w-full bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-400 hover:to-yellow-300 text-amber-950 font-black py-3.5 rounded-2xl text-base shadow-xl transition-all active:scale-95 border border-yellow-200"
+              className="w-full bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-400 hover:to-yellow-300 text-amber-950 font-bold py-3 rounded-xl text-sm shadow-xl transition-all active:scale-95 border border-yellow-200 cursor-pointer leading-none"
             >
               {lang === 'bn' ? 'পুরষ্কার সংগ্রহ করুন' : 'Collect Reward'}
             </button>
@@ -426,48 +426,48 @@ export default function LuckySpinFeed({
       {/* Point Exchange Modal */}
       {showExchangeModal && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in">
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 max-w-md w-full relative shadow-2xl">
+          <div className="bg-slate-900 border border-slate-800 rounded-[1.25rem] p-4 sm:p-6 max-w-md w-full relative shadow-2xl">
             {/* Close Button */}
             <button
               onClick={() => setShowExchangeModal(false)}
-              className="absolute top-4 right-4 text-slate-400 hover:text-white bg-slate-800 p-2 rounded-xl transition-all"
+              className="absolute top-4 right-4 text-slate-400 hover:text-white bg-slate-800 p-2 rounded-xl transition-all cursor-pointer"
             >
               <Icons.X className="w-5 h-5" />
             </button>
 
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center shrink-0">
                 <Icons.RefreshCw className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="text-lg font-black text-white">
+                <h3 className="text-base sm:text-lg font-bold text-white tracking-tight leading-snug">
                   {lang === 'bn' ? 'পয়েন্ট এক্সচেঞ্জ করুন' : 'Exchange Points'}
                 </h3>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-slate-400 font-medium leading-tight">
                   {lang === 'bn' ? '১০০ পয়েন্ট = ৳১০ টাকা মেইন ব্যালেন্স' : '100 Points = ৳10 Taka Main Balance'}
                 </p>
               </div>
             </div>
 
             {/* Current Balance & Points */}
-            <div className="bg-slate-800/90 rounded-2xl p-4 border border-slate-700/70 mb-5 flex items-center justify-between">
+            <div className="bg-slate-800/90 rounded-xl p-3.5 border border-slate-700/70 mb-4 flex items-center justify-between">
               <div>
-                <span className="text-xs text-slate-400 block">{lang === 'bn' ? 'অবশিষ্ট পয়েন্ট' : 'Available Points'}</span>
-                <span className="text-lg font-black text-amber-400 font-mono">
-                  {profile.points || 0} {lang === 'bn' ? 'পয়েন্ট' : 'pts'}
+                <span className="text-xs text-slate-400 block leading-tight">{lang === 'bn' ? 'অবশিষ্ট পয়েন্ট' : 'Available Points'}</span>
+                <span className="text-base sm:text-lg font-bold text-amber-400 font-mono tabular-nums leading-snug">
+                  3250 {lang === 'bn' ? 'পয়েন্ট (স্থির)' : 'pts (fixed)'}
                 </span>
               </div>
               <div className="text-right">
-                <span className="text-xs text-slate-400 block">{lang === 'bn' ? 'বর্তমান ব্যালেন্স' : 'Current Balance'}</span>
-                <span className="text-lg font-black text-emerald-400 font-mono">
+                <span className="text-xs text-slate-400 block leading-tight">{lang === 'bn' ? 'বর্তমান ব্যালেন্স' : 'Current Balance'}</span>
+                <span className="text-base sm:text-lg font-bold text-emerald-400 font-mono tabular-nums leading-snug">
                   ৳{profile.balance}
                 </span>
               </div>
             </div>
 
             {/* Exchange Option Quick Cards */}
-            <div className="space-y-3 mb-6">
-              <label className="text-xs font-bold text-slate-300 block">
+            <div className="space-y-2.5 mb-5">
+              <label className="text-xs font-bold text-slate-300 block leading-tight">
                 {lang === 'bn' ? 'পয়েন্ট এক্সচেঞ্জ প্যাকেজ বেছে নিন:' : 'Select Point Exchange Package:'}
               </label>
 
@@ -480,7 +480,7 @@ export default function LuckySpinFeed({
                 <div
                   key={pkg.pts}
                   onClick={() => setExchangePoints(pkg.pts)}
-                  className={`p-3.5 rounded-2xl border flex items-center justify-between cursor-pointer transition-all ${
+                  className={`p-3 rounded-xl border flex items-center justify-between cursor-pointer transition-all ${
                     exchangePoints === pkg.pts
                       ? 'bg-emerald-500/20 border-emerald-500 text-white shadow-md'
                       : 'bg-slate-800/60 border-slate-700 text-slate-300 hover:bg-slate-800'
@@ -488,19 +488,19 @@ export default function LuckySpinFeed({
                 >
                   <div className="flex items-center gap-2.5">
                     <Icons.Coins className="w-5 h-5 text-amber-400" />
-                    <span className="font-bold text-sm">
+                    <span className="font-bold text-xs sm:text-sm">
                       {pkg.pts} {lang === 'bn' ? 'পয়েন্ট' : 'Points'}
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="font-mono font-black text-emerald-400 text-sm">
+                    <span className="font-mono font-bold text-emerald-400 text-xs sm:text-sm tabular-nums">
                       ৳{pkg.taka} {lang === 'bn' ? 'টাকা' : 'Taka'}
                     </span>
                     <input
                       type="radio"
                       checked={exchangePoints === pkg.pts}
                       onChange={() => setExchangePoints(pkg.pts)}
-                      className="accent-emerald-500 w-4 h-4"
+                      className="accent-emerald-500 w-4 h-4 cursor-pointer"
                     />
                   </div>
                 </div>
@@ -510,9 +510,9 @@ export default function LuckySpinFeed({
             {/* Action Button */}
             <button
               onClick={() => handleExecuteExchange(exchangePoints)}
-              className="w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-black py-3.5 rounded-2xl text-sm shadow-xl transition-all active:scale-95 border border-emerald-400/30 flex items-center justify-center gap-2"
+              className="w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold py-3 rounded-xl text-xs sm:text-sm shadow-lg transition-all active:scale-95 border border-emerald-400/30 flex items-center justify-center gap-2 cursor-pointer leading-none"
             >
-              <Icons.CheckCircle2 className="w-5 h-5" />
+              <Icons.CheckCircle2 className="w-4 h-4" />
               <span>
                 {lang === 'bn'
                   ? `${exchangePoints} পয়েন্ট দিয়ে ৳${Math.floor((exchangePoints / 100) * 10)} টাকা রিডিম করুন`

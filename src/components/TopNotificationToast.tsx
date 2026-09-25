@@ -68,7 +68,7 @@ export default function TopNotificationToast({ lang }: TopNotificationToastProps
       className="fixed top-3 left-1/2 w-[94%] max-w-md z-[100] pointer-events-none select-none"
     >
       {/* Simple, clean notification card without close button */}
-      <div className="bg-slate-900/95 text-white rounded-2xl p-3.5 shadow-[0_8px_30px_rgba(0,0,0,0.35)] border border-slate-700/80 flex items-center gap-3 backdrop-blur-md">
+      <div className="bg-slate-900/95 text-white rounded-[1.25rem] p-3.5 sm:p-4 shadow-[0_8px_30px_rgba(0,0,0,0.35)] border border-slate-700/80 flex items-center gap-3 backdrop-blur-md">
         
         {/* Simple Notification Icon */}
         <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-amber-400 to-yellow-500 text-slate-950 flex items-center justify-center font-bold text-lg shrink-0 shadow-[0_2px_8px_rgba(245,158,11,0.4)]">
@@ -77,11 +77,11 @@ export default function TopNotificationToast({ lang }: TopNotificationToastProps
 
         {/* Text Content */}
         <div className="flex-1 min-w-0">
-          <h4 className="font-black text-xs text-amber-400 leading-tight">
+          <h4 className="font-bold text-xs text-amber-400 leading-snug tracking-tight">
             {currentNotif.title}
           </h4>
           
-          <p className="text-xs text-slate-100 font-medium leading-snug mt-0.5">
+          <p className="text-xs text-slate-100 font-medium leading-relaxed mt-0.5">
             {currentNotif.body}
           </p>
         </div>

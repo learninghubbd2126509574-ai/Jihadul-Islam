@@ -191,10 +191,10 @@ export default function RankingTab({ profile, lang }: RankingTabProps) {
 
   return (
     <div className="space-y-4 pb-24 animate-fade-in" id="ranking-container">
-      {/* Page Banner Header - Compact & Matching Frame */}
-      <div className="clay-card bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 text-slate-950 px-4 py-2.5 rounded-2xl border border-amber-300 text-center shadow-sm flex items-center justify-center gap-2">
+      {/* Page Banner Header */}
+      <div className="bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 text-slate-950 p-4 rounded-[1.25rem] border border-amber-300 shadow-sm flex items-center justify-center gap-2">
         <Icons.Trophy className="w-5 h-5 text-slate-950" />
-        <h1 className="text-base md:text-lg font-black text-slate-950 tracking-tight">
+        <h1 className="text-base sm:text-lg font-bold text-slate-950 tracking-tight leading-snug">
           {lang === 'bn' ? 'ইনকাম র‍্যাঙ্কিং' : 'Income Ranking'}
         </h1>
       </div>
@@ -202,11 +202,11 @@ export default function RankingTab({ profile, lang }: RankingTabProps) {
       {/* --- FEATURED USER PERSONAL DETAILS CARD (RANK #176) --- */}
       <div 
         onClick={() => handleMemberClick(userMember)}
-        className="clay-card bg-gradient-to-br from-amber-500/15 via-yellow-500/10 to-indigo-500/10 rounded-2xl border-2 border-amber-400 p-3.5 sm:p-4 shadow-sm relative overflow-hidden cursor-pointer hover:scale-[1.01] transition-all" 
+        className="bg-white rounded-[1.25rem] border-2 border-amber-400 p-4 shadow-sm relative overflow-hidden cursor-pointer hover:border-amber-500 transition-colors" 
         id="my-position-header-card"
+        role="button"
+        tabIndex={0}
       >
-        <div className="absolute top-0 right-0 w-36 h-36 bg-amber-400/20 rounded-full blur-2xl pointer-events-none" />
-        
         <div className="flex flex-col gap-2.5 relative z-10">
           {/* Main User Details Header Row */}
           <div className="flex items-start justify-between gap-2">
@@ -216,17 +216,17 @@ export default function RankingTab({ profile, lang }: RankingTabProps) {
                 <img
                   src={userAvatar}
                   alt={userName}
-                  className="w-12 h-12 rounded-xl object-cover bg-amber-100 border-2 border-amber-400 shadow-sm"
+                  className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl object-cover bg-amber-50 border-2 border-amber-400 shadow-xs"
                 />
-                <span className="absolute -bottom-1 -right-1 bg-amber-500 text-white text-[8px] font-black px-1 rounded-full border border-white">
+                <span className="absolute -bottom-1 -right-1 bg-amber-500 text-white text-[8px] font-bold px-1 rounded-full border border-white leading-tight">
                   YOU
                 </span>
               </div>
               <div className="min-w-0 flex-1">
-                <h3 className="font-extrabold text-slate-900 text-sm md:text-base leading-snug truncate">
+                <h3 className="font-bold text-slate-900 text-sm sm:text-base leading-snug tracking-tight truncate">
                   {userName}
                 </h3>
-                <span className="text-slate-600 font-mono text-[11px] font-bold block">
+                <span className="text-slate-500 font-mono text-[11px] font-semibold block leading-tight">
                   UID: {userUid}
                 </span>
               </div>
@@ -234,28 +234,29 @@ export default function RankingTab({ profile, lang }: RankingTabProps) {
 
             {/* Right: Rank Badge & Total Income */}
             <div className="text-right shrink-0 flex flex-col items-end">
-              <span className="inline-flex items-center gap-1 bg-amber-500 text-slate-950 px-2 py-0.5 rounded-lg text-[11px] font-black shadow-2xs">
-                <Icons.Award className="w-3.5 h-3.5 text-slate-950" />
-                {lang === 'bn' ? `${toBnNum(176)} নম্বর স্থান` : 'Rank #176'}
+              <span className="inline-flex items-center gap-1 bg-amber-100 text-amber-900 border border-amber-300 px-2 py-0.5 rounded-lg text-[11px] font-bold leading-none">
+                <Icons.Award className="w-3.5 h-3.5 text-amber-600" />
+                <span>{lang === 'bn' ? `${toBnNum(176)} নম্বর স্থান` : 'Rank #176'}</span>
               </span>
-              <div className="text-lg sm:text-xl font-black text-emerald-800 font-mono leading-tight mt-1">
+              <div className="text-base sm:text-lg font-bold text-emerald-700 font-mono tabular-nums leading-tight mt-1">
                 {lang === 'bn' ? `৳${toBnNum(315)}` : '৳315'}
               </div>
             </div>
           </div>
 
           {/* Sub Row: Income Label & Scroll Button */}
-          <div className="flex items-center justify-between border-t border-amber-300/50 pt-2 text-xs">
-            <span className="text-slate-700 font-extrabold text-[11px] flex items-center gap-1">
+          <div className="flex items-center justify-between border-t border-amber-200/80 pt-2 text-xs">
+            <span className="text-slate-700 font-bold text-[11px] flex items-center gap-1 leading-normal">
               <Icons.Sparkles className="w-3.5 h-3.5 text-amber-600" />
-              {lang === 'bn' ? 'আজকের মোট ইনকাম: ৩১৫ টাকা' : "Today's Total Income: ৳315"}
+              <span>{lang === 'bn' ? 'আজকের মোট ইনকাম: ৩১৫ টাকা' : "Today's Total Income: ৳315"}</span>
             </span>
             <button
+              type="button"
               onClick={(e) => {
                 e.stopPropagation();
                 scrollToUserRank();
               }}
-              className="text-[10px] font-black text-amber-950 bg-amber-300 hover:bg-amber-400 px-2.5 py-1 rounded-lg transition-all flex items-center gap-1 border border-amber-400 shadow-2xs shrink-0 active:scale-95"
+              className="text-[10px] font-bold text-amber-950 bg-amber-300 hover:bg-amber-400 px-2.5 py-1 rounded-lg transition-colors flex items-center gap-1 border border-amber-400 shadow-2xs shrink-0 active:scale-95 cursor-pointer leading-none"
             >
               <span>{lang === 'bn' ? 'তালিকায় দেখুন' : 'Go to List'}</span>
               <Icons.ArrowDown className="w-3 h-3" />
@@ -263,28 +264,28 @@ export default function RankingTab({ profile, lang }: RankingTabProps) {
           </div>
 
           {/* 315 Taka Breakdown Quick Pills */}
-          <div className="bg-white/95 backdrop-blur-sm rounded-xl p-2.5 border border-amber-200 shadow-2xs">
+          <div className="bg-slate-50 rounded-xl p-2.5 border border-slate-200/80">
             <div className="flex items-center justify-between mb-1.5">
-              <span className="text-[11px] font-black text-slate-900 flex items-center gap-1">
+              <span className="text-[11px] font-bold text-slate-800 flex items-center gap-1 leading-tight">
                 <Icons.PieChart className="w-3.5 h-3.5 text-amber-600" />
-                {lang === 'bn' ? 'আজকের ৩১৫ টাকার কাজের বিবরণী:' : 'Today ৳315 Breakdown:'}
+                <span>{lang === 'bn' ? 'আজকের ৩১৫ টাকার কাজের বিবরণী:' : 'Today ৳315 Breakdown:'}</span>
               </span>
-              <span className="text-[10px] font-extrabold text-blue-600 underline">
+              <span className="text-[10px] font-bold text-blue-600 hover:underline leading-tight">
                 {lang === 'bn' ? 'হিসাব দেখুন' : 'Details'}
               </span>
             </div>
-            <div className="grid grid-cols-3 gap-1.5 text-center text-[10px] font-bold">
-              <div className="bg-emerald-50/90 text-emerald-900 p-1.5 rounded-lg border border-emerald-200/80">
-                <div className="text-[9px] text-slate-600 font-medium leading-tight">{lang === 'bn' ? 'ফর্ম ফিলআপ' : 'Form Fill'}</div>
-                <div className="font-black text-xs font-mono text-emerald-700 mt-0.5">৳২৫০</div>
+            <div className="grid grid-cols-3 gap-1.5 text-center text-[10px] font-semibold">
+              <div className="bg-white p-2 rounded-lg border border-slate-200">
+                <div className="text-[9.5px] text-slate-500 font-medium leading-tight">{lang === 'bn' ? 'ফর্ম ফিলআপ' : 'Form Fill'}</div>
+                <div className="font-bold text-xs font-mono tabular-nums text-emerald-700 mt-0.5 leading-snug">৳২৫০</div>
               </div>
-              <div className="bg-blue-50/90 text-blue-900 p-1.5 rounded-lg border border-blue-200/80">
-                <div className="text-[9px] text-slate-600 font-medium leading-tight">{lang === 'bn' ? 'ই-মেইল সেল' : 'Email Sale'}</div>
-                <div className="font-black text-xs font-mono text-blue-700 mt-0.5">৳৪০</div>
+              <div className="bg-white p-2 rounded-lg border border-slate-200">
+                <div className="text-[9.5px] text-slate-500 font-medium leading-tight">{lang === 'bn' ? 'ই-মেইল সেল' : 'Email Sale'}</div>
+                <div className="font-bold text-xs font-mono tabular-nums text-blue-700 mt-0.5 leading-snug">৳৪০</div>
               </div>
-              <div className="bg-violet-50/90 text-violet-900 p-1.5 rounded-lg border border-violet-200/80">
-                <div className="text-[9px] text-slate-600 font-medium leading-tight">{lang === 'bn' ? 'মাইক্রো জবস' : 'Micro Jobs'}</div>
-                <div className="font-black text-xs font-mono text-violet-700 mt-0.5">৳২৫</div>
+              <div className="bg-white p-2 rounded-lg border border-slate-200">
+                <div className="text-[9.5px] text-slate-500 font-medium leading-tight">{lang === 'bn' ? 'মাইক্রো জবস' : 'Micro Jobs'}</div>
+                <div className="font-bold text-xs font-mono tabular-nums text-violet-700 mt-0.5 leading-snug">৳২৫</div>
               </div>
             </div>
           </div>
@@ -293,27 +294,27 @@ export default function RankingTab({ profile, lang }: RankingTabProps) {
 
       {/* --- SEARCH BAR --- */}
       <div className="flex items-center justify-between gap-3 pt-1">
-        <h2 className="text-base font-black text-slate-900 flex items-center gap-2">
-          <Icons.ListOrdered className="w-5 h-5 text-amber-500" />
-          {lang === 'bn' ? 'র‍্যাঙ্কিং তালিকা (১ - ২১৫)' : 'Leaderboard (1 - 215)'}
+        <h2 className="text-sm sm:text-base font-bold text-slate-900 flex items-center gap-2 leading-snug tracking-tight">
+          <Icons.ListOrdered className="w-4 h-4 text-amber-500" />
+          <span>{lang === 'bn' ? 'র‍্যাঙ্কিং তালিকা (১ - ২১৫)' : 'Leaderboard (1 - 215)'}</span>
         </h2>
 
         {/* Search Input */}
-        <div className="relative w-full sm:w-64">
-          <Icons.Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+        <div className="relative w-full sm:w-60">
+          <Icons.Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder={lang === 'bn' ? 'নাম, UID বা স্থান খুঁজুন...' : 'Search name, UID or rank...'}
-            className="w-full pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-medium text-slate-700 outline-none focus:border-amber-400 shadow-xs"
+            placeholder={lang === 'bn' ? 'নাম বা UID খুঁজুন...' : 'Search name or UID...'}
+            className="w-full pl-8 pr-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 outline-none focus:border-blue-500 shadow-2xs font-medium"
           />
         </div>
       </div>
 
-      {/* --- COMPLETE ALL 215 MEMBERS LIST TABLE (NO TOP 3 PODIUM) --- */}
-      <div className="clay-card bg-white rounded-3xl border border-slate-200/80 overflow-hidden shadow-sm">
-        <div className="divide-y divide-slate-100 max-h-[750px] overflow-y-auto custom-scrollbar">
+      {/* --- COMPLETE ALL 215 MEMBERS LIST TABLE --- */}
+      <div className="bg-white rounded-[1.25rem] border border-slate-200/80 overflow-hidden shadow-sm">
+        <div className="divide-y divide-slate-100 max-h-[700px] overflow-y-auto custom-scrollbar">
           {filteredMembers.map((item) => {
             const isUserRow = item.rank === 176 || item.isUser;
             return (
@@ -321,71 +322,71 @@ export default function RankingTab({ profile, lang }: RankingTabProps) {
                 key={item.rank}
                 id={isUserRow ? 'user-rank-row-176' : `rank-row-${item.rank}`}
                 onClick={() => handleMemberClick(item)}
-                className={`p-3.5 md:p-4 flex items-center justify-between transition-all cursor-pointer ${
+                className={`p-3 sm:p-3.5 flex items-center justify-between transition-colors cursor-pointer ${
                   isUserRow
-                    ? 'bg-gradient-to-r from-amber-100 via-yellow-100 to-amber-200/90 border-y-2 border-amber-400 shadow-md font-bold'
-                    : 'hover:bg-slate-50/90'
+                    ? 'bg-amber-50/80 border-y border-amber-300 font-bold'
+                    : 'hover:bg-slate-50'
                 }`}
               >
                 {/* Left Side: Rank, Avatar & Name */}
-                <div className="flex items-center gap-3">
-                  <span className={`w-7 h-7 rounded-xl flex items-center justify-center font-black text-xs shrink-0 font-mono ${
-                    item.rank === 1 ? 'bg-amber-400 text-slate-950 shadow-xs' :
-                    item.rank === 2 ? 'bg-slate-300 text-slate-800' :
-                    item.rank === 3 ? 'bg-amber-200 text-amber-900' :
-                    isUserRow ? 'bg-amber-500 text-white border border-amber-300' : 'bg-slate-100 text-slate-600'
+                <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 pr-2">
+                  <span className={`w-7 h-7 rounded-lg flex items-center justify-center font-bold text-xs shrink-0 font-mono tabular-nums ${
+                    item.rank === 1 ? 'bg-amber-400 text-slate-950 font-extrabold shadow-2xs' :
+                    item.rank === 2 ? 'bg-slate-200 text-slate-800' :
+                    item.rank === 3 ? 'bg-amber-100 text-amber-900 border border-amber-300' :
+                    isUserRow ? 'bg-amber-500 text-white font-black' : 'bg-slate-100 text-slate-600'
                   }`}>
                     {lang === 'bn' ? toBnNum(item.rank) : item.rank}
                   </span>
 
-                  {/* Avatar rendering: photo, cartoon, or default icon */}
+                  {/* Avatar */}
                   {item.avatar ? (
                     <img
                       src={item.avatar}
                       alt={item.name}
-                      className={`w-9 h-9 rounded-full object-cover border shrink-0 ${
-                        isUserRow ? 'border-2 border-amber-400' : 'border-slate-200 bg-slate-100'
+                      className={`w-9 h-9 rounded-full object-cover shrink-0 ${
+                        isUserRow ? 'border-2 border-amber-400' : 'border border-slate-200 bg-slate-100'
                       }`}
                       onError={(e) => {
                         (e.target as HTMLElement).style.display = 'none';
                       }}
                     />
                   ) : (
-                    <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-blue-500 to-indigo-600 text-white flex items-center justify-center font-black text-xs shrink-0 border border-slate-200">
+                    <div className="w-9 h-9 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-xs shrink-0">
                       {item.name.charAt(0)}
                     </div>
                   )}
 
                   {/* Name and UID */}
-                  <div>
-                    <h4 className="font-extrabold text-slate-900 text-xs md:text-sm hover:text-blue-600 flex items-center gap-1.5">
-                      {item.name}
+                  <div className="min-w-0">
+                    <h4 className="font-bold text-slate-900 text-xs sm:text-sm hover:text-blue-600 flex items-center gap-1.5 truncate">
+                      <span>{item.name}</span>
                       {isUserRow && (
-                        <span className="bg-amber-500 text-white font-black text-[9px] px-1.5 py-0.2 rounded uppercase">
-                          YOU (১৭৬)
+                        <span className="bg-amber-500 text-white font-bold text-[9px] px-1.5 py-0.2 rounded uppercase shrink-0">
+                          YOU
                         </span>
                       )}
                       {item.rank === 1 && (
-                        <span className="text-[9px] font-black text-amber-700 bg-amber-100 px-1 rounded border border-amber-300">
+                        <span className="text-[9px] font-bold text-amber-800 bg-amber-100 px-1 rounded border border-amber-300 shrink-0">
                           👑 ৳730
                         </span>
                       )}
                     </h4>
-                    <span className="text-[10px] text-slate-400 font-mono block">{item.uid}</span>
+                    <span className="text-[10px] text-slate-400 font-mono tabular-nums block">{item.uid}</span>
                   </div>
                 </div>
 
                 {/* Right Side: Earnings & Action */}
-                <div className="text-right flex items-center gap-2">
+                <div className="text-right shrink-0 flex items-center gap-2">
                   <div>
-                    <span className={`text-xs md:text-sm font-black font-mono block ${isUserRow ? 'text-emerald-900 text-sm md:text-base' : 'text-emerald-600'}`}>
+                    <span className={`text-xs sm:text-sm font-bold font-mono tabular-nums block ${isUserRow ? 'text-emerald-900 font-extrabold' : 'text-emerald-600'}`}>
                       {lang === 'bn' ? `৳${toBnNum(item.earnings)}` : `৳${item.earnings}`}
                     </span>
-                    <span className="text-[9px] text-slate-400 font-bold block">
+                    <span className="text-[10px] text-slate-400 font-medium block">
                       {lang === 'bn' ? `${toBnNum(item.tasks)}টি কাজ` : `${item.tasks} tasks`}
                     </span>
                   </div>
-                  <Icons.ChevronRight className={`w-4 h-4 ${isUserRow ? 'text-amber-900' : 'text-slate-300'}`} />
+                  <Icons.ChevronRight className={`w-4 h-4 ${isUserRow ? 'text-amber-800' : 'text-slate-300'}`} />
                 </div>
               </div>
             );
@@ -395,8 +396,8 @@ export default function RankingTab({ profile, lang }: RankingTabProps) {
 
       {/* --- MEMBER WORK BREAKDOWN MODAL POPUP --- */}
       {selectedMember && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md animate-fade-in">
-          <div className="clay-card bg-white rounded-3xl border border-amber-300 shadow-2xl max-w-sm w-full p-6 relative overflow-hidden text-left space-y-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
+          <div className="bg-white rounded-3xl border border-slate-200 shadow-xl max-w-sm w-full p-5 sm:p-6 relative overflow-hidden text-left space-y-4">
             {/* Ambient background glow */}
             <div className="absolute top-0 right-0 w-36 h-36 bg-amber-400/10 rounded-full blur-3xl pointer-events-none" />
 

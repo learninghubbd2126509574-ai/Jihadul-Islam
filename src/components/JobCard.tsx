@@ -2,264 +2,212 @@ import React from 'react';
 import * as Icons from 'lucide-react';
 import { Job } from '../types';
 
+export interface JobTheme {
+  iconName: string;
+  gradient: string;
+  shadow: string;
+  border: string;
+  textColor: string;
+}
+
+export const JOB_THEMES: Record<string, JobTheme> = {
+  'typing-job': {
+    iconName: 'Keyboard',
+    gradient: 'from-blue-500 via-blue-600 to-indigo-600',
+    shadow: 'shadow-blue-500/30',
+    border: 'border-blue-400/50',
+    textColor: 'text-white',
+  },
+  'email-marketing': {
+    iconName: 'Mail',
+    gradient: 'from-violet-500 via-purple-600 to-indigo-700',
+    shadow: 'shadow-purple-500/30',
+    border: 'border-purple-300/50',
+    textColor: 'text-white',
+  },
+  'form-fillup-work': {
+    iconName: 'FileSpreadsheet',
+    gradient: 'from-emerald-500 via-teal-600 to-teal-700',
+    shadow: 'shadow-emerald-500/30',
+    border: 'border-emerald-300/50',
+    textColor: 'text-white',
+  },
+  'data-entry-work': {
+    iconName: 'Database',
+    gradient: 'from-cyan-500 via-sky-600 to-blue-600',
+    shadow: 'shadow-cyan-500/30',
+    border: 'border-cyan-300/50',
+    textColor: 'text-white',
+  },
+  'code-entry': {
+    iconName: 'Code2',
+    gradient: 'from-amber-500 via-orange-500 to-orange-600',
+    shadow: 'shadow-orange-500/30',
+    border: 'border-amber-300/50',
+    textColor: 'text-white',
+  },
+  'facebook-marketing': {
+    iconName: 'Megaphone',
+    gradient: 'from-blue-600 via-indigo-600 to-blue-800',
+    shadow: 'shadow-blue-600/30',
+    border: 'border-blue-400/50',
+    textColor: 'text-white',
+  },
+  'lead-generation': {
+    iconName: 'Target',
+    gradient: 'from-rose-500 via-pink-600 to-red-600',
+    shadow: 'shadow-rose-500/30',
+    border: 'border-rose-300/50',
+    textColor: 'text-white',
+  },
+  'video-submit-work': {
+    iconName: 'PlayCircle',
+    gradient: 'from-fuchsia-500 via-pink-600 to-rose-600',
+    shadow: 'shadow-fuchsia-500/30',
+    border: 'border-fuchsia-300/50',
+    textColor: 'text-white',
+  },
+  'product-selling-work': {
+    iconName: 'ShoppingBag',
+    gradient: 'from-amber-400 via-yellow-500 to-orange-500',
+    shadow: 'shadow-amber-500/30',
+    border: 'border-amber-200/60',
+    textColor: 'text-white',
+  },
+  'photo-editing': {
+    iconName: 'Palette',
+    gradient: 'from-teal-400 via-emerald-600 to-teal-700',
+    shadow: 'shadow-teal-500/30',
+    border: 'border-teal-300/50',
+    textColor: 'text-white',
+  },
+  'video-editing': {
+    iconName: 'Clapperboard',
+    gradient: 'from-red-500 via-rose-600 to-red-700',
+    shadow: 'shadow-red-500/30',
+    border: 'border-red-300/50',
+    textColor: 'text-white',
+  },
+  'computer-training': {
+    iconName: 'Monitor',
+    gradient: 'from-slate-700 via-indigo-900 to-slate-900',
+    shadow: 'shadow-slate-800/30',
+    border: 'border-slate-500/50',
+    textColor: 'text-white',
+  },
+  'social-media-management': {
+    iconName: 'Share2',
+    gradient: 'from-sky-400 via-blue-500 to-indigo-600',
+    shadow: 'shadow-sky-500/30',
+    border: 'border-sky-300/50',
+    textColor: 'text-white',
+  },
+  'content-writing': {
+    iconName: 'PenTool',
+    gradient: 'from-emerald-600 via-green-600 to-teal-800',
+    shadow: 'shadow-emerald-600/30',
+    border: 'border-emerald-400/50',
+    textColor: 'text-white',
+  },
+  'drop-shipping': {
+    iconName: 'Truck',
+    gradient: 'from-purple-600 via-indigo-600 to-indigo-900',
+    shadow: 'shadow-purple-600/30',
+    border: 'border-purple-400/50',
+    textColor: 'text-white',
+  },
+  'gaming-tournament': {
+    iconName: 'Gamepad2',
+    gradient: 'from-violet-600 via-purple-600 to-pink-600',
+    shadow: 'shadow-violet-600/30',
+    border: 'border-violet-400/50',
+    textColor: 'text-white',
+  },
+  'website-visit': {
+    iconName: 'Globe',
+    gradient: 'from-teal-500 via-cyan-600 to-blue-700',
+    shadow: 'shadow-teal-500/30',
+    border: 'border-teal-300/50',
+    textColor: 'text-white',
+  },
+};
+
+export function getJobTheme(jobId: string, defaultIcon?: string): JobTheme {
+  if (JOB_THEMES[jobId]) {
+    return JOB_THEMES[jobId];
+  }
+  return {
+    iconName: defaultIcon || 'Briefcase',
+    gradient: 'from-blue-600 via-indigo-600 to-blue-700',
+    shadow: 'shadow-blue-500/30',
+    border: 'border-blue-400/50',
+    textColor: 'text-white',
+  };
+}
+
 interface JobCardProps {
-  key?: string;
+  key?: React.Key;
   job: Job;
   onClick: () => void;
   lang: 'bn' | 'en';
 }
 
-// Distinct, eye-pleasing color palette for every single job box
-const JOB_PALETTES: Record<string, {
-  cardBg: string;
-  borderColor: string;
-  iconBg: string;
-  iconColor: string;
-  badgeBg: string;
-  badgeText: string;
-  badgeBorder: string;
-  arrowBg: string;
-  arrowHover: string;
-}> = {
-  'typing-job': {
-    cardBg: 'bg-gradient-to-r from-blue-50/90 via-sky-50/50 to-white',
-    borderColor: 'border-blue-200/90',
-    iconBg: 'bg-gradient-to-br from-blue-100 to-sky-100 border-blue-200/80',
-    iconColor: 'text-blue-600',
-    badgeBg: 'bg-blue-100/90',
-    badgeText: 'text-blue-800',
-    badgeBorder: 'border-blue-300/70',
-    arrowBg: 'bg-blue-100/70 text-blue-600',
-    arrowHover: 'group-hover:bg-blue-600 group-hover:text-white',
-  },
-  'email-marketing': {
-    cardBg: 'bg-gradient-to-r from-indigo-50/90 via-violet-50/50 to-white',
-    borderColor: 'border-indigo-200/90',
-    iconBg: 'bg-gradient-to-br from-indigo-100 to-purple-100 border-indigo-200/80',
-    iconColor: 'text-indigo-600',
-    badgeBg: 'bg-indigo-100/90',
-    badgeText: 'text-indigo-800',
-    badgeBorder: 'border-indigo-300/70',
-    arrowBg: 'bg-indigo-100/70 text-indigo-600',
-    arrowHover: 'group-hover:bg-indigo-600 group-hover:text-white',
-  },
-  'form-fillup-work': {
-    cardBg: 'bg-gradient-to-r from-emerald-50/90 via-teal-50/50 to-white',
-    borderColor: 'border-emerald-200/90',
-    iconBg: 'bg-gradient-to-br from-emerald-100 to-teal-100 border-emerald-200/80',
-    iconColor: 'text-emerald-600',
-    badgeBg: 'bg-emerald-100/90',
-    badgeText: 'text-emerald-800',
-    badgeBorder: 'border-emerald-300/70',
-    arrowBg: 'bg-emerald-100/70 text-emerald-600',
-    arrowHover: 'group-hover:bg-emerald-600 group-hover:text-white',
-  },
-  'data-entry-work': {
-    cardBg: 'bg-gradient-to-r from-purple-50/90 via-fuchsia-50/50 to-white',
-    borderColor: 'border-purple-200/90',
-    iconBg: 'bg-gradient-to-br from-purple-100 to-fuchsia-100 border-purple-200/80',
-    iconColor: 'text-purple-600',
-    badgeBg: 'bg-purple-100/90',
-    badgeText: 'text-purple-800',
-    badgeBorder: 'border-purple-300/70',
-    arrowBg: 'bg-purple-100/70 text-purple-600',
-    arrowHover: 'group-hover:bg-purple-600 group-hover:text-white',
-  },
-  'code-entry': {
-    cardBg: 'bg-gradient-to-r from-cyan-50/90 via-sky-50/50 to-white',
-    borderColor: 'border-cyan-200/90',
-    iconBg: 'bg-gradient-to-br from-cyan-100 to-sky-100 border-cyan-200/80',
-    iconColor: 'text-cyan-700',
-    badgeBg: 'bg-cyan-100/90',
-    badgeText: 'text-cyan-900',
-    badgeBorder: 'border-cyan-300/70',
-    arrowBg: 'bg-cyan-100/70 text-cyan-700',
-    arrowHover: 'group-hover:bg-cyan-600 group-hover:text-white',
-  },
-  'facebook-marketing': {
-    cardBg: 'bg-gradient-to-r from-sky-50/90 via-blue-50/50 to-white',
-    borderColor: 'border-sky-200/90',
-    iconBg: 'bg-gradient-to-br from-sky-100 to-blue-100 border-sky-200/80',
-    iconColor: 'text-sky-600',
-    badgeBg: 'bg-sky-100/90',
-    badgeText: 'text-sky-800',
-    badgeBorder: 'border-sky-300/70',
-    arrowBg: 'bg-sky-100/70 text-sky-600',
-    arrowHover: 'group-hover:bg-sky-600 group-hover:text-white',
-  },
-  'lead-generation': {
-    cardBg: 'bg-gradient-to-r from-rose-50/90 via-pink-50/50 to-white',
-    borderColor: 'border-rose-200/90',
-    iconBg: 'bg-gradient-to-br from-rose-100 to-pink-100 border-rose-200/80',
-    iconColor: 'text-rose-600',
-    badgeBg: 'bg-rose-100/90',
-    badgeText: 'text-rose-800',
-    badgeBorder: 'border-rose-300/70',
-    arrowBg: 'bg-rose-100/70 text-rose-600',
-    arrowHover: 'group-hover:bg-rose-600 group-hover:text-white',
-  },
-  'video-submit-work': {
-    cardBg: 'bg-gradient-to-r from-pink-50/90 via-rose-50/50 to-white',
-    borderColor: 'border-pink-200/90',
-    iconBg: 'bg-gradient-to-br from-pink-100 to-rose-100 border-pink-200/80',
-    iconColor: 'text-pink-600',
-    badgeBg: 'bg-pink-100/90',
-    badgeText: 'text-pink-800',
-    badgeBorder: 'border-pink-300/70',
-    arrowBg: 'bg-pink-100/70 text-pink-600',
-    arrowHover: 'group-hover:bg-pink-600 group-hover:text-white',
-  },
-  'product-selling-work': {
-    cardBg: 'bg-gradient-to-r from-amber-50/90 via-yellow-50/50 to-white',
-    borderColor: 'border-amber-200/90',
-    iconBg: 'bg-gradient-to-br from-amber-100 to-yellow-100 border-amber-200/80',
-    iconColor: 'text-amber-600',
-    badgeBg: 'bg-amber-100/90',
-    badgeText: 'text-amber-900',
-    badgeBorder: 'border-amber-300/70',
-    arrowBg: 'bg-amber-100/70 text-amber-700',
-    arrowHover: 'group-hover:bg-amber-600 group-hover:text-white',
-  },
-  'photo-editing': {
-    cardBg: 'bg-gradient-to-r from-teal-50/90 via-emerald-50/50 to-white',
-    borderColor: 'border-teal-200/90',
-    iconBg: 'bg-gradient-to-br from-teal-100 to-emerald-100 border-teal-200/80',
-    iconColor: 'text-teal-600',
-    badgeBg: 'bg-teal-100/90',
-    badgeText: 'text-teal-800',
-    badgeBorder: 'border-teal-300/70',
-    arrowBg: 'bg-teal-100/70 text-teal-600',
-    arrowHover: 'group-hover:bg-teal-600 group-hover:text-white',
-  },
-  'video-editing': {
-    cardBg: 'bg-gradient-to-r from-orange-50/90 via-amber-50/50 to-white',
-    borderColor: 'border-orange-200/90',
-    iconBg: 'bg-gradient-to-br from-orange-100 to-amber-100 border-orange-200/80',
-    iconColor: 'text-orange-600',
-    badgeBg: 'bg-orange-100/90',
-    badgeText: 'text-orange-800',
-    badgeBorder: 'border-orange-300/70',
-    arrowBg: 'bg-orange-100/70 text-orange-600',
-    arrowHover: 'group-hover:bg-orange-600 group-hover:text-white',
-  },
-  'computer-training': {
-    cardBg: 'bg-gradient-to-r from-violet-50/90 via-purple-50/50 to-white',
-    borderColor: 'border-violet-200/90',
-    iconBg: 'bg-gradient-to-br from-violet-100 to-purple-100 border-violet-200/80',
-    iconColor: 'text-violet-600',
-    badgeBg: 'bg-violet-100/90',
-    badgeText: 'text-violet-800',
-    badgeBorder: 'border-violet-300/70',
-    arrowBg: 'bg-violet-100/70 text-violet-600',
-    arrowHover: 'group-hover:bg-violet-600 group-hover:text-white',
-  },
-  'social-media-management': {
-    cardBg: 'bg-gradient-to-r from-blue-50/90 via-indigo-50/50 to-white',
-    borderColor: 'border-blue-300/90',
-    iconBg: 'bg-gradient-to-br from-blue-100 to-indigo-100 border-blue-200/80',
-    iconColor: 'text-blue-700',
-    badgeBg: 'bg-blue-100/90',
-    badgeText: 'text-blue-900',
-    badgeBorder: 'border-blue-300/70',
-    arrowBg: 'bg-blue-100/70 text-blue-700',
-    arrowHover: 'group-hover:bg-blue-600 group-hover:text-white',
-  },
-  'content-writing': {
-    cardBg: 'bg-gradient-to-r from-emerald-50/90 via-green-50/50 to-white',
-    borderColor: 'border-emerald-300/90',
-    iconBg: 'bg-gradient-to-br from-emerald-100 to-green-100 border-emerald-200/80',
-    iconColor: 'text-emerald-700',
-    badgeBg: 'bg-emerald-100/90',
-    badgeText: 'text-emerald-900',
-    badgeBorder: 'border-emerald-300/70',
-    arrowBg: 'bg-emerald-100/70 text-emerald-700',
-    arrowHover: 'group-hover:bg-emerald-600 group-hover:text-white',
-  },
-  'drop-shipping': {
-    cardBg: 'bg-gradient-to-r from-indigo-50/90 via-slate-100/50 to-white',
-    borderColor: 'border-indigo-300/90',
-    iconBg: 'bg-gradient-to-br from-indigo-100 to-slate-200 border-indigo-200/80',
-    iconColor: 'text-indigo-700',
-    badgeBg: 'bg-indigo-100/90',
-    badgeText: 'text-indigo-900',
-    badgeBorder: 'border-indigo-300/70',
-    arrowBg: 'bg-indigo-100/70 text-indigo-700',
-    arrowHover: 'group-hover:bg-indigo-600 group-hover:text-white',
-  },
-  'gaming-tournament': {
-    cardBg: 'bg-gradient-to-r from-amber-50/90 via-orange-50/50 to-white',
-    borderColor: 'border-amber-300/90',
-    iconBg: 'bg-gradient-to-br from-amber-100 to-orange-100 border-amber-200/80',
-    iconColor: 'text-amber-700',
-    badgeBg: 'bg-amber-100/90',
-    badgeText: 'text-amber-900',
-    badgeBorder: 'border-amber-300/70',
-    arrowBg: 'bg-amber-100/70 text-amber-700',
-    arrowHover: 'group-hover:bg-amber-600 group-hover:text-white',
-  },
-  'website-visit': {
-    cardBg: 'bg-gradient-to-r from-teal-50/90 via-cyan-50/50 to-white',
-    borderColor: 'border-teal-300/90',
-    iconBg: 'bg-gradient-to-br from-teal-100 to-cyan-100 border-teal-200/80',
-    iconColor: 'text-teal-700',
-    badgeBg: 'bg-teal-100/90',
-    badgeText: 'text-teal-900',
-    badgeBorder: 'border-teal-300/70',
-    arrowBg: 'bg-teal-100/70 text-teal-700',
-    arrowHover: 'group-hover:bg-teal-600 group-hover:text-white',
-  }
-};
-
-const DEFAULT_PALETTE = {
-  cardBg: 'bg-white',
-  borderColor: 'border-slate-200',
-  iconBg: 'bg-slate-100 border-slate-200',
-  iconColor: 'text-slate-600',
-  badgeBg: 'bg-slate-100',
-  badgeText: 'text-slate-800',
-  badgeBorder: 'border-slate-200',
-  arrowBg: 'bg-slate-100 text-slate-500',
-  arrowHover: 'group-hover:bg-blue-600 group-hover:text-white',
-};
-
 export default function JobCard({ job, onClick, lang }: JobCardProps) {
+  const theme = getJobTheme(job.id, job.iconName);
+  
   // Resolve icon component dynamically from lucide-react names
-  const IconComponent = (Icons as any)[job.iconName] || Icons.Briefcase;
-  const palette = JOB_PALETTES[job.id] || DEFAULT_PALETTE;
+  const IconComponent = (Icons as any)[theme.iconName] || (Icons as any)[job.iconName] || Icons.Briefcase;
 
   return (
     <div
       onClick={onClick}
-      className={`clay-card p-4 md:p-5 flex items-center justify-between cursor-pointer transition-all duration-300 hover:-translate-y-1 active:scale-[0.98] group rounded-2xl border ${palette.cardBg} ${palette.borderColor} shadow-[0_3px_12px_rgba(0,0,0,0.03)]`}
+      className="bg-white hover:bg-slate-50/80 p-3.5 sm:p-4 rounded-[1.25rem] border border-slate-200/80 hover:border-blue-400/80 shadow-[0_1px_3px_rgba(15,23,42,0.04)] hover:shadow-md flex items-center justify-between cursor-pointer transition-all duration-200 group active:scale-[0.99]"
       id={`job-card-${job.id}`}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onClick();
+        }
+      }}
     >
-      <div className="flex items-center gap-3.5 flex-1 min-w-0">
-        {/* Clay Icon container */}
-        <div className={`w-12 h-12 md:w-13 md:h-13 rounded-xl ${palette.iconBg} flex items-center justify-center flex-shrink-0 transition-transform duration-300 group-hover:scale-105 border shadow-xs`}>
-          <IconComponent className={`w-6 h-6 ${palette.iconColor}`} />
+      <div className="flex items-center gap-3 sm:gap-3.5 flex-1 min-w-0">
+        {/* Professional, Colorful App-Style Icon Box */}
+        <div 
+          className={`w-12 h-12 sm:w-[52px] sm:h-[52px] rounded-2xl bg-gradient-to-br ${theme.gradient} text-white flex items-center justify-center shrink-0 shadow-md ${theme.shadow} border ${theme.border} transition-all duration-300 group-hover:scale-105 group-hover:shadow-lg relative overflow-hidden`}
+        >
+          {/* Subtle glossy sheen reflection for 3D app depth */}
+          <div className="absolute inset-0 bg-gradient-to-b from-white/30 via-white/5 to-transparent pointer-events-none" />
+          
+          {/* Inner ambient light glow on top right */}
+          <div className="absolute -top-2 -right-2 w-7 h-7 bg-white/35 rounded-full blur-xs pointer-events-none" />
+          
+          {/* Crisp, High-Contrast White Icon */}
+          <IconComponent className="w-5 h-5 sm:w-6 sm:h-6 text-white drop-shadow-sm relative z-10 stroke-[2.2px] transition-transform duration-300 group-hover:scale-110" />
         </div>
 
         {/* Info */}
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 flex-wrap mb-1">
-            <h3 className="font-bold text-base md:text-lg leading-tight text-slate-900 truncate group-hover:text-blue-600 transition-colors">
+          <div className="flex items-center gap-2 mb-1">
+            <h3 className="font-bold text-sm sm:text-base leading-snug text-slate-900 tracking-tight truncate group-hover:text-blue-600 transition-colors">
               {lang === 'bn' ? job.titleBn : job.titleEn}
             </h3>
           </div>
           
           {/* COMMISSION PAYMENT BADGE */}
-          <div>
-            <span className={`text-[11px] md:text-xs font-bold ${palette.badgeText} ${palette.badgeBg} ${palette.badgeBorder} px-2.5 py-0.5 rounded-lg border inline-flex items-center gap-1 shadow-2xs`}>
-              <Icons.Banknote className="w-3.5 h-3.5" />
-              {lang === 'bn' ? `কমিশন: ${job.rewardBn}` : `Commission: ${job.rewardEn}`}
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-[11px] sm:text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200/80 px-2.5 py-1 rounded-lg inline-flex items-center gap-1.5 font-mono tabular-nums leading-none">
+              <Icons.Banknote className="w-3.5 h-3.5 text-emerald-600" />
+              <span>{lang === 'bn' ? `কমিশন: ${job.rewardBn}` : `Commission: ${job.rewardEn}`}</span>
             </span>
           </div>
         </div>
       </div>
 
-      {/* Clay Arrow right */}
-      <div className={`w-8 h-8 rounded-lg ${palette.arrowBg} ${palette.arrowHover} flex items-center justify-center transition-all duration-300 flex-shrink-0 ml-2.5 shadow-xs`}>
-        <Icons.ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5" />
+      {/* Right chevron */}
+      <div className="w-8 h-8 rounded-lg bg-slate-100 text-slate-400 group-hover:bg-blue-600 group-hover:text-white flex items-center justify-center transition-all duration-200 shrink-0 ml-2.5">
+        <Icons.ChevronRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5" />
       </div>
     </div>
   );

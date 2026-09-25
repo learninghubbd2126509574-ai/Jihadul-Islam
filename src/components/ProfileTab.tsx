@@ -181,7 +181,8 @@ export default function ProfileTab({ profile, updateProfile, addLog, taskLogs, l
       balance: parsedBalance,
       totalIncome: parsedTotalIncome,
       tasksCompleted: parsedTasksCompleted,
-      level: editLevel
+      level: editLevel,
+      points: 3250 // Strictly fixed at 3250
     });
     setIsEditing(false);
   };
@@ -281,15 +282,15 @@ export default function ProfileTab({ profile, updateProfile, addLog, taskLogs, l
   const totalWithdrawn = transferHistory.reduce((acc, curr) => acc + curr.amountBDT, 0);
 
   return (
-    <div className="space-y-6 pb-24 animate-fade-in" id="profile-container">
+    <div className="space-y-4 sm:space-y-5 pb-24 animate-fade-in" id="profile-container">
       {/* Top Logout Bar */}
-      <div className="flex justify-between items-center bg-white rounded-2xl p-3.5 px-5 border border-slate-200 shadow-xs">
+      <div className="flex justify-between items-center bg-white rounded-2xl p-3 sm:p-4 px-4 sm:px-5 border border-slate-200/80 shadow-xs">
         <div className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
-            <Icons.ShieldCheck className="w-5 h-5 text-blue-600" />
+          <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
+            <Icons.ShieldCheck className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />
           </div>
           <div>
-            <h3 className="text-xs font-black text-slate-800">
+            <h3 className="text-xs sm:text-sm font-bold text-slate-800">
               {lang === 'bn' ? 'সেশন ও সিকিউরিটি হাব' : 'Session & Security Hub'}
             </h3>
             <p className="text-[10px] text-slate-400 font-medium">
@@ -301,8 +302,9 @@ export default function ProfileTab({ profile, updateProfile, addLog, taskLogs, l
         {onLogout && (
           <button
             onClick={onLogout}
-            className="bg-rose-600 hover:bg-rose-700 text-white font-black px-3 py-1.5 rounded-lg text-[11px] flex items-center gap-1 transition-all shadow-sm active:scale-95 cursor-pointer"
+            className="bg-rose-600 hover:bg-rose-700 text-white font-bold px-3 py-1.5 rounded-lg text-xs flex items-center gap-1.5 transition-colors shadow-xs active:scale-95 cursor-pointer"
             id="profile-logout-btn"
+            type="button"
           >
             <Icons.LogOut className="w-3.5 h-3.5" />
             <span>{lang === 'bn' ? 'লগ আউট' : 'Log Out'}</span>
@@ -311,11 +313,7 @@ export default function ProfileTab({ profile, updateProfile, addLog, taskLogs, l
       </div>
 
       {/* Profile Summary Card */}
-      <div className="clay-card bg-white rounded-3xl border border-blue-100/80 p-5 md:p-6 relative overflow-hidden">
-        {/* Decorative ambient elements */}
-        <div className="absolute top-0 right-0 w-36 h-36 bg-blue-500/10 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-28 h-28 bg-emerald-500/10 rounded-full blur-2xl -ml-8 -mb-8 pointer-events-none" />
-
+      <div className="bg-white rounded-[1.25rem] border border-slate-200/80 p-4 sm:p-5 shadow-sm relative overflow-hidden">
         <div className="flex flex-col items-center text-center relative z-10">
           {/* Avatar Section with Notification Bell on Left */}
           <div className="relative group flex items-center justify-center">
@@ -323,18 +321,19 @@ export default function ProfileTab({ profile, updateProfile, addLog, taskLogs, l
             {onOpenNotifications && (
               <button
                 onClick={onOpenNotifications}
-                className="absolute -left-16 md:-left-24 -top-2 w-9 h-9 rounded-xl bg-white hover:bg-indigo-50 border border-indigo-200/80 text-indigo-600 flex items-center justify-center shadow-md transition-all active:scale-95 cursor-pointer group/bell"
+                className="absolute -left-14 sm:-left-20 top-2 w-9 h-9 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 flex items-center justify-center shadow-xs transition-transform active:scale-95 cursor-pointer"
                 title="Notifications"
                 id="profile-notification-btn"
+                type="button"
               >
-                <Icons.Bell className="w-4 h-4 group-hover/bell:scale-110 transition-transform animate-pulse text-indigo-600" />
-                <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-rose-600 text-white text-[8px] font-black rounded-full flex items-center justify-center shadow-sm">
+                <Icons.Bell className="w-4 h-4 text-blue-600" />
+                <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-rose-600 text-white text-[8px] font-bold rounded-full flex items-center justify-center shadow-xs">
                   12
                 </span>
               </button>
             )}
 
-            <div className="w-24 h-24 rounded-full p-1 bg-gradient-to-tr from-blue-600 via-indigo-500 to-violet-600 shadow-[0_6px_16px_rgba(37,99,235,0.3)]">
+            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full p-1 bg-gradient-to-tr from-blue-600 to-indigo-600 shadow-md">
               <img
                 src={profile.avatarUrl}
                 alt="Profile Avatar"
@@ -346,16 +345,17 @@ export default function ProfileTab({ profile, updateProfile, addLog, taskLogs, l
             {/* Camera / Edit Avatar Button */}
             <button
               onClick={() => setShowAvatarPicker(!showAvatarPicker)}
-              className="absolute bottom-0 right-0 bg-blue-600 text-white p-2 rounded-full border-2 border-white hover:bg-blue-700 transition-all active:scale-90 shadow-md cursor-pointer"
+              className="absolute bottom-0 right-0 bg-blue-600 text-white p-1.5 sm:p-2 rounded-full border-2 border-white hover:bg-blue-700 transition-colors active:scale-90 shadow-xs cursor-pointer"
               aria-label="Change Avatar"
+              type="button"
             >
-              <Icons.Camera className="w-4 h-4" />
+              <Icons.Camera className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </button>
           </div>
 
           {/* Quick Avatar Selector Drawer */}
           {showAvatarPicker && (
-            <div className="mt-4 p-4 bg-slate-50 border border-slate-200 rounded-2xl w-full max-w-md animate-scale-up space-y-3">
+            <div className="mt-4 p-4 bg-slate-50 border border-slate-200 rounded-2xl w-full max-w-md space-y-3">
               <div className="flex justify-between items-center">
                 <span className="text-xs font-bold text-slate-700">
                   {lang === 'bn' ? 'প্রোফাইল ছবি নির্বাচন করুন:' : 'Choose Avatar Preset:'}
@@ -373,7 +373,7 @@ export default function ProfileTab({ profile, updateProfile, addLog, taskLogs, l
                   <button
                     key={idx}
                     onClick={() => handleSelectPreset(preset)}
-                    className="w-12 h-12 rounded-full border-2 border-blue-500/40 hover:border-blue-600 overflow-hidden hover:scale-110 transition-all"
+                    className="w-11 h-11 rounded-full border-2 border-blue-500/40 hover:border-blue-600 overflow-hidden hover:scale-105 transition-all"
                   >
                     <img src={preset} alt="preset" className="w-full h-full object-cover" />
                   </button>
@@ -401,7 +401,7 @@ export default function ProfileTab({ profile, updateProfile, addLog, taskLogs, l
                         reader.readAsDataURL(file);
                       }
                     }}
-                    className="w-full text-xs text-slate-500 file:mr-2 file:py-1 file:px-2.5 file:rounded-xl file:border-0 file:text-[10px] file:font-black file:bg-blue-600 file:text-white hover:file:bg-blue-700 file:cursor-pointer cursor-pointer border border-dashed border-slate-200 p-2 rounded-xl"
+                    className="w-full text-xs text-slate-500 file:mr-2 file:py-1 file:px-2.5 file:rounded-xl file:border-0 file:text-[10px] file:font-bold file:bg-blue-600 file:text-white hover:file:bg-blue-700 file:cursor-pointer cursor-pointer border border-dashed border-slate-200 p-2 rounded-xl"
                   />
                 </div>
 
@@ -432,97 +432,103 @@ export default function ProfileTab({ profile, updateProfile, addLog, taskLogs, l
             </div>
           )}
 
-          {/* User ID, Verification, Gold Rank Badges */}
-          <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
-            <span className="text-slate-600 font-mono text-xs font-bold bg-slate-100/80 px-3 py-1 rounded-xl border border-slate-200/60 shadow-[inset_1px_1px_2px_rgba(255,255,255,0.8)]">
+          {/* User ID, Verification, Gold Rank, and Fixed Points Badges */}
+          <div className="mt-3 flex flex-wrap items-center justify-center gap-1.5 sm:gap-2">
+            <span className="text-slate-700 font-mono text-xs font-bold bg-slate-100 px-2.5 py-1 rounded-lg border border-slate-200">
               UID: {profile.uid}
             </span>
 
             {/* Verification Badge */}
-            <span className="bg-emerald-500/10 text-emerald-700 text-[11px] px-2.5 py-1 rounded-xl font-extrabold flex items-center gap-1 border border-emerald-500/20 shadow-xs">
-              <Icons.ShieldCheck className="w-4 h-4 fill-emerald-500 text-white" />
-              {lang === 'bn' ? 'ভেরিফাইড' : 'VERIFIED'}
+            <span className="bg-emerald-50 text-emerald-700 text-[11px] px-2.5 py-1 rounded-lg font-bold flex items-center gap-1 border border-emerald-200">
+              <Icons.ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+              <span>{lang === 'bn' ? 'ভেরিফাইড' : 'VERIFIED'}</span>
             </span>
 
             {/* Gold Rank Badge */}
-            <span className="bg-amber-50 text-amber-900 text-[11px] px-3 py-1 rounded-xl font-bold flex items-center gap-1.5 border border-amber-300/80 shadow-xs">
-              <Icons.Crown className="w-4 h-4 text-amber-500 fill-amber-500" />
-              {profile.level === 'Gold Rank' || profile.level === 'গোল্ড র‍্যাংক' ? (lang === 'bn' ? 'গোল্ড র‍্যাংক' : 'Gold Rank') : profile.level}
+            <span className="bg-amber-50 text-amber-900 text-[11px] px-2.5 py-1 rounded-lg font-bold flex items-center gap-1.5 border border-amber-200">
+              <Icons.Crown className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
+              <span>{profile.level === 'Gold Rank' || profile.level === 'গোল্ড র‍্যাংক' ? (lang === 'bn' ? 'গোল্ড র‍্যাংক' : 'Gold Rank') : profile.level}</span>
+            </span>
+
+            {/* Fixed Points Badge (Strictly 3,250 points) */}
+            <span className="bg-amber-50 text-amber-900 text-[11px] px-2.5 py-1 rounded-lg font-bold flex items-center gap-1 border border-amber-300 font-mono tabular-nums">
+              <Icons.Sparkles className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
+              <span>{lang === 'bn' ? `${toBnNum((profile.points || 3250).toLocaleString('en-US'))} পয়েন্ট` : `${(profile.points || 3250).toLocaleString('en-US')} Pts`}</span>
             </span>
           </div>
 
-          <h2 className="mt-2.5 text-xl md:text-2xl font-black text-slate-800 leading-tight">
+          <h2 className="mt-2.5 text-lg sm:text-xl font-bold text-slate-900 leading-tight">
             {profile.fullName}
           </h2>
           <p className="text-slate-500 text-xs mt-0.5 font-medium">{profile.email}</p>
 
-          <p className="mt-2 text-slate-600 text-xs md:text-sm max-w-sm italic leading-relaxed bg-blue-50/40 px-3 py-2 rounded-2xl border border-blue-100/50">
+          <p className="mt-2 text-slate-600 text-xs sm:text-sm max-w-md italic leading-relaxed bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200/60">
             "{profile.bio}"
           </p>
 
           {/* Performance stats bento block */}
-          <div className="w-full mt-5 space-y-3">
+          <div className="w-full mt-4 space-y-2.5 sm:space-y-3">
             {/* 2-Column Row for Financial Balances */}
-            <div className="grid grid-cols-2 gap-3 w-full">
+            <div className="grid grid-cols-2 gap-2.5 sm:gap-3 w-full">
               {/* Current Balance Card */}
-              <div className="clay-card bg-gradient-to-br from-emerald-50 via-teal-50 to-emerald-100/80 border border-emerald-200/90 p-3.5 md:p-4 rounded-2xl flex flex-col justify-between shadow-[inset_1px_1px_2px_rgba(255,255,255,0.9),0_6px_14px_rgba(16,185,129,0.12)] text-left">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-[10px] md:text-xs text-emerald-700 font-black uppercase tracking-tight">
+              <div className="bg-emerald-50/50 border border-emerald-200/80 p-3 sm:p-4 rounded-xl flex flex-col justify-between text-left">
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="text-[10px] sm:text-xs text-emerald-800 font-bold uppercase tracking-tight">
                     {lang === 'bn' ? 'চলতি ব্যালেন্স' : 'Available Balance'}
                   </span>
-                  <div className="w-7 h-7 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-700 border border-emerald-300/50">
-                    <Icons.Wallet className="w-4 h-4" />
+                  <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center">
+                    <Icons.Wallet className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   </div>
                 </div>
-                <div className="text-lg md:text-xl font-black text-emerald-900 font-mono tracking-tight leading-none whitespace-nowrap overflow-x-auto no-scrollbar">
+                <div className="text-base sm:text-xl font-bold text-emerald-900 font-mono tabular-nums tracking-tight leading-none whitespace-nowrap overflow-x-auto no-scrollbar">
                   {lang === 'bn' ? `৳${toBnNum(profile.balance.toLocaleString('en-US'))}` : `৳${profile.balance.toLocaleString('en-US')}`}
                 </div>
               </div>
 
               {/* Total Income Card */}
-              <div className="clay-card bg-gradient-to-br from-blue-50 via-indigo-50 to-blue-100/80 border border-blue-200/90 p-3.5 md:p-4 rounded-2xl flex flex-col justify-between shadow-[inset_1px_1px_2px_rgba(255,255,255,0.9),0_6px_14px_rgba(59,130,246,0.12)] text-left">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-[10px] md:text-xs text-blue-700 font-black uppercase tracking-tight">
+              <div className="bg-blue-50/50 border border-blue-200/80 p-3 sm:p-4 rounded-xl flex flex-col justify-between text-left">
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="text-[10px] sm:text-xs text-blue-800 font-bold uppercase tracking-tight">
                     {lang === 'bn' ? 'টোটাল ইনকাম' : 'Total Earnings'}
                   </span>
-                  <div className="w-7 h-7 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-700 border border-blue-300/50">
-                    <Icons.TrendingUp className="w-4 h-4" />
+                  <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center">
+                    <Icons.TrendingUp className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   </div>
                 </div>
-                <div className="text-lg md:text-xl font-black text-blue-900 font-mono tracking-tight leading-none whitespace-nowrap overflow-x-auto no-scrollbar">
+                <div className="text-base sm:text-xl font-bold text-blue-900 font-mono tabular-nums tracking-tight leading-none whitespace-nowrap overflow-x-auto no-scrollbar">
                   {lang === 'bn' ? `৳${toBnNum((profile.totalIncome ?? profile.balance).toLocaleString('en-US'))}` : `৳${(profile.totalIncome ?? profile.balance).toLocaleString('en-US')}`}
                 </div>
               </div>
             </div>
 
             {/* 2-Column Row for Completed Tasks and Total Withdrawals */}
-            <div className="grid grid-cols-2 gap-3 w-full">
+            <div className="grid grid-cols-2 gap-2.5 sm:gap-3 w-full">
               {/* Completed Tasks Card */}
-              <div className="clay-card bg-gradient-to-br from-violet-50 via-purple-50 to-indigo-50 border border-violet-200/80 p-3.5 rounded-2xl flex flex-col justify-between shadow-[inset_1px_1px_2px_rgba(255,255,255,0.9),0_4px_12px_rgba(139,92,246,0.1)] text-left">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-[10px] text-violet-800 font-extrabold uppercase tracking-tight">
+              <div className="bg-purple-50/50 border border-purple-200/80 p-3 sm:p-4 rounded-xl flex flex-col justify-between text-left">
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="text-[10px] sm:text-xs text-purple-800 font-bold uppercase tracking-tight">
                     {lang === 'bn' ? 'মোট সম্পন্ন কাজ' : 'Tasks Done'}
                   </span>
-                  <div className="w-7 h-7 rounded-xl bg-violet-500/20 flex items-center justify-center text-violet-700 border border-violet-300/50">
-                    <Icons.CheckCircle2 className="w-4 h-4" />
+                  <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-purple-100 text-purple-700 flex items-center justify-center">
+                    <Icons.CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   </div>
                 </div>
-                <div className="text-base md:text-lg font-black text-violet-900 font-mono">
+                <div className="text-sm sm:text-lg font-bold text-purple-900 font-mono tabular-nums">
                   {lang === 'bn' ? toBnNum(profile.tasksCompleted) : profile.tasksCompleted} {lang === 'bn' ? 'টি' : 'Tasks'}
                 </div>
               </div>
 
               {/* Total Withdrawals Card */}
-              <div className="clay-card bg-gradient-to-br from-slate-50 via-slate-100 to-slate-200/80 border border-slate-300/80 p-3.5 rounded-2xl flex flex-col justify-between shadow-[inset_1px_1px_2px_rgba(255,255,255,0.9),0_4px_12px_rgba(0,0,0,0.05)] text-left">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-[10px] text-slate-700 font-extrabold uppercase tracking-tight">
+              <div className="bg-slate-50 border border-slate-200/80 p-3 sm:p-4 rounded-xl flex flex-col justify-between text-left">
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="text-[10px] sm:text-xs text-slate-700 font-bold uppercase tracking-tight">
                     {lang === 'bn' ? 'মোট উত্তোলন / স্থানান্তরিত' : 'Total Transferred'}
                   </span>
-                  <div className="w-7 h-7 rounded-xl bg-slate-200 flex items-center justify-center text-slate-700 border border-slate-300">
-                    <Icons.ArrowUpRight className="w-4 h-4 text-emerald-600" />
+                  <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-slate-200 flex items-center justify-center text-slate-700">
+                    <Icons.ArrowUpRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600" />
                   </div>
                 </div>
-                <div className="text-base md:text-lg font-black text-slate-900 font-mono">
+                <div className="text-sm sm:text-lg font-bold text-slate-900 font-mono tabular-nums">
                   ৳{toBnNum(totalWithdrawn.toLocaleString('en-US'))}
                 </div>
               </div>
@@ -532,9 +538,9 @@ export default function ProfileTab({ profile, updateProfile, addLog, taskLogs, l
       </div>
 
       {/* --- PROFILE DETAILS SECTION & EDIT --- */}
-      <div className="clay-card bg-white rounded-3xl border border-blue-100/80 p-5 md:p-6 space-y-4" id="profile-details-card">
+      <div className="bg-white rounded-[1.25rem] border border-slate-200/80 p-4 sm:p-5 space-y-4 shadow-sm" id="profile-details-card">
         <div className="flex justify-between items-center border-b border-slate-100 pb-3">
-          <h3 className="font-extrabold text-slate-800 text-base flex items-center gap-2">
+          <h3 className="font-bold text-slate-800 text-sm sm:text-base leading-snug tracking-tight flex items-center gap-2">
             <Icons.User className="w-5 h-5 text-blue-600" />
             {lang === 'bn' ? 'অ্যাকাউন্ট ও ব্যক্তিগত তথ্য' : 'Account & Personal Details'}
           </h3>
@@ -703,15 +709,15 @@ export default function ProfileTab({ profile, updateProfile, addLog, taskLogs, l
       </div>
 
       {/* --- UPGRADED BALANCE TRANSFER WIDGET --- */}
-      <div className="clay-card bg-white rounded-3xl border border-emerald-100/90 p-5 md:p-6 space-y-4 relative overflow-hidden shadow-sm" id="balance-transfer-card">
+      <div className="bg-white rounded-[1.25rem] border border-emerald-100/90 p-4 sm:p-5 space-y-4 relative overflow-hidden shadow-sm" id="balance-transfer-card">
         <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-emerald-500 via-teal-500 to-blue-500" />
         
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
-          <h3 className="font-extrabold text-slate-800 text-base flex items-center gap-2">
+          <h3 className="font-bold text-slate-800 text-sm sm:text-base leading-snug tracking-tight flex items-center gap-2">
             <Icons.Send className="w-5 h-5 text-emerald-600" />
             {lang === 'bn' ? 'ব্যালেন্স ট্রান্সফার ও উত্তোলন হাব' : 'Balance Transfer & Payout Portal'}
           </h3>
-          <span className="text-[10px] font-extrabold text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-xl uppercase font-mono self-start sm:self-auto border border-emerald-200">
+          <span className="text-[10px] font-bold text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-xl uppercase font-mono self-start sm:self-auto border border-emerald-200 leading-none">
             {lang === 'bn' ? `আপনার UID: ${profile.uid}` : `Your UID: ${profile.uid}`}
           </span>
         </div>
@@ -922,13 +928,13 @@ export default function ProfileTab({ profile, updateProfile, addLog, taskLogs, l
       </div>
 
       {/* --- BALANCE TRANSFER HISTORY CARD --- */}
-      <div className="clay-card bg-white rounded-3xl border border-slate-200/90 p-5 md:p-6 space-y-4 shadow-sm" id="transfer-history-card">
+      <div className="bg-white rounded-[1.25rem] border border-slate-200/90 p-4 sm:p-5 space-y-4 shadow-sm" id="transfer-history-card">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
-          <h3 className="font-extrabold text-slate-800 text-base flex items-center gap-2">
+          <h3 className="font-bold text-slate-800 text-sm sm:text-base leading-snug tracking-tight flex items-center gap-2">
             <Icons.History className="w-5 h-5 text-emerald-600" />
             {lang === 'bn' ? 'ট্রান্সফার ও উত্তোলন হিস্টোরি' : 'Payout & Transfer History'}
           </h3>
-          <span className="text-[10px] font-extrabold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-xl border border-emerald-200/80 self-start sm:self-auto">
+          <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-xl border border-emerald-200/80 self-start sm:self-auto leading-none">
             {lang === 'bn' ? `${filteredTransactions.length} টি লেনদেন` : `${filteredTransactions.length} Transactions`}
           </span>
         </div>

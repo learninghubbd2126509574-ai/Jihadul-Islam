@@ -174,19 +174,19 @@ export default function NotificationModal({ lang, onClose }: NotificationModalPr
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="bg-white rounded-3xl w-full max-w-lg shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[85vh] animate-in zoom-in-95 duration-300">
+      <div className="bg-white rounded-[1.25rem] w-full max-w-lg shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[85vh] animate-in zoom-in-95 duration-300">
         
         {/* Header */}
-        <div className="p-4 px-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/80">
+        <div className="p-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/80">
           <div className="flex items-center gap-2.5">
-            <div className="w-10 h-10 rounded-2xl bg-indigo-600 text-white flex items-center justify-center shadow-lg shadow-indigo-600/20">
+            <div className="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-md shadow-indigo-600/20 shrink-0">
               <Icons.Bell className="w-5 h-5 animate-bounce" />
             </div>
             <div>
-              <h2 className="text-base font-black text-slate-900 tracking-tight">
+              <h2 className="text-sm sm:text-base font-bold text-slate-900 tracking-tight leading-snug">
                 {lang === 'bn' ? 'সিস্টেম নোটিফিকেশন হাব' : 'Notification Hub'}
               </h2>
-              <p className="text-[11px] text-slate-500 font-medium">
+              <p className="text-[11px] text-slate-500 font-medium leading-tight">
                 {lang === 'bn' ? 'বোনাস, লগইন ও র‍্যাঙ্কিং আপডেট' : 'Bonus, Login & Ranking Updates'}
               </p>
             </div>
@@ -195,15 +195,15 @@ export default function NotificationModal({ lang, onClose }: NotificationModalPr
           <div className="flex items-center gap-2">
             <button
               onClick={markAllAsRead}
-              className="text-[11px] font-bold text-indigo-600 hover:text-indigo-700 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-xl transition-all cursor-pointer"
+              className="text-[11px] font-bold text-indigo-600 hover:text-indigo-700 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg transition-all cursor-pointer leading-none"
             >
               {lang === 'bn' ? 'সব পঠিত করুন' : 'Mark Read'}
             </button>
             <button
               onClick={onClose}
-              className="w-9 h-9 rounded-full bg-slate-200/70 hover:bg-slate-300 text-slate-700 flex items-center justify-center transition-all cursor-pointer"
+              className="w-8 h-8 rounded-full bg-slate-200/70 hover:bg-slate-300 text-slate-700 flex items-center justify-center transition-all cursor-pointer"
             >
-              <Icons.X className="w-5 h-5" />
+              <Icons.X className="w-4 h-4" />
             </button>
           </div>
         </div>

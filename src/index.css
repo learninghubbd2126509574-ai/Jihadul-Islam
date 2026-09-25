@@ -1,9 +1,13 @@
-@import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Plus Jakarta Sans", "Hind Siliguri", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --font-sans: "Plus Jakarta Sans", "Hind Siliguri", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.25rem;
+  --radius-3xl: 1.25rem;
+  --radius-card: 1.25rem;
 }
 
 @keyframes shimmer {
@@ -21,106 +25,181 @@
   }
 }
 
-body {
-  background-color: #eef3f8;
-  color: #1e293b;
-  font-family: var(--font-sans);
+@keyframes float-subtle {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
 }
 
-/* Claymorphism Utility Classes */
+:root {
+  -webkit-tap-highlight-color: transparent;
+  text-rendering: optimizeLegibility;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
+
+body {
+  background-color: #f8fafc;
+  color: #0f172a;
+  font-family: var(--font-sans);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Tabular figures for money, scores, and dates */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Hide scrollbars while allowing scroll */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* App Shell Geometry & Elevated Card System */
 .clay-card {
   background: #ffffff;
-  border-radius: 1.5rem;
+  border-radius: 1.25rem;
+  border: 1px solid rgba(226, 232, 240, 0.85);
   box-shadow: 
-    8px 8px 18px rgba(166, 180, 200, 0.35),
-    -8px -8px 18px rgba(255, 255, 255, 0.95),
-    inset 2px 2px 4px rgba(255, 255, 255, 0.8),
-    inset -2px -2px 4px rgba(0, 0, 0, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.9);
+    0 1px 3px 0 rgba(15, 23, 42, 0.04),
+    0 4px 12px -2px rgba(15, 23, 42, 0.05);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease;
+}
+
+.clay-card:hover {
+  border-color: rgba(203, 213, 225, 1);
 }
 
 .clay-card-blue {
-  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  background: linear-gradient(135deg, #1d4ed8, #2563eb 60%, #3b82f6);
   color: #ffffff;
-  border-radius: 1.5rem;
+  border-radius: 1.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
   box-shadow: 
-    8px 8px 20px rgba(37, 99, 235, 0.35),
-    -4px -4px 14px rgba(255, 255, 255, 0.3),
-    inset 3px 3px 6px rgba(255, 255, 255, 0.35),
-    inset -3px -3px 6px rgba(0, 0, 0, 0.2);
+    0 4px 16px -2px rgba(37, 99, 235, 0.3),
+    0 1px 3px 0 rgba(37, 99, 235, 0.2);
 }
 
 .clay-card-subtle {
   background: #f8fafc;
   border-radius: 1.25rem;
-  box-shadow: 
-    4px 4px 10px rgba(166, 180, 200, 0.25),
-    -4px -4px 10px rgba(255, 255, 255, 0.8),
-    inset 2px 2px 3px rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  box-shadow: 0 1px 2px 0 rgba(15, 23, 42, 0.03);
 }
 
+.app-card {
+  background: #ffffff;
+  border-radius: 1.25rem;
+  padding: 1rem;
+  border: 1px solid rgba(226, 232, 240, 0.85);
+  box-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.04);
+}
+
+.app-container {
+  padding: 1rem;
+}
+
+/* Polished Modern Buttons */
 .clay-btn-primary {
-  background: linear-gradient(145deg, #3b82f6, #1d4ed8);
+  background: linear-gradient(145deg, #2563eb, #1d4ed8);
   color: #ffffff;
-  border-radius: 9999px;
-  box-shadow: 
-    4px 4px 10px rgba(37, 99, 235, 0.35),
-    inset 2px 2px 4px rgba(255, 255, 255, 0.4),
-    inset -2px -2px 4px rgba(0, 0, 0, 0.2);
-  transition: all 0.15s ease-in-out;
+  border-radius: 0.875rem;
+  font-weight: 600;
+  box-shadow: 0 2px 6px 0 rgba(37, 99, 235, 0.3);
+  transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.clay-btn-primary:hover {
+  background: linear-gradient(145deg, #3b82f6, #2563eb);
+  box-shadow: 0 4px 12px 0 rgba(37, 99, 235, 0.35);
 }
 
 .clay-btn-primary:active {
   transform: scale(0.97);
-  box-shadow: 
-    inset 3px 3px 6px rgba(0, 0, 0, 0.3),
-    inset -2px -2px 4px rgba(255, 255, 255, 0.2);
+  box-shadow: 0 1px 2px 0 rgba(37, 99, 235, 0.4);
 }
 
 .clay-btn-emerald {
-  background: linear-gradient(145deg, #10b981, #047857);
+  background: linear-gradient(145deg, #059669, #047857);
   color: #ffffff;
-  border-radius: 9999px;
-  box-shadow: 
-    4px 4px 10px rgba(16, 185, 129, 0.35),
-    inset 2px 2px 4px rgba(255, 255, 255, 0.4),
-    inset -2px -2px 4px rgba(0, 0, 0, 0.2);
+  border-radius: 0.875rem;
+  font-weight: 600;
+  box-shadow: 0 2px 6px 0 rgba(5, 150, 105, 0.3);
+  transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.clay-btn-emerald:active {
+  transform: scale(0.97);
 }
 
 .clay-btn-secondary {
-  background: linear-gradient(145deg, #ffffff, #e2e8f0);
-  color: #334155;
-  border-radius: 9999px;
-  box-shadow: 
-    4px 4px 10px rgba(166, 180, 200, 0.3),
-    -4px -4px 10px rgba(255, 255, 255, 0.9),
-    inset 2px 2px 3px rgba(255, 255, 255, 0.9);
+  background: #ffffff;
+  color: #1e293b;
+  border-radius: 0.875rem;
+  font-weight: 600;
+  border: 1px solid rgba(203, 213, 225, 0.8);
+  box-shadow: 0 1px 2px 0 rgba(15, 23, 42, 0.04);
+  transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.clay-btn-secondary:hover {
+  background: #f8fafc;
+  border-color: rgba(148, 163, 184, 0.8);
+}
+
+.clay-btn-secondary:active {
+  transform: scale(0.97);
 }
 
 .clay-pill {
   background: #f1f5f9;
   border-radius: 9999px;
-  box-shadow: 
-    inset 2px 2px 4px rgba(166, 180, 200, 0.25),
-    inset -2px -2px 4px rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(226, 232, 240, 0.8);
 }
 
 .clay-input {
-  background: #f8fafc;
-  border-radius: 1rem;
-  box-shadow: 
-    inset 3px 3px 6px rgba(166, 180, 200, 0.25),
-    inset -3px -3px 6px rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(203, 213, 225, 0.6);
+  background: #ffffff;
+  border-radius: 0.875rem;
+  border: 1px solid #cbd5e1;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
+.clay-input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+  outline: none;
+}
+
+/* Floating App Bottom Navigation */
 .clay-nav {
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(226, 232, 240, 0.9);
   box-shadow: 
-    0 -8px 24px rgba(166, 180, 200, 0.25),
-    inset 0 2px 3px rgba(255, 255, 255, 0.9);
-  border-top: 1px solid rgba(255, 255, 255, 0.9);
+    0 -4px 20px -2px rgba(15, 23, 42, 0.08),
+    0 1px 3px 0 rgba(15, 23, 42, 0.03);
 }
 
+/* Safe area support for notched phones */
+.pb-safe {
+  padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+}

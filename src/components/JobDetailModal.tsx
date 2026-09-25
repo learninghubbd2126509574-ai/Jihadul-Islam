@@ -4,6 +4,8 @@ import { Job, UserProfile } from '../types';
 import { MicroTask, getLocalMicroTasks, saveLocalMicroTasks } from '../data/microJobs';
 import { getSubTasks, productCodeEntryData, clientsData, SubTask } from '../data/jobSubtasks';
 import { INITIAL_RESELLING_PRODUCTS, ResellingProduct } from '../data/resellingProducts';
+import { DAILY_PROJECTS } from '../data/dailyProjects';
+import { getJobTheme } from './JobCard';
 import LuckySpinFeed from './LuckySpinFeed';
 import GamingTournamentWorkspace from './GamingTournamentWorkspace';
 import SimOfferWorkspace from './SimOfferWorkspace';
@@ -1291,11 +1293,12 @@ export default function JobDetailModal({
     setModSubmitted(true);
   };
 
-  const IconComponent = (Icons as any)[job.iconName] || Icons.Briefcase;
+  const jobTheme = getJobTheme(job.id, job.iconName);
+  const IconComponent = (Icons as any)[jobTheme.iconName] || (Icons as any)[job.iconName] || Icons.Briefcase;
 
   return (
     <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 md:p-6 overflow-y-auto animate-fade-in">
-      <div className="bg-white w-full h-full md:h-auto md:max-w-7xl md:rounded-3xl shadow-2xl flex flex-col md:max-h-[92vh] overflow-hidden border border-slate-100 animate-slide-up" id="job-detail-container">
+      <div className="bg-white w-full h-full md:h-auto md:max-w-7xl md:rounded-[1.25rem] shadow-2xl flex flex-col md:max-h-[92vh] overflow-hidden border border-slate-100 animate-slide-up" id="job-detail-container">
         {/* Modal Header */}
         <div className="bg-slate-900 text-white px-3 sm:px-5 py-2.5 flex items-center justify-between border-b border-slate-800 relative shadow-md gap-2 shrink-0 min-h-[48px]">
           {activeSubTaskId ? (
@@ -1328,8 +1331,9 @@ export default function JobDetailModal({
           ) : (
             /* Standard job header when browsing tasks */
             <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
-              <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-xl ${job.bgColor} flex items-center justify-center shrink-0`}>
-                <IconComponent className={`w-4 h-4 sm:w-6 sm:h-6 ${job.iconColor}`} />
+              <div className={`w-9 h-9 sm:w-11 sm:h-11 rounded-2xl bg-gradient-to-br ${jobTheme.gradient} text-white flex items-center justify-center shrink-0 shadow-md ${jobTheme.shadow} border ${jobTheme.border} relative overflow-hidden`}>
+                <div className="absolute inset-0 bg-gradient-to-b from-white/30 via-white/5 to-transparent pointer-events-none" />
+                <IconComponent className="w-5 h-5 sm:w-6 sm:h-6 text-white drop-shadow-sm relative z-10 stroke-[2.2px]" />
               </div>
               <div className="min-w-0">
                 <h2 className="font-bold text-sm sm:text-base md:text-lg leading-tight flex items-center gap-2 truncate">
@@ -1374,7 +1378,7 @@ export default function JobDetailModal({
         </div>
 
         {/* Modal Scrollable Content */}
-        <div className="p-3 sm:p-4 md:p-5 overflow-y-auto flex-1 bg-slate-50/50">
+        <div className="p-4 sm:p-5 overflow-y-auto flex-1 bg-slate-50/50">
           <div className="space-y-4">
               {!activeSubTaskId ? (
                 job.id === 'gaming-tournament' ? (
@@ -1386,37 +1390,32 @@ export default function JobDetailModal({
                     onBack={onClose}
                   />
                 ) : job.id === 'daily-work' ? (
-                  <div className="bg-orange-500 rounded-3xl p-6 shadow-xl relative overflow-hidden animate-fade-in">
+                  <div className="bg-gradient-to-br from-blue-600 via-indigo-600 to-violet-700 rounded-[1.25rem] p-4 sm:p-5 shadow-lg relative overflow-hidden animate-fade-in border border-blue-400/40">
                     <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
-                    <div className="absolute bottom-0 left-0 w-40 h-40 bg-black/5 rounded-full blur-2xl pointer-events-none -ml-10 -mb-10" />
+                    <div className="absolute bottom-0 left-0 w-40 h-40 bg-blue-950/40 rounded-full blur-2xl pointer-events-none -ml-10 -mb-10" />
                     
-                    <div className="flex items-center gap-3 mb-6 relative z-10">
-                      <Icons.Layers className="w-8 h-8 text-white" />
-                      <h2 className="text-xl md:text-2xl font-black text-white">
-                        {lang === 'bn' ? 'আমাদের প্রজেক্ট সমূহ' : 'Our Projects'}
-                      </h2>
+                    <div className="flex items-center justify-between gap-2 mb-4 relative z-10 border-b border-white/20 pb-3">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-10 h-10 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-white border border-white/30 shrink-0">
+                          <Icons.Layers className="w-5 h-5 text-white" />
+                        </div>
+                        <div>
+                          <h2 className="text-base sm:text-lg font-bold text-white tracking-tight leading-snug">
+                            {lang === 'bn' ? 'আমাদের প্রজেক্ট সমূহ' : 'Our Projects'}
+                          </h2>
+                          <p className="text-blue-100 text-xs font-medium">
+                            {lang === 'bn' ? 'পছন্দের প্রজেক্ট সিলেক্ট করে কাজ শুরু করুন' : 'Select a project to start working'}
+                          </p>
+                        </div>
+                      </div>
+                      <span className="text-[11px] font-bold text-blue-900 bg-white/95 px-2.5 py-1 rounded-xl shadow-xs shrink-0">
+                        {lang === 'bn' ? `${DAILY_PROJECTS.length}টি প্রজেক্ট` : `${DAILY_PROJECTS.length} Projects`}
+                      </span>
                     </div>
 
-                    <div className="grid grid-cols-3 sm:grid-cols-4 gap-y-6 gap-x-2 relative z-10">
-                      {[
-                        { id: 'dw-like-earning', nameEn: 'Like Earning', nameBn: 'লাইক আর্নিং', icon: 'Heart', color: 'text-rose-500' },
-                        { id: 'dw-lucky-spin', nameEn: 'Lucky Spin', nameBn: 'লাকি স্পিন', icon: 'Dices', color: 'text-amber-500' },
-                        { id: 'dw-mobile-recharge', nameEn: 'Mobile Recharge', nameBn: 'মোবাইল রিচার্জ', icon: 'Smartphone', color: 'text-blue-500' },
-                        { id: 'dw-drive-offer', nameEn: 'Drive Offer', nameBn: 'ড্রাইভ অফার', icon: 'Radio', color: 'text-teal-500' },
-                        { id: 'dw-online-shop', nameEn: 'Online Shop', nameBn: 'অনলাইন শপ', icon: 'ShoppingCart', color: 'text-emerald-500' },
-                        { id: 'dw-ads-view', nameEn: 'Ads View', nameBn: 'এডস ভিউ', icon: 'Video', color: 'text-rose-500' },
-                        { id: 'dw-micro-job', nameEn: 'Micro Job', nameBn: 'মাইক্রো জব', icon: 'ListChecks', color: 'text-blue-600' },
-                        { id: 'dw-job-post', nameEn: 'Job Post', nameBn: 'জব পোস্ট', icon: 'Upload', color: 'text-orange-500' },
-                        { id: 'dw-social-marketing', nameEn: 'Social Marketing', nameBn: 'সোশ্যাল মিডিয়া মার্কেটিং', icon: 'Store', color: 'text-purple-500' },
-                        { id: 'dw-smart-earning', nameEn: 'Smart Earning', nameBn: 'স্মার্ট আর্নিং', icon: 'Wallet', color: 'text-teal-600' },
-                        { id: 'dw-learning-earning', nameEn: 'Learning & Earning', nameBn: 'লার্নিং & আর্নিং', icon: 'BookOpen', color: 'text-slate-600' },
-                        { id: 'dw-leadership', nameEn: 'Leadership', nameBn: 'লিডারশিপ', icon: 'Trophy', color: 'text-yellow-500' },
-                        { id: 'dw-target-bonus', nameEn: 'Target Bonus', nameBn: 'টার্গেট বোনাস', icon: 'Target', color: 'text-indigo-500' },
-                        { id: 'dw-monthly-salary', nameEn: 'Monthly Salary', nameBn: 'মাসিক বেতন', icon: 'Coins', color: 'text-green-600' },
-                        { id: 'dw-quran-education', nameEn: 'Quran Education', nameBn: 'কোরআন শিক্ষা', icon: 'Book', color: 'text-emerald-600' },
-                        { id: 'dw-football-game', nameEn: 'Football Game', nameBn: 'ফুটবল খেলা', icon: 'Gamepad2', color: 'text-indigo-600' },
-                      ].map((item) => {
-                        const IconComponent = Icons[item.icon as keyof typeof Icons] as React.ElementType;
+                    <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2.5 relative z-10">
+                      {DAILY_PROJECTS.map((item) => {
+                        const IconComponent = (Icons as any)[item.icon] || Icons.Layers;
                         return (
                           <div
                             key={item.id}
@@ -1424,15 +1423,38 @@ export default function JobDetailModal({
                               setActiveSubTaskId(item.id);
                               setTaskStatus('idle');
                             }}
-                            className="flex flex-col items-center gap-2 cursor-pointer group"
+                            className="group relative bg-white hover:bg-slate-50/95 rounded-[1.25rem] p-2.5 flex flex-col items-center justify-between text-center cursor-pointer transition-all duration-200 hover:-translate-y-1 hover:shadow-md active:scale-95 border border-slate-200 shadow-2xs min-h-[110px]"
+                            role="button"
+                            tabIndex={0}
                           >
-                            <div className="w-14 h-14 md:w-16 md:h-16 bg-white rounded-full flex items-center justify-center shadow-sm group-hover:scale-105 group-active:scale-95 transition-all duration-300 relative">
-                              <div className="absolute inset-0 bg-white/20 rounded-full blur-md opacity-0 group-hover:opacity-100 transition-opacity" />
-                              <IconComponent className={`w-7 h-7 md:w-8 md:h-8 ${item.color}`} />
+                            {/* Floating Micro Badge */}
+                            {item.badge && (
+                              <span
+                                className={`absolute -top-1.5 -right-1 text-[8px] font-bold px-1.5 py-0.5 rounded-full shadow-xs leading-none border border-white z-20 ${
+                                  item.badgeColor || 'bg-rose-600 text-white'
+                                }`}
+                              >
+                                {item.badge}
+                              </span>
+                            )}
+
+                            {/* 3D App-Style Squircle Icon Box */}
+                            <div
+                              className={`w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-gradient-to-br ${item.gradient} text-white flex items-center justify-center shrink-0 shadow-sm ${item.shadow} border border-white/30 relative overflow-hidden transition-transform duration-300 group-hover:scale-105`}
+                            >
+                              <div className="absolute inset-0 bg-gradient-to-b from-white/35 via-white/5 to-transparent pointer-events-none" />
+                              <IconComponent className="w-5 h-5 text-white stroke-[2.2px] relative z-10 drop-shadow-xs" />
                             </div>
-                            <span className="text-white text-[11px] md:text-xs font-semibold text-center leading-tight">
-                              {lang === 'bn' ? item.nameBn : item.nameEn}
-                            </span>
+
+                            {/* Title & Reward */}
+                            <div className="w-full mt-1.5">
+                              <span className="text-slate-800 text-[10.5px] sm:text-xs font-bold text-center leading-tight line-clamp-1 block group-hover:text-blue-600 transition-colors">
+                                {lang === 'bn' ? item.nameBn : item.nameEn}
+                              </span>
+                              <span className="text-[9px] text-emerald-700 bg-emerald-50 px-1.5 py-0.2 rounded font-semibold border border-emerald-200/60 inline-block mt-0.5 truncate max-w-full">
+                                {lang === 'bn' ? item.rewardBn : item.rewardEn}
+                              </span>
+                            </div>
                           </div>
                         );
                       })}
@@ -1441,15 +1463,15 @@ export default function JobDetailModal({
                 ) : (
                 // Related Tasks Directory
                 <div className="space-y-4">
-                  <div className="bg-slate-900 text-white p-5 rounded-2xl relative overflow-hidden border border-slate-800 shadow-lg">
+                  <div className="bg-slate-900 text-white p-4 sm:p-5 rounded-[1.25rem] relative overflow-hidden border border-slate-800 shadow-md">
                     <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none" />
-                    <span className="text-[10px] bg-emerald-500 text-slate-900 font-extrabold px-2.5 py-1 rounded uppercase tracking-wider mb-2.5 inline-block">
+                    <span className="text-[10px] bg-emerald-500 text-slate-900 font-bold px-2.5 py-0.5 rounded uppercase tracking-wider mb-2 inline-block leading-tight">
                       {lang === 'bn' ? 'কাজের তালিকা' : 'ACTIVE CONTRACTS'}
                     </span>
-                    <h3 className="font-bold text-sm md:text-base mb-1.5">
+                    <h3 className="font-bold text-sm md:text-base mb-1 leading-snug tracking-tight">
                       {lang === 'bn' ? `${job.titleBn} ক্যাটাগরি` : `${job.titleEn} Category`}
                     </h3>
-                    <p className="text-slate-300 text-xs leading-relaxed">
+                    <p className="text-slate-300 text-xs leading-relaxed font-medium">
                       {lang === 'bn' 
                         ? 'নিচে এই ক্যাটাগরির সমস্ত সরাসরি কাজ ও প্রজেক্টের তালিকা দেওয়া হলো। যেকোনো একটি কাজ বেছে নিয়ে শুরু করুন।'
                         : 'Find active project contracts under this category below. Select a project to enter its workflow.'}

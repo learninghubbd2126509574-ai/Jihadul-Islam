@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primary_blue">#2563EB</color>
+    <color name="primary_dark">#1D4ED8</color>
+    <color name="accent_gold">#D97706</color>
+    <color name="emerald_green">#059669</color>
+    <color name="background_light">#F8FAFC</color>
+    <color name="surface_card">#FFFFFF</color>
+</resources>
