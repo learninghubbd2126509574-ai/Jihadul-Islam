@@ -539,45 +539,58 @@ export default function QuizTab({ profile, updateProfile, addLog, lang }: QuizTa
   return (
     <div className="space-y-4 pb-24 animate-fade-in">
       {/* HEADER HERO CARD */}
-      <div className="bg-gradient-to-br from-indigo-900 to-slate-900 text-white rounded-[1.25rem] p-4 sm:p-5 border border-slate-800 shadow-md relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-36 h-36 bg-indigo-500/10 rounded-full blur-2xl -mr-12 -mt-12" />
-        <div className="relative z-10 flex justify-between items-center">
+      <div className="bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 text-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 border border-slate-800 shadow-xl relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-48 h-48 bg-indigo-500/10 rounded-full blur-3xl -mr-12 -mt-12 pointer-events-none" />
+        <div className="relative z-10 flex justify-between items-center gap-3">
           <div className="space-y-1">
-            <span className="text-[10px] bg-indigo-500/30 text-indigo-300 font-extrabold uppercase px-2.5 py-0.5 rounded-full tracking-wider border border-indigo-400/20 leading-tight">
-              {lang === 'bn' ? 'অনলাইন প্রতিযোগিতা' : 'Online Tournament'}
-            </span>
-            <h2 className="text-base sm:text-lg font-bold tracking-tight pt-1 leading-snug">
-              {lang === 'bn' ? 'কুইজ মেগা প্রতিযোগিতা' : 'Mega Quiz Competition'}
+            <div className="flex items-center gap-2">
+              <span className="text-[9.5px] bg-amber-400 text-slate-950 font-black uppercase px-2.5 py-0.5 rounded-full tracking-wider shadow-xs leading-tight inline-block">
+                {lang === 'bn' ? 'মেগা কুইজ প্রতিযোগিতা' : 'Mega Quiz Tournament'}
+              </span>
+              <span className="text-[10px] text-emerald-400 font-mono font-bold flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                {lang === 'bn' ? 'সরাসরি নগদ ক্যাশ' : 'Instant Cash'}
+              </span>
+            </div>
+            <h2 className="text-base sm:text-lg font-black tracking-tight pt-0.5 leading-snug text-white">
+              {lang === 'bn' ? 'ডেইলি কুইজ ও বোনাস আর্নিং' : 'Daily Quiz & Bonus Earnings'}
             </h2>
             <p className="text-xs text-slate-300 font-medium leading-relaxed">
-              {lang === 'bn' ? '৫০টি প্রশ্নের সঠিক উত্তর দিয়ে জিতে নিন আকর্ষণীয় প্রাইজ!' : 'Answer 50 MCQ questions to claim instant bonus!'}
+              {lang === 'bn' ? '৫০টি প্রশ্নের সঠিক উত্তর দিয়ে জিতে নিন আকর্ষণীয় নগদ প্রাইজ!' : 'Answer 50 questions correctly to win instant cash bonus!'}
             </p>
           </div>
-          <Icons.Trophy className="w-10 h-10 sm:w-11 sm:h-11 text-amber-400 drop-shadow-[0_4px_10px_rgba(251,191,36,0.3)] shrink-0 ml-3 animate-pulse" />
+          <div className="w-12 h-12 rounded-2xl bg-amber-400/20 border border-amber-400/40 flex items-center justify-center shrink-0 shadow-inner">
+            <Icons.Trophy className="w-7 h-7 text-amber-400 drop-shadow-[0_2px_8px_rgba(251,191,36,0.5)]" />
+          </div>
         </div>
       </div>
 
       {/* TOURNAMENT ANNOUNCEMENT BANNER */}
-      <div className="bg-gradient-to-r from-amber-500/10 via-orange-500/10 to-indigo-500/10 border border-amber-500/30 rounded-[1.25rem] p-4 flex items-start gap-3.5 shadow-xs">
-        <div className="bg-amber-500/20 p-2 rounded-xl text-amber-700 shrink-0">
-          <Icons.Trophy className="w-5 h-5 animate-bounce" />
+      <div className="bg-gradient-to-r from-amber-500/15 via-yellow-500/10 to-emerald-500/10 border border-amber-400/30 rounded-2xl p-3.5 sm:p-4 flex items-center justify-between gap-3 shadow-2xs">
+        <div className="flex items-center gap-2.5 min-w-0">
+          <div className="bg-amber-400 p-2 rounded-xl text-slate-950 shrink-0 font-bold">
+            <Icons.Award className="w-4 h-4 text-slate-950" />
+          </div>
+          <div className="min-w-0">
+            <h4 className="font-black text-slate-900 text-xs sm:text-sm tracking-tight leading-snug">
+              {lang === 'bn' ? '🏆 স্পেশাল কুইজ রিওয়ার্ড অফার' : '🏆 Special Quiz Reward Offer'}
+            </h4>
+            <p className="text-[11px] text-slate-600 font-medium truncate">
+              {lang === 'bn' 
+                ? 'প্রতিটি সঠিক উত্তরে পাবেন ২ টাকা নগদ বোনাস সরাসরি মূল ব্যালেন্সে!' 
+                : 'Get ৳2 instant bonus credited for each correct answer!'}
+            </p>
+          </div>
         </div>
-        <div className="space-y-0.5">
-          <h4 className="font-bold text-amber-950 text-xs sm:text-sm tracking-tight flex items-center gap-1.5 leading-snug">
-            {lang === 'bn' ? '🏆 স্পেশাল কুইজ প্রতিযোগিতা অফার!' : '🏆 Special Quiz Competition Offer!'}
-          </h4>
-          <p className="text-[11px] sm:text-xs text-amber-900 font-semibold leading-relaxed">
-            {lang === 'bn' 
-              ? '৫০টি কুইজের এই প্রতিযোগিতায় অংশগ্রহণকারী প্রথম ১০ জন বিজয়ী সরাসরি পাবেন ১৫০ টাকা করে বোনাস!' 
-              : 'The first 10 winners to successfully complete this 50-question competition will receive ৳150 bonus each!'}
-          </p>
-        </div>
+
+        <span className="text-[10px] font-black text-amber-950 bg-amber-200/90 border border-amber-300 px-2.5 py-1 rounded-xl shrink-0 font-mono">
+          +৳২.০০ / উত্তর
+        </span>
       </div>
 
       {/* 1. WELCOME SCREEN */}
       {gameState === 'welcome' && (
         <div className="bg-white rounded-[1.25rem] p-4 sm:p-5 border border-slate-200 shadow-sm space-y-4">
-          {/* Rules: super short and concise */}
           <div className="space-y-1">
             <h3 className="font-bold text-[#0f172a] text-xs sm:text-sm uppercase tracking-wide flex items-center gap-1.5 leading-snug">
               <Icons.Award className="w-4 h-4 text-indigo-600" />
@@ -590,51 +603,9 @@ export default function QuizTab({ profile, updateProfile, addLog, lang }: QuizTa
             </p>
           </div>
 
-          {/* Job Commissions List directly addressing: "কোন কাজে কত টাকা এটা লিখ" */}
-          <div className="bg-slate-50/60 rounded-xl p-3 border border-slate-100 space-y-2">
-            <h4 className="text-[11px] font-bold text-slate-700 border-b border-slate-200/60 pb-1 flex justify-between">
-              <span>{lang === 'bn' ? 'কাজের তালিকা' : 'Job Title'}</span>
-              <span>{lang === 'bn' ? 'কমিশন / টাকা' : 'Commission Rate'}</span>
-            </h4>
-            <div className="grid grid-cols-1 divide-y divide-slate-100 text-[11px] text-slate-600">
-              <div className="py-1 flex justify-between">
-                <span className="font-medium">{lang === 'bn' ? '• টাইপিং জব (Typing)' : '• Typing Job'}</span>
-                <span className="font-bold text-indigo-600">৳২৫০ - ৳৪০০</span>
-              </div>
-              <div className="py-1 flex justify-between">
-                <span className="font-medium">{lang === 'bn' ? '• লিড জেনারেশন (Lead Gen)' : '• Lead Gen'}</span>
-                <span className="font-bold text-indigo-600">৳৪৫০ - ৳৭০০</span>
-              </div>
-              <div className="py-1 flex justify-between">
-                <span className="font-medium">{lang === 'bn' ? '• প্রোডাক্ট রিসেলিং (Reselling)' : '• Reselling'}</span>
-                <span className="font-bold text-indigo-600">৳৪৫০ - ৳১২০০</span>
-              </div>
-              <div className="py-1 flex justify-between">
-                <span className="font-medium">{lang === 'bn' ? '• ইমেইল MARKETING (Email)' : '• Email Marketing'}</span>
-                <span className="font-bold text-indigo-600">৳৪২০ - ৳৬৫০</span>
-              </div>
-              <div className="py-1 flex justify-between">
-                <span className="font-medium">{lang === 'bn' ? '• ডিজিটাল মার্কেটিং (Digital)' : '• Digital Marketing'}</span>
-                <span className="font-bold text-indigo-600">৳৩৮০ - ৳৫৫০</span>
-              </div>
-              <div className="py-1 flex justify-between">
-                <span className="font-medium">{lang === 'bn' ? '• ফটো এডিটিং (Photo Edit)' : '• Photo Editing'}</span>
-                <span className="font-bold text-indigo-600">৳৩০০ - ৳৫৫০</span>
-              </div>
-              <div className="py-1 flex justify-between">
-                <span className="font-medium">{lang === 'bn' ? '• ভিডিও এডিটিং (Video Edit)' : '• Video Editing'}</span>
-                <span className="font-bold text-indigo-600">৳৪৫০ - ৳৮০০</span>
-              </div>
-              <div className="py-1 flex justify-between">
-                <span className="font-medium">{lang === 'bn' ? '• কম্পিউটার ট্রেইনিং (Training)' : '• Computer Training'}</span>
-                <span className="font-bold text-indigo-600">৳৩৫০ - ৳৬০০</span>
-              </div>
-            </div>
-          </div>
-
           <button
             onClick={handleStartQuiz}
-            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold py-3 rounded-xl text-xs tracking-wider transition-all active:scale-[0.98] shadow-sm flex items-center justify-center gap-2 cursor-pointer"
+            className="w-full bg-slate-900 hover:bg-slate-800 text-white font-black py-3.5 rounded-2xl text-xs tracking-wide transition-all active:scale-[0.98] shadow-md flex items-center justify-center gap-2 cursor-pointer"
           >
             <Icons.Play className="w-4 h-4 fill-white" />
             {lang === 'bn' ? 'কুইজ প্রতিযোগিতা শুরু করুন' : 'Start Quiz Competition'}
@@ -644,63 +615,93 @@ export default function QuizTab({ profile, updateProfile, addLog, lang }: QuizTa
 
       {/* 2. PLAYING SCREEN */}
       {gameState === 'playing' && (
-        <div className="space-y-4">
-          
-          <div className="bg-emerald-100 border-2 border-emerald-500 rounded-xl p-3 flex justify-center items-center shadow-sm animate-pulse">
-            <span className="text-emerald-800 font-black text-sm md:text-base text-center">
-              {lang === 'bn' ? 'প্রত্যেকটি সঠিক উত্তরের জন্য পাবেন ২ টাকা করে বোনাস!' : 'You will get 2 Taka bonus for each correct answer!'}
-            </span>
-          </div>
+        <div className="space-y-3.5">
+          {/* Progress & Live Countdown Header */}
+          <div className="bg-white rounded-2xl border border-slate-200 p-3 sm:p-3.5 flex justify-between items-center shadow-xs">
+            <div className="flex items-center gap-2">
+              <span className="w-7 h-7 rounded-xl bg-indigo-50 border border-indigo-200 text-indigo-700 font-mono font-black text-xs flex items-center justify-center">
+                {currentIndex + 1}
+              </span>
+              <div className="flex flex-col">
+                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider leading-none">
+                  {lang === 'bn' ? 'প্রশ্ন অগ্রগতি' : 'Question'}
+                </span>
+                <span className="text-xs font-black text-slate-800 font-mono mt-0.5">
+                  {currentIndex + 1} / {QUESTIONS.length}
+                </span>
+              </div>
+            </div>
 
-          {/* Progress Header */}
-          <div className="bg-white rounded-xl border border-slate-200 p-3 flex justify-between items-center shadow-sm">
-            <span className="text-xs font-bold text-slate-500">
-              {lang === 'bn' ? `প্রশ্ন: ${currentIndex + 1} / ${QUESTIONS.length}` : `Question: ${currentIndex + 1} of ${QUESTIONS.length}`}
-            </span>
-            <div className="flex items-center gap-1.5 bg-amber-50 text-amber-800 font-bold px-2.5 py-1 rounded-full text-xs">
-              <Icons.Timer className="w-3.5 h-3.5 text-amber-600" />
+            {/* Countdown Timer with Dynamic Alert Color */}
+            <div className={`flex items-center gap-1.5 font-black px-3 py-1.5 rounded-xl text-xs border font-mono transition-colors ${
+              timeLeft <= 5 
+                ? 'bg-rose-50 text-rose-700 border-rose-300 animate-pulse' 
+                : timeLeft <= 10 
+                ? 'bg-amber-50 text-amber-700 border-amber-300' 
+                : 'bg-indigo-50 text-indigo-700 border-indigo-200'
+            }`}>
+              <Icons.Timer className="w-3.5 h-3.5 shrink-0" />
               <span>{timeLeft}s</span>
             </div>
-            <span className="text-xs font-bold text-indigo-600">
-              {lang === 'bn' ? `স্কোর: ${score}` : `Score: ${score}`}
-            </span>
+
+            {/* Live Score Ticker */}
+            <div className="flex items-center gap-1.5 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-xl text-emerald-800 font-black text-xs font-mono">
+              <Icons.Coins className="w-3.5 h-3.5 text-emerald-600" />
+              <span>{lang === 'bn' ? `স্কোর: ${score}` : `Score: ${score}`}</span>
+            </div>
           </div>
 
           {/* Progress Bar */}
-          <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+          <div className="w-full bg-slate-200/80 h-1.5 rounded-full overflow-hidden">
             <div
-              className="bg-indigo-600 h-full transition-all duration-300"
+              className="bg-gradient-to-r from-blue-600 to-indigo-600 h-full transition-all duration-300"
               style={{ width: `${((currentIndex + 1) / QUESTIONS.length) * 100}%` }}
             />
           </div>
 
           {/* Question Card */}
-          <div className="bg-white rounded-[1.25rem] p-4 sm:p-5 border border-slate-200 shadow-sm space-y-4">
-            <h3 className="font-bold text-slate-900 text-sm sm:text-base leading-snug tracking-tight">
+          <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 border border-slate-200/90 shadow-sm space-y-4">
+            <div className="flex items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
+              <span className="text-[10.5px] font-bold text-indigo-700 bg-indigo-50 px-2.5 py-0.5 rounded-lg border border-indigo-200/60 inline-flex items-center gap-1">
+                <Icons.HelpCircle className="w-3 h-3 text-indigo-500" />
+                {lang === 'bn' ? 'দক্ষতা ও আইটি জ্ঞান যাচাই' : 'General & IT Assessment'}
+              </span>
+              <span className="text-[10.5px] font-bold text-emerald-700 font-mono">
+                +৳২.০০ বোনাস
+              </span>
+            </div>
+
+            <h3 className="font-extrabold text-slate-900 text-sm sm:text-base leading-snug tracking-tight">
               {lang === 'bn' ? activeQuestion.questionBn : activeQuestion.questionEn}
             </h3>
 
-            {/* Options Grid */}
+            {/* Options Grid with Letter Badges A, B, C, D */}
             <div className="space-y-2.5">
               {(lang === 'bn' ? activeQuestion.optionsBn : activeQuestion.optionsEn).map((option, idx) => {
                 const isSelected = selectedOption === idx;
                 const isCorrectOption = idx === activeQuestion.answerIndex;
+                const optionLetters = ['A', 'B', 'C', 'D'];
 
-                let optClass = "border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-700";
+                let optClass = "border-slate-200/90 hover:border-indigo-300 hover:bg-slate-50 text-slate-700 bg-white";
+                let badgeClass = "bg-slate-100 text-slate-600 border-slate-200";
                 let icon = null;
 
                 if (isAnswered) {
                   if (isCorrectOption) {
-                    optClass = "border-emerald-500 bg-emerald-50 text-emerald-800 font-bold";
+                    optClass = "border-emerald-500 bg-emerald-50/90 text-emerald-900 font-bold shadow-xs";
+                    badgeClass = "bg-emerald-600 text-white border-emerald-600";
                     icon = <Icons.CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />;
                   } else if (isSelected) {
-                    optClass = "border-rose-500 bg-rose-50 text-rose-800 font-bold";
+                    optClass = "border-rose-500 bg-rose-50 text-rose-900 font-bold";
+                    badgeClass = "bg-rose-600 text-white border-rose-600";
                     icon = <Icons.XCircle className="w-4 h-4 text-rose-600 shrink-0" />;
                   } else {
                     optClass = "border-slate-100 bg-slate-50/50 text-slate-400 opacity-60";
+                    badgeClass = "bg-slate-100 text-slate-400 border-slate-200";
                   }
                 } else if (isSelected) {
-                  optClass = "border-indigo-500 bg-indigo-50 text-indigo-800 font-bold";
+                  optClass = "border-indigo-600 bg-indigo-50/80 text-indigo-950 font-bold shadow-xs";
+                  badgeClass = "bg-indigo-600 text-white border-indigo-600";
                 }
 
                 return (
@@ -708,9 +709,14 @@ export default function QuizTab({ profile, updateProfile, addLog, lang }: QuizTa
                     key={idx}
                     disabled={isAnswered}
                     onClick={() => handleOptionSelect(idx)}
-                    className={`w-full text-left p-3.5 rounded-xl border text-xs flex justify-between items-center transition-all duration-200 cursor-pointer ${optClass}`}
+                    className={`w-full text-left p-3.5 rounded-2xl border text-xs sm:text-[13px] flex justify-between items-center transition-all duration-200 cursor-pointer ${optClass}`}
                   >
-                    <span>{option}</span>
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <span className={`w-6 h-6 rounded-lg text-xs font-black flex items-center justify-center shrink-0 border ${badgeClass}`}>
+                        {optionLetters[idx]}
+                      </span>
+                      <span className="truncate leading-relaxed">{option}</span>
+                    </div>
                     {icon}
                   </button>
                 );
@@ -723,9 +729,9 @@ export default function QuizTab({ profile, updateProfile, addLog, lang }: QuizTa
                 <button
                   onClick={handleSubmitAnswer}
                   disabled={selectedOption === null}
-                  className="bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white font-bold px-6 py-2.5 rounded-xl text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+                  className="bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed text-white font-bold px-6 py-2.5 rounded-xl text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-xs active:scale-95"
                 >
-                  {lang === 'bn' ? 'উত্তর সাবমিট করুন' : 'Submit Answer'}
+                  {lang === 'bn' ? 'উত্তর নিশ্চিত করুন' : 'Confirm Answer'}
                   <Icons.Check className="w-4 h-4" />
                 </button>
               </div>
@@ -736,22 +742,22 @@ export default function QuizTab({ profile, updateProfile, addLog, lang }: QuizTa
               <div className="pt-2 animate-fade-in flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-t border-slate-100 mt-4">
                 <div className="text-xs">
                   {selectedOption === null ? (
-                    <span className="text-amber-600 font-semibold">
+                    <span className="text-amber-600 font-bold flex items-center gap-1">
                       ⚠️ {lang === 'bn' ? 'সময় শেষ হয়ে গেছে!' : 'Time is up!'}
                     </span>
                   ) : selectedOption === activeQuestion.answerIndex ? (
-                    <span className="text-emerald-600 font-bold">
-                      🎉 {lang === 'bn' ? 'সঠিক উত্তর! অভিনন্দন।' : 'Correct answer! Excellent.'}
+                    <span className="text-emerald-700 font-bold flex items-center gap-1">
+                      🎉 {lang === 'bn' ? 'সঠিক উত্তর! +২ টাকা যোগ হয়েছে।' : 'Correct answer! +৳2 bonus.'}
                     </span>
                   ) : (
-                    <span className="text-rose-600 font-semibold">
-                      ❌ {lang === 'bn' ? 'ভুল উত্তর! সঠিকটি চিহ্নিত করা হলো।' : 'Incorrect answer! Correct option highlighted.'}
+                    <span className="text-rose-600 font-bold flex items-center gap-1">
+                      ❌ {lang === 'bn' ? 'ভুল উত্তর! সঠিকটি চিহ্নিত হলো।' : 'Incorrect answer!'}
                     </span>
                   )}
                 </div>
                 <button
                   onClick={handleNext}
-                  className="bg-[#0f172a] hover:bg-slate-800 text-white font-bold px-5 py-2.5 rounded-xl text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer self-end"
+                  className="bg-slate-900 hover:bg-slate-800 text-white font-bold px-5 py-2.5 rounded-xl text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer self-end active:scale-95 shadow-xs"
                 >
                   {currentIndex === QUESTIONS.length - 1 ? (
                     lang === 'bn' ? 'ফলাফল দেখুন' : 'View Results'
@@ -771,14 +777,14 @@ export default function QuizTab({ profile, updateProfile, addLog, lang }: QuizTa
       {/* 3. COMPLETED RESULT SCREEN */}
       {gameState === 'completed' && (
         <div className="space-y-4">
-          <div className="bg-white rounded-[1.25rem] p-4 sm:p-6 border border-slate-200 shadow-sm text-center space-y-4">
-            <div className="w-14 h-14 bg-amber-50 text-amber-500 rounded-full flex items-center justify-center mx-auto shadow-inner border border-amber-100">
-              <Icons.Award className="w-8 h-8" />
+          <div className="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-6 border border-slate-200 shadow-md text-center space-y-4">
+            <div className="w-16 h-16 bg-amber-400 text-slate-950 rounded-2xl flex items-center justify-center mx-auto shadow-md border border-amber-300">
+              <Icons.Trophy className="w-9 h-9" />
             </div>
 
             <div className="space-y-1">
-              <h3 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight leading-snug">
-                {lang === 'bn' ? 'অভিনন্দন! কুইজ সম্পন্ন হয়েছে' : 'Congratulations! Quiz Completed'}
+              <h3 className="text-base sm:text-lg font-black text-slate-900 tracking-tight leading-snug">
+                {lang === 'bn' ? 'অভিনন্দন! কুইজ প্রতিযোগিতা সম্পন্ন হয়েছে' : 'Congratulations! Quiz Completed'}
               </h3>
               <p className="text-xs text-slate-500 font-medium leading-relaxed">
                 {lang === 'bn' ? 'আপনার দক্ষতা পরীক্ষা সফলভাবে শেষ হয়েছে।' : 'Your skill validation session completed successfully.'}
@@ -786,18 +792,18 @@ export default function QuizTab({ profile, updateProfile, addLog, lang }: QuizTa
             </div>
 
             {/* Scoreboard stats */}
-            <div className="grid grid-cols-2 gap-4 max-w-xs mx-auto py-3">
-              <div className="bg-slate-50 border border-slate-100 p-3 rounded-xl">
+            <div className="grid grid-cols-2 gap-3 max-w-xs mx-auto py-2">
+              <div className="bg-slate-50 border border-slate-200 p-3 rounded-2xl text-center">
                 <span className="text-[10px] text-slate-400 font-bold block uppercase tracking-wide">
-                  {lang === 'bn' ? 'প্রাপ্ত নম্বর' : 'Final Score'}
+                  {lang === 'bn' ? 'প্রাপ্ত স্কোর' : 'Final Score'}
                 </span>
-                <span className="text-lg font-black text-indigo-600">{score} / {QUESTIONS.length}</span>
+                <span className="text-xl font-black text-indigo-700 font-mono">{score} / {QUESTIONS.length}</span>
               </div>
-              <div className="bg-emerald-50/40 border border-emerald-100 p-3 rounded-xl">
-                <span className="text-[10px] text-emerald-600 font-bold block uppercase tracking-wide">
-                  {lang === 'bn' ? 'অর্জিত কমিশন' : 'Earnings'}
+              <div className="bg-emerald-50 border border-emerald-200 p-3 rounded-2xl text-center">
+                <span className="text-[10px] text-emerald-700 font-bold block uppercase tracking-wide">
+                  {lang === 'bn' ? 'অর্জিত বোনাস' : 'Earnings'}
                 </span>
-                <span className="text-lg font-black text-emerald-600">
+                <span className="text-xl font-black text-emerald-700 font-mono">
                   {lang === 'bn' ? `৳${getRewardAmount().toFixed(0)}` : `$${getRewardAmount().toFixed(2)}`}
                 </span>
               </div>
@@ -807,14 +813,14 @@ export default function QuizTab({ profile, updateProfile, addLog, lang }: QuizTa
             {!claimed ? (
               <button
                 onClick={handleClaimReward}
-                className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-3.5 rounded-xl text-xs tracking-wide transition-all active:scale-[0.98] flex items-center justify-center gap-2 cursor-pointer shadow-md"
+                className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-3.5 rounded-2xl text-xs tracking-wide transition-all active:scale-[0.98] flex items-center justify-center gap-2 cursor-pointer shadow-md"
               >
                 <Icons.CheckCircle2 className="w-4 h-4" />
                 {lang === 'bn' ? 'ব্যালেন্স অ্যাকাউন্টে টাকা যোগ করুন' : 'Claim Reward & Add to Balance'}
               </button>
             ) : (
-              <div className="bg-emerald-100 border border-emerald-200 text-emerald-800 font-bold rounded-xl py-3 text-xs flex items-center justify-center gap-1.5">
-                <Icons.CheckCircle2 className="w-4.5 h-4.5" />
+              <div className="bg-emerald-100 border border-emerald-300 text-emerald-900 font-bold rounded-2xl py-3.5 text-xs flex items-center justify-center gap-1.5 shadow-2xs">
+                <Icons.CheckCircle2 className="w-4.5 h-4.5 text-emerald-700" />
                 <span>
                   {lang === 'bn'
                     ? 'টাকা ব্যালেন্সে সফলভাবে যোগ করা হয়েছে!'
@@ -836,8 +842,9 @@ export default function QuizTab({ profile, updateProfile, addLog, lang }: QuizTa
           </div>
 
           {/* Quick Quiz History Details review */}
-          <div className="bg-white rounded-2xl border border-slate-200 p-4 space-y-3 shadow-sm">
-            <h4 className="font-extrabold text-[#0f172a] text-xs uppercase tracking-wide">
+          <div className="bg-white rounded-2xl sm:rounded-3xl border border-slate-200 p-4 space-y-3 shadow-xs">
+            <h4 className="font-extrabold text-[#0f172a] text-xs uppercase tracking-wide flex items-center gap-1.5">
+              <Icons.ListChecks className="w-4 h-4 text-indigo-600" />
               {lang === 'bn' ? 'আপনার উত্তর পর্যালোচনা:' : 'Your Answer Sheet Review:'}
             </h4>
 

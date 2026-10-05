@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import * as Icons from 'lucide-react';
 import { UserProfile, TaskLog } from '../types';
+import SocialLinksBar from './SocialLinksBar';
 
 interface ProfileTabProps {
   profile: UserProfile;
@@ -17,7 +18,18 @@ const toBnNum = (num: number | string): string => {
   return num.toString().replace(/\d/g, (d) => bnDigits[parseInt(d, 10)]);
 };
 
-type TransferMethodType = 'main-portal' | 'bkash' | 'nagad' | 'rocket' | 'p2p';
+type TransferMethodType = 
+  | 'main-portal' 
+  | 'p2p' 
+  | 'bkash' 
+  | 'nagad' 
+  | 'rocket' 
+  | 'upay' 
+  | 'binance' 
+  | 'upi' 
+  | 'gpay' 
+  | 'paytm' 
+  | 'bank';
 
 interface TransferRecord {
   id: string;
@@ -40,6 +52,7 @@ export default function ProfileTab({ profile, updateProfile, addLog, taskLogs, l
   const [customAvatar, setCustomAvatar] = useState(profile.avatarUrl);
   const [showAvatarPicker, setShowAvatarPicker] = useState(false);
   const [downloadProgress, setDownloadProgress] = useState<number | null>(null);
+  const [showAppInstallModal, setShowAppInstallModal] = useState<boolean>(false);
 
   const handleDownloadApp = () => {
     if (downloadProgress !== null) return;
@@ -50,17 +63,14 @@ export default function ProfileTab({ profile, updateProfile, addLog, taskLogs, l
         if (prev >= 100) {
           clearInterval(interval);
           setTimeout(() => {
-            alert(
-              lang === 'bn'
-                ? 'পুরো অ্যাপটি আপনার ফোনে ইনস্টল করতে ব্রাউজারের মেনু (⋮) থেকে "Add to Home screen" বা "Install App" এ ক্লিক করুন।'
-                : 'To install the full app on your phone, click "Add to Home screen" or "Install App" from your browser menu (⋮).'
-            );
-          }, 500);
+            setShowAppInstallModal(true);
+            setDownloadProgress(null);
+          }, 400);
           return 100;
         }
         return prev + 10;
       });
-    }, 150);
+    }, 120);
   };
 
   const avatarPresets = [
@@ -78,6 +88,7 @@ export default function ProfileTab({ profile, updateProfile, addLog, taskLogs, l
   const [editLevel, setEditLevel] = useState(profile.level || 'Gold Rank');
 
   // Balance transfer states
+  const [hubAction, setHubAction] = useState<'transfer' | 'withdraw'>('transfer');
   const [selectedMethod, setSelectedMethod] = useState<TransferMethodType>('main-portal');
   const [transferTarget, setTransferTarget] = useState('');
   const [transferAmount, setTransferAmount] = useState('');
@@ -201,6 +212,12 @@ export default function ProfileTab({ profile, updateProfile, addLog, taskLogs, l
       setTransferError(
         selectedMethod === 'main-portal' || selectedMethod === 'p2p'
           ? (lang === 'bn' ? 'দয়া করে একটি সঠিক ইউজার আইডি (UID) প্রবেশ করান।' : 'Please enter a valid User ID (UID).')
+          : selectedMethod === 'bank'
+          ? (lang === 'bn' ? 'দয়া করে আপনার ব্যাংক অ্যাকাউন্ট নম্বর ও বিবরণ দিন।' : 'Please enter your bank account details.')
+          : selectedMethod === 'binance'
+          ? (lang === 'bn' ? 'দয়া করে আপনার বাইনেন্স পে আইডি বা USDT এড্রেস দিন।' : 'Please enter your Binance Pay ID or USDT address.')
+          : selectedMethod === 'upi' || selectedMethod === 'gpay' || selectedMethod === 'paytm'
+          ? (lang === 'bn' ? 'দয়া করে সঠিক নম্বর বা UPI ID প্রবেশ করান।' : 'Please enter a valid number or UPI ID.')
           : (lang === 'bn' ? 'দয়া করে সঠিক মোবাইল নম্বর দিন।' : 'Please enter a valid mobile number.')
       );
       return;
@@ -230,6 +247,12 @@ export default function ProfileTab({ profile, updateProfile, addLog, taskLogs, l
         'bkash': { bn: 'বিকাশ ওয়ালেট (bKash)', en: 'bKash Wallet' },
         'nagad': { bn: 'নগদ ওয়ালেট (Nagad)', en: 'Nagad Wallet' },
         'rocket': { bn: 'রকেট ওয়ালেট (Rocket)', en: 'Rocket Wallet' },
+        'upay': { bn: 'উপায় ওয়ালেট (Upay)', en: 'Upay Wallet' },
+        'binance': { bn: 'বাইনেন্স পে (Binance USDT)', en: 'Binance Pay (USDT)' },
+        'upi': { bn: 'ইউপিআই (UPI)', en: 'UPI (India)' },
+        'gpay': { bn: 'গুগল পে (Google Pay)', en: 'Google Pay (GPay)' },
+        'paytm': { bn: 'পেটিএম (Paytm)', en: 'Paytm Wallet' },
+        'bank': { bn: 'ব্যাংক ট্রান্সফার (Bank Transfer)', en: 'Bank Transfer' },
         'p2p': { bn: 'ইউজার-টু-ইউজার (P2P)', en: 'Peer-to-Peer UID' }
       };
 
@@ -315,24 +338,8 @@ export default function ProfileTab({ profile, updateProfile, addLog, taskLogs, l
       {/* Profile Summary Card */}
       <div className="bg-white rounded-[1.25rem] border border-slate-200/80 p-4 sm:p-5 shadow-sm relative overflow-hidden">
         <div className="flex flex-col items-center text-center relative z-10">
-          {/* Avatar Section with Notification Bell on Left */}
+          {/* Avatar Section */}
           <div className="relative group flex items-center justify-center">
-            {/* Notification Bell Button next to Avatar */}
-            {onOpenNotifications && (
-              <button
-                onClick={onOpenNotifications}
-                className="absolute -left-14 sm:-left-20 top-2 w-9 h-9 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 flex items-center justify-center shadow-xs transition-transform active:scale-95 cursor-pointer"
-                title="Notifications"
-                id="profile-notification-btn"
-                type="button"
-              >
-                <Icons.Bell className="w-4 h-4 text-blue-600" />
-                <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-rose-600 text-white text-[8px] font-bold rounded-full flex items-center justify-center shadow-xs">
-                  12
-                </span>
-              </button>
-            )}
-
             <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full p-1 bg-gradient-to-tr from-blue-600 to-indigo-600 shadow-md">
               <img
                 src={profile.avatarUrl}
@@ -468,70 +475,108 @@ export default function ProfileTab({ profile, updateProfile, addLog, taskLogs, l
 
           {/* Performance stats bento block */}
           <div className="w-full mt-4 space-y-2.5 sm:space-y-3">
-            {/* 2-Column Row for Financial Balances */}
-            <div className="grid grid-cols-2 gap-2.5 sm:gap-3 w-full">
-              {/* Current Balance Card */}
-              <div className="bg-emerald-50/50 border border-emerald-200/80 p-3 sm:p-4 rounded-xl flex flex-col justify-between text-left">
-                <div className="flex items-center justify-between mb-1.5">
-                  <span className="text-[10px] sm:text-xs text-emerald-800 font-bold uppercase tracking-tight">
-                    {lang === 'bn' ? 'চলতি ব্যালেন্স' : 'Available Balance'}
-                  </span>
-                  <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center">
-                    <Icons.Wallet className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            {/* 1. Main Hero Available Balance Card - Elegant Executive Layout */}
+            <div className="w-full bg-gradient-to-r from-emerald-50 via-teal-50/60 to-emerald-50/40 border border-emerald-300/80 p-3 sm:p-3.5 rounded-2xl shadow-xs text-left relative overflow-hidden">
+              <div className="flex items-center justify-between gap-2 mb-1.5">
+                <div className="flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-xl bg-emerald-600 text-white flex items-center justify-center shadow-xs shrink-0">
+                    <Icons.Wallet className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <span className="text-[11px] sm:text-xs text-emerald-950 font-black uppercase tracking-wider block leading-tight">
+                      Available Balance
+                    </span>
+                    <span className="text-[9.5px] text-emerald-700 font-medium">
+                      {lang === 'bn' ? 'উত্তোলনযোগ্য মেইন ব্যালেন্স' : 'Withdrawable Main Balance'}
+                    </span>
                   </div>
                 </div>
-                <div className="text-base sm:text-xl font-bold text-emerald-900 font-mono tabular-nums tracking-tight leading-none whitespace-nowrap overflow-x-auto no-scrollbar">
-                  {lang === 'bn' ? `৳${toBnNum(profile.balance.toLocaleString('en-US'))}` : `৳${profile.balance.toLocaleString('en-US')}`}
+
+                <span className="bg-emerald-600/10 text-emerald-800 text-[10px] font-black px-2.5 py-0.5 rounded-full border border-emerald-400/50 shrink-0">
+                  {lang === 'bn' ? '০% ক্যাশআউট ফি' : '0% Cashout Fee'}
+                </span>
+              </div>
+
+              <div className="flex items-baseline justify-between gap-2 pt-1 border-t border-emerald-200/60">
+                <div className="flex items-baseline gap-1">
+                  <span className="text-base sm:text-lg font-black text-emerald-700 font-mono">৳</span>
+                  <span className="text-2xl sm:text-3xl font-black text-emerald-950 font-mono tabular-nums tracking-tight">
+                    {profile.balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </span>
+                </div>
+                <span className="text-[10px] text-slate-500 font-semibold font-mono">
+                  BDT • Instant Ready
+                </span>
+              </div>
+            </div>
+
+            {/* 2. 3-in-a-Row Single Line for Total Earnings, Total Transactions, and Tasks Done */}
+            <div className="grid grid-cols-3 gap-1.5 sm:gap-2.5 w-full">
+              {/* Total Income / Earnings */}
+              <div className="bg-blue-50/70 border border-blue-200/80 p-2 sm:p-3 rounded-xl flex flex-col justify-between text-left shadow-2xs">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-[9px] sm:text-[10.5px] text-blue-900 font-bold uppercase tracking-tight truncate">
+                    Total Earnings
+                  </span>
+                  <Icons.TrendingUp className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+                </div>
+                <div className="text-xs sm:text-base font-black text-blue-950 font-mono tabular-nums truncate">
+                  ৳{(profile.totalIncome ?? profile.balance).toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}
                 </div>
               </div>
 
-              {/* Total Income Card */}
-              <div className="bg-blue-50/50 border border-blue-200/80 p-3 sm:p-4 rounded-xl flex flex-col justify-between text-left">
-                <div className="flex items-center justify-between mb-1.5">
-                  <span className="text-[10px] sm:text-xs text-blue-800 font-bold uppercase tracking-tight">
-                    {lang === 'bn' ? 'টোটাল ইনকাম' : 'Total Earnings'}
+              {/* Total Transferred / Transactions */}
+              <div className="bg-slate-50 border border-slate-200/90 p-2 sm:p-3 rounded-xl flex flex-col justify-between text-left shadow-2xs">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-[9px] sm:text-[10.5px] text-slate-800 font-bold uppercase tracking-tight truncate">
+                    Total Cashout
                   </span>
-                  <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center">
-                    <Icons.TrendingUp className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                  </div>
+                  <Icons.ArrowUpRight className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                 </div>
-                <div className="text-base sm:text-xl font-bold text-blue-900 font-mono tabular-nums tracking-tight leading-none whitespace-nowrap overflow-x-auto no-scrollbar">
-                  {lang === 'bn' ? `৳${toBnNum((profile.totalIncome ?? profile.balance).toLocaleString('en-US'))}` : `৳${(profile.totalIncome ?? profile.balance).toLocaleString('en-US')}`}
+                <div className="text-xs sm:text-base font-black text-slate-900 font-mono tabular-nums truncate">
+                  ৳{totalWithdrawn.toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}
+                </div>
+              </div>
+
+              {/* Tasks Completed */}
+              <div className="bg-purple-50/70 border border-purple-200/80 p-2 sm:p-3 rounded-xl flex flex-col justify-between text-left shadow-2xs">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-[9px] sm:text-[10.5px] text-purple-900 font-bold uppercase tracking-tight truncate">
+                    Tasks Done
+                  </span>
+                  <Icons.CheckCircle2 className="w-3.5 h-3.5 text-purple-600 shrink-0" />
+                </div>
+                <div className="text-xs sm:text-base font-black text-purple-950 font-mono tabular-nums truncate">
+                  {profile.tasksCompleted} Tasks
                 </div>
               </div>
             </div>
 
-            {/* 2-Column Row for Completed Tasks and Total Withdrawals */}
-            <div className="grid grid-cols-2 gap-2.5 sm:gap-3 w-full">
-              {/* Completed Tasks Card */}
-              <div className="bg-purple-50/50 border border-purple-200/80 p-3 sm:p-4 rounded-xl flex flex-col justify-between text-left">
-                <div className="flex items-center justify-between mb-1.5">
-                  <span className="text-[10px] sm:text-xs text-purple-800 font-bold uppercase tracking-tight">
-                    {lang === 'bn' ? 'মোট সম্পন্ন কাজ' : 'Tasks Done'}
-                  </span>
-                  <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-purple-100 text-purple-700 flex items-center justify-center">
-                    <Icons.CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                  </div>
-                </div>
-                <div className="text-sm sm:text-lg font-bold text-purple-900 font-mono tabular-nums">
-                  {lang === 'bn' ? toBnNum(profile.tasksCompleted) : profile.tasksCompleted} {lang === 'bn' ? 'টি' : 'Tasks'}
-                </div>
-              </div>
+            {/* Direct Quick Action Buttons for Balance Transfer & Withdraw */}
+            <div className="grid grid-cols-2 gap-2 w-full pt-1">
+              <button
+                type="button"
+                onClick={() => {
+                  setHubAction('transfer');
+                  document.getElementById('balance-transfer-card')?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="py-2.5 px-3 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold text-xs flex items-center justify-center gap-1.5 border border-blue-200/80 transition-all cursor-pointer active:scale-95 shadow-2xs"
+              >
+                <Icons.ArrowRightLeft className="w-3.5 h-3.5 text-blue-600" />
+                <span>{lang === 'bn' ? 'ব্যালেন্স ট্রান্সফার' : 'Balance Transfer'}</span>
+              </button>
 
-              {/* Total Withdrawals Card */}
-              <div className="bg-slate-50 border border-slate-200/80 p-3 sm:p-4 rounded-xl flex flex-col justify-between text-left">
-                <div className="flex items-center justify-between mb-1.5">
-                  <span className="text-[10px] sm:text-xs text-slate-700 font-bold uppercase tracking-tight">
-                    {lang === 'bn' ? 'মোট উত্তোলন / স্থানান্তরিত' : 'Total Transferred'}
-                  </span>
-                  <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-slate-200 flex items-center justify-center text-slate-700">
-                    <Icons.ArrowUpRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600" />
-                  </div>
-                </div>
-                <div className="text-sm sm:text-lg font-bold text-slate-900 font-mono tabular-nums">
-                  ৳{toBnNum(totalWithdrawn.toLocaleString('en-US'))}
-                </div>
-              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setHubAction('withdraw');
+                  document.getElementById('balance-transfer-card')?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="py-2.5 px-3 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold text-xs flex items-center justify-center gap-1.5 border border-emerald-200/80 transition-all cursor-pointer active:scale-95 shadow-2xs"
+              >
+                <Icons.Download className="w-3.5 h-3.5 text-emerald-600" />
+                <span>{lang === 'bn' ? 'ক্যাশ আউট (উইথড্র)' : 'Cash Out (Withdraw)'}</span>
+              </button>
             </div>
           </div>
         </div>
@@ -708,7 +753,7 @@ export default function ProfileTab({ profile, updateProfile, addLog, taskLogs, l
         )}
       </div>
 
-      {/* --- UPGRADED BALANCE TRANSFER WIDGET --- */}
+      {/* --- UPGRADED BALANCE TRANSFER & WITHDRAW WIDGET --- */}
       <div className="bg-white rounded-[1.25rem] border border-emerald-100/90 p-4 sm:p-5 space-y-4 relative overflow-hidden shadow-sm" id="balance-transfer-card">
         <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-emerald-500 via-teal-500 to-blue-500" />
         
@@ -722,61 +767,351 @@ export default function ProfileTab({ profile, updateProfile, addLog, taskLogs, l
           </span>
         </div>
 
-        <p className="text-xs text-slate-500 font-medium leading-relaxed">
-          {lang === 'bn'
-            ? 'আপনার অর্জিত ব্যালেন্স সরাসরি ইউনিটি মেইন অ্যাকাউন্ট, বিকাশ, নগদ, রকেট অথবা অন্য যেকোনো ইউজার অ্যাকাউন্টে দ্রুত ও নিরাপদে ট্রান্সফার করুন।'
-            : 'Transfer your wallet earnings instantly to your main portal registration, bKash, Nagad, Rocket, or another user account.'}
-        </p>
+        {/* Two Main Option Tabs (Requested: ব্যালেন্স ট্রান্সফার এবং উইথড্র) */}
+        <div className="grid grid-cols-2 gap-2 p-1.5 bg-slate-100 rounded-2xl border border-slate-200">
+          <button
+            type="button"
+            onClick={() => {
+              setHubAction('transfer');
+              setSelectedMethod('main-portal');
+              setTransferTarget('');
+              setTransferSuccess(false);
+              setTransferError(null);
+            }}
+            className={`py-3 px-4 rounded-xl text-xs sm:text-sm font-extrabold flex items-center justify-center gap-2 transition-all cursor-pointer ${
+              hubAction === 'transfer'
+                ? 'bg-blue-600 text-white shadow-md scale-[1.01]'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
+            }`}
+          >
+            <Icons.ArrowRightLeft className="w-4 h-4" />
+            <span>{lang === 'bn' ? 'ব্যালেন্স ট্রান্সফার' : 'Balance Transfer'}</span>
+          </button>
 
-        {/* Transfer Method Selector Chips */}
-        <div className="space-y-1.5">
-          <label className="text-[11px] font-black text-slate-600 block uppercase tracking-wider">
-            {lang === 'bn' ? 'ট্রান্সফার মাধ্যম নির্বাচন করুন:' : 'Select Transfer Destination:'}
-          </label>
-
-          <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
-            {[
-              { id: 'main-portal', labelBn: 'মেইন অ্যাকাউন্ট', labelEn: 'Main UID', icon: Icons.Zap, color: 'text-indigo-600' },
-              { id: 'bkash', labelBn: 'বিকাশ (bKash)', labelEn: 'bKash', icon: Icons.Smartphone, color: 'text-pink-600' },
-              { id: 'nagad', labelBn: 'নগদ (Nagad)', labelEn: 'Nagad', icon: Icons.Flame, color: 'text-orange-600' },
-              { id: 'rocket', labelBn: 'রকেট (Rocket)', labelEn: 'Rocket', icon: Icons.Radio, color: 'text-purple-600' },
-              { id: 'p2p', labelBn: 'P2P ইউজার', labelEn: 'Peer UID', icon: Icons.Users, color: 'text-emerald-600' }
-            ].map((method) => {
-              const IconComp = method.icon;
-              const isSelected = selectedMethod === method.id;
-              return (
-                <button
-                  key={method.id}
-                  type="button"
-                  onClick={() => {
-                    setSelectedMethod(method.id as TransferMethodType);
-                    setTransferSuccess(false);
-                    setTransferError(null);
-                  }}
-                  className={`p-2.5 rounded-2xl border text-xs font-bold flex flex-col items-center justify-center gap-1 transition-all cursor-pointer ${
-                    isSelected
-                      ? 'bg-slate-900 text-white border-slate-900 shadow-sm scale-[1.02]'
-                      : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100 hover:border-slate-300'
-                  }`}
-                >
-                  <IconComp className={`w-4 h-4 ${isSelected ? 'text-white' : method.color}`} />
-                  <span className="text-[11px]">{lang === 'bn' ? method.labelBn : method.labelEn}</span>
-                </button>
-              );
-            })}
-          </div>
+          <button
+            type="button"
+            onClick={() => {
+              setHubAction('withdraw');
+              setSelectedMethod('bkash');
+              setTransferTarget('');
+              setTransferSuccess(false);
+              setTransferError(null);
+            }}
+            className={`py-3 px-4 rounded-xl text-xs sm:text-sm font-extrabold flex items-center justify-center gap-2 transition-all cursor-pointer ${
+              hubAction === 'withdraw'
+                ? 'bg-emerald-600 text-white shadow-md scale-[1.01]'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
+            }`}
+          >
+            <Icons.Download className="w-4 h-4" />
+            <span>{lang === 'bn' ? 'উইথড্র (ক্যাশ আউট)' : 'Withdraw (Cash Out)'}</span>
+          </button>
         </div>
 
-        <div className="bg-slate-50/80 border border-slate-100 rounded-2xl p-4 md:p-5 space-y-4 shadow-[inset_1px_1px_3px_rgba(0,0,0,0.03)]">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* 1. WITHDRAWAL VIEW (Requested: বিকাশ, নগদ, রকেট, উপায়, বাইনেন্স, ইউপিআই, গুগল পে, পেটিএম, ব্যাংক ট্রান্সফার - আরও চিকন ডিজাইন) */}
+        {hubAction === 'withdraw' && (
+          <div className="space-y-3 animate-fade-in">
+            <div className="flex items-center justify-between px-0.5">
+              <label className="text-[11px] font-extrabold text-slate-700 uppercase tracking-wider block">
+                {lang === 'bn' ? 'উইথড্র মাধ্যম নির্বাচন করুন (ক্যাশ আউট):' : 'Select Cashout Method:'}
+              </label>
+              <span className="text-[10px] text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
+                {lang === 'bn' ? '০% চার্জ • ৫-১৫ মিনিটে পেআউট' : '0% Fee • 5-15 Min Payout'}
+              </span>
+            </div>
+
+            {/* Vertically Stacked Withdrawal Options (One below another - Slim "চিকন" Layout) */}
+            <div className="space-y-1.5">
+              {[
+                {
+                  id: 'bkash',
+                  nameBn: 'বিকাশ (bKash)',
+                  nameEn: 'bKash Mobile Wallet',
+                  descBn: 'পার্সোনাল বিকাশ ওয়ালেট • ৫-১০ মিনিটে ইনস্ট্যান্ট ক্যাশআউট',
+                  descEn: 'Personal bKash wallet • Instant payout (0% fee)',
+                  color: 'text-pink-600 bg-pink-50 border-pink-200',
+                  icon: Icons.Smartphone,
+                  badge: 'দ্রুততম',
+                  minBn: '৫০৳',
+                  minEn: '৳50',
+                },
+                {
+                  id: 'nagad',
+                  nameBn: 'নগদ (Nagad)',
+                  nameEn: 'Nagad Mobile Wallet',
+                  descBn: 'পার্সোনাল নগদ ওয়ালেট • কোনো ফি নেই (০% চার্জ)',
+                  descEn: 'Personal Nagad wallet • 0% Cashout fee',
+                  color: 'text-orange-600 bg-orange-50 border-orange-200',
+                  icon: Icons.Flame,
+                  badge: 'জনপ্রিয়',
+                  minBn: '৫০৳',
+                  minEn: '৳50',
+                },
+                {
+                  id: 'rocket',
+                  nameBn: 'রকেট (Rocket)',
+                  nameEn: 'Rocket (DBBL)',
+                  descBn: 'ডাচ-বাংলা ব্যাংক রকেট ওয়ালেট ক্যাশআউট',
+                  descEn: 'DBBL Rocket account cashout (0% fee)',
+                  color: 'text-purple-600 bg-purple-50 border-purple-200',
+                  icon: Icons.Radio,
+                  badge: 'ডিবিবিএল',
+                  minBn: '৫০৳',
+                  minEn: '৳50',
+                },
+                {
+                  id: 'upay',
+                  nameBn: 'উপায় (Upay)',
+                  nameEn: 'Upay Wallet (UCB)',
+                  descBn: 'ইউসিবি উপায় পার্সোনাল ওয়ালেট পেআউট',
+                  descEn: 'UCB Upay personal wallet payout',
+                  color: 'text-amber-600 bg-amber-50 border-amber-200',
+                  icon: Icons.Zap,
+                  badge: 'ইউসিবি',
+                  minBn: '৫০৳',
+                  minEn: '৳50',
+                },
+                {
+                  id: 'binance',
+                  nameBn: 'বাইনেন্স (Binance Pay / USDT)',
+                  nameEn: 'Binance Pay (USDT)',
+                  descBn: 'বাইনেন্স পে আইডি বা USDT (BEP20 / TRC20)',
+                  descEn: 'Binance Pay ID or USDT crypto address',
+                  color: 'text-yellow-600 bg-yellow-50 border-yellow-200',
+                  icon: Icons.Coins,
+                  badge: 'ক্রিপ্টো',
+                  minBn: '$১ (৳১২০)',
+                  minEn: '$1 (৳120)',
+                },
+                {
+                  id: 'upi',
+                  nameBn: 'ইউপিআই (UPI)',
+                  nameEn: 'UPI (India / Cross-border)',
+                  descBn: 'ভারত ও প্রবাসী ইউপিআই ভার্চুয়াল আইডি (VPA)',
+                  descEn: 'Instant UPI Virtual Payment Address',
+                  color: 'text-teal-600 bg-teal-50 border-teal-200',
+                  icon: Icons.QrCode,
+                  badge: 'ইউপিআই',
+                  minBn: '₹৫০ (৳৭০)',
+                  minEn: '₹50 (৳70)',
+                },
+                {
+                  id: 'gpay',
+                  nameBn: 'গুগল পে (Google Pay)',
+                  nameEn: 'Google Pay (GPay)',
+                  descBn: 'গুগল পে রেজিস্টার্ড মোবাইল বা জিপে আইডি',
+                  descEn: 'Google Pay mobile or GPay ID',
+                  color: 'text-blue-600 bg-blue-50 border-blue-200',
+                  icon: Icons.CreditCard,
+                  badge: 'গুগল পে',
+                  minBn: '₹৫০ (৳৭০)',
+                  minEn: '₹50 (৳70)',
+                },
+                {
+                  id: 'paytm',
+                  nameBn: 'পেটিএম (Paytm)',
+                  nameEn: 'Paytm Wallet / UPI',
+                  descBn: 'পেটিএম ওয়ালেট বা পেমেন্টস ব্যাংক নম্বর',
+                  descEn: 'Paytm wallet or payments bank number',
+                  color: 'text-cyan-600 bg-cyan-50 border-cyan-200',
+                  icon: Icons.Wallet,
+                  badge: 'পেটিএম',
+                  minBn: '₹৫০ (৳৭০)',
+                  minEn: '₹50 (৳70)',
+                },
+                {
+                  id: 'bank',
+                  nameBn: 'ব্যাংক ট্রান্সফার (Bank Transfer)',
+                  nameEn: 'Bank Transfer (All Banks)',
+                  descBn: 'যেকোনো বাংলাদেশি ব্যাংকের একাউন্টে সরাসরি ডিপোজিট',
+                  descEn: 'Direct bank account transfer (All Banks)',
+                  color: 'text-emerald-700 bg-emerald-50 border-emerald-200',
+                  icon: Icons.Building2,
+                  badge: 'সকল ব্যাংক',
+                  minBn: '৫০০৳',
+                  minEn: '৳500',
+                },
+              ].map((item) => {
+                const IconComp = item.icon;
+                const isSelected = selectedMethod === item.id;
+                return (
+                  <div
+                    key={item.id}
+                    onClick={() => {
+                      setSelectedMethod(item.id as TransferMethodType);
+                      setTransferSuccess(false);
+                      setTransferError(null);
+                    }}
+                    className={`rounded-xl border p-2.5 sm:py-2 sm:px-3 transition-all cursor-pointer flex items-center justify-between ${
+                      isSelected
+                        ? 'border-emerald-600 bg-emerald-50/70 ring-1 ring-emerald-500/30 shadow-xs'
+                        : 'border-slate-200/90 hover:border-slate-300 bg-white hover:bg-slate-50/70'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div
+                        className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 border ${
+                          isSelected
+                            ? 'bg-emerald-600 text-white border-emerald-600'
+                            : `${item.color} border-slate-200/80`
+                        }`}
+                      >
+                        <IconComp className="w-4 h-4" />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <h4 className="text-xs sm:text-[13px] font-bold text-slate-900 leading-snug truncate">
+                            {lang === 'bn' ? item.nameBn : item.nameEn}
+                          </h4>
+                          <span className="text-[9px] font-semibold text-emerald-800 bg-emerald-100/70 px-1.5 py-0.2 rounded-md leading-none shrink-0">
+                            {item.badge}
+                          </span>
+                        </div>
+                        <p className="text-[10px] sm:text-[10.5px] text-slate-500 font-normal leading-tight mt-0.5 truncate">
+                          {lang === 'bn' ? item.descBn : item.descEn}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 shrink-0 ml-2">
+                      <span className="text-[10px] font-semibold text-slate-500 font-mono">
+                        {lang === 'bn' ? `মিনিমাম ${item.minBn}` : `Min ${item.minEn}`}
+                      </span>
+                      <div
+                        className={`w-4.5 h-4.5 rounded-full border flex items-center justify-center transition-colors ${
+                          isSelected ? 'border-emerald-600 bg-emerald-600 text-white' : 'border-slate-300'
+                        }`}
+                      >
+                        {isSelected && <Icons.Check className="w-3 h-3 stroke-[3]" />}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* 2. BALANCE TRANSFER DESTINATION VIEW */}
+        {hubAction === 'transfer' && (
+          <div className="space-y-3 animate-fade-in">
+            <label className="text-[11px] font-black text-slate-700 uppercase tracking-wider block">
+              {lang === 'bn' ? 'ট্রান্সফার গন্তব্য নির্বাচন করুন:' : 'Select Transfer Destination:'}
+            </label>
+
+            <div className="grid grid-cols-2 gap-2">
+              {[
+                {
+                  id: 'main-portal',
+                  labelBn: 'মেইন অ্যাকাউন্ট',
+                  labelEn: 'Main Account UID',
+                  descBn: 'ইউনিটি পোর্টাল সেন্ট্রাল ওয়ালেট',
+                  icon: Icons.Zap,
+                  color: 'text-indigo-600',
+                },
+                {
+                  id: 'p2p',
+                  labelBn: 'P2P মেম্বার ওয়ালেট',
+                  labelEn: 'Peer Member UID',
+                  descBn: 'অন্য ফ্রিল্যান্সার বা বন্ধুর একাউন্ট',
+                  icon: Icons.Users,
+                  color: 'text-emerald-600',
+                },
+              ].map((m) => {
+                const IconComp = m.icon;
+                const isSelected = selectedMethod === m.id;
+                return (
+                  <button
+                    key={m.id}
+                    type="button"
+                    onClick={() => {
+                      setSelectedMethod(m.id as TransferMethodType);
+                      setTransferSuccess(false);
+                      setTransferError(null);
+                    }}
+                    className={`p-3 rounded-2xl border text-left transition-all cursor-pointer ${
+                      isSelected
+                        ? 'border-blue-600 bg-blue-50/70 ring-2 ring-blue-500/20 shadow-xs'
+                        : 'border-slate-200 bg-white hover:bg-slate-50'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2 mb-1">
+                      <div
+                        className={`w-7 h-7 rounded-lg flex items-center justify-center ${
+                          isSelected ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-700'
+                        }`}
+                      >
+                        <IconComp className="w-4 h-4" />
+                      </div>
+                      <span className="text-xs font-bold text-slate-900">
+                        {lang === 'bn' ? m.labelBn : m.labelEn}
+                      </span>
+                    </div>
+                    <p className="text-[10px] text-slate-500 font-medium">
+                      {m.descBn}
+                    </p>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* INPUT FIELDS SECTION - Slim "চিকন" Aesthetic */}
+        <div className="bg-slate-50/80 border border-slate-200/80 rounded-xl p-3 sm:p-4 space-y-3.5 shadow-2xs">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {/* Dynamic Target Input */}
             <div className="space-y-1">
-              <label className="text-xs font-bold text-slate-500 flex items-center gap-1">
-                <Icons.User className="w-3.5 h-3.5 text-indigo-500" />
-                {selectedMethod === 'main-portal' || selectedMethod === 'p2p'
-                  ? (lang === 'bn' ? 'রিসিভার ইউজার আইডি (UID):' : 'Receiver User ID (UID):')
-                  : (lang === 'bn' ? 'রিসিভার মোবাইল নম্বর (017...):' : 'Receiver Mobile Number:')}
+              <label className="text-[11px] font-bold text-slate-700 flex items-center gap-1.5">
+                {hubAction === 'transfer' ? (
+                  <>
+                    <Icons.User className="w-3.5 h-3.5 text-blue-600" />
+                    <span>
+                      {selectedMethod === 'main-portal'
+                        ? (lang === 'bn' ? 'মেইন অ্যাকাউন্ট ইউজার আইডি (UID):' : 'Main Portal User ID (UID):')
+                        : (lang === 'bn' ? 'রিসিভার ইউজার আইডি (UID):' : 'Receiver Member User ID (UID):')}
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    {selectedMethod === 'bank' ? (
+                      <Icons.Building2 className="w-3.5 h-3.5 text-emerald-600" />
+                    ) : selectedMethod === 'binance' ? (
+                      <Icons.Coins className="w-3.5 h-3.5 text-yellow-600" />
+                    ) : selectedMethod === 'upi' ? (
+                      <Icons.QrCode className="w-3.5 h-3.5 text-teal-600" />
+                    ) : selectedMethod === 'gpay' ? (
+                      <Icons.CreditCard className="w-3.5 h-3.5 text-blue-600" />
+                    ) : selectedMethod === 'paytm' ? (
+                      <Icons.Wallet className="w-3.5 h-3.5 text-cyan-600" />
+                    ) : (
+                      <Icons.Smartphone className="w-3.5 h-3.5 text-emerald-600" />
+                    )}
+                    <span>
+                      {selectedMethod === 'bkash'
+                        ? (lang === 'bn' ? 'বিকাশ পার্সোনাল মোবাইল নম্বর:' : 'bKash Personal Mobile Number:')
+                        : selectedMethod === 'nagad'
+                        ? (lang === 'bn' ? 'নগদ পার্সোনাল মোবাইল নম্বর:' : 'Nagad Personal Mobile Number:')
+                        : selectedMethod === 'rocket'
+                        ? (lang === 'bn' ? 'রকেট অ্যাকাউন্ট নম্বর:' : 'Rocket Account Number:')
+                        : selectedMethod === 'upay'
+                        ? (lang === 'bn' ? 'উপায় অ্যাকাউন্ট নম্বর:' : 'Upay Account Number:')
+                        : selectedMethod === 'binance'
+                        ? (lang === 'bn' ? 'বাইনেন্স পে আইডি বা USDT এড্রেস:' : 'Binance Pay ID or USDT Address:')
+                        : selectedMethod === 'upi'
+                        ? (lang === 'bn' ? 'ইউপিআই আইডি (UPI ID / VPA):' : 'UPI ID (Virtual Payment Address):')
+                        : selectedMethod === 'gpay'
+                        ? (lang === 'bn' ? 'গুগল পে নম্বর বা UPI ID:' : 'Google Pay Mobile / UPI ID:')
+                        : selectedMethod === 'paytm'
+                        ? (lang === 'bn' ? 'পেটিএম নম্বর বা UPI ID:' : 'Paytm Mobile / UPI ID:')
+                        : selectedMethod === 'bank'
+                        ? (lang === 'bn' ? 'ব্যাংক একাউন্ট নম্বর, ব্যাংক ও ব্রাঞ্চ নাম:' : 'Bank Account No, Bank Name & Branch:')
+                        : (lang === 'bn' ? 'হিসাব নম্বর বা রিসিভার আইডি:' : 'Account Number / Receiver ID:')}
+                    </span>
+                  </>
+                )}
               </label>
+
               <input
                 type="text"
                 value={transferTarget}
@@ -786,13 +1121,31 @@ export default function ProfileTab({ profile, updateProfile, addLog, taskLogs, l
                   setTransferError(null);
                 }}
                 disabled={transferring}
-                className="w-full clay-input bg-white border border-slate-200 rounded-xl p-3 text-sm font-bold text-slate-700 outline-none focus:border-emerald-500 font-mono"
+                className="w-full clay-input bg-white border border-slate-200/90 rounded-xl px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-semibold text-slate-800 outline-none focus:border-emerald-500 font-mono shadow-2xs"
                 placeholder={
-                  selectedMethod === 'main-portal'
-                    ? 'e.g. UE-MAIN-7701'
-                    : selectedMethod === 'p2p'
-                    ? 'e.g. UE-2026-8942'
-                    : 'e.g. 017xxxxxxxx'
+                  hubAction === 'transfer'
+                    ? selectedMethod === 'main-portal'
+                      ? 'e.g. UE-MAIN-7701'
+                      : 'e.g. UE-2026-8942'
+                    : selectedMethod === 'bkash'
+                    ? '০১৭XXXXXXXX (১১ ডিজিটের বিকাশ নম্বর)'
+                    : selectedMethod === 'nagad'
+                    ? '০১৮XXXXXXXX (১১ ডিজিটের নগদ নম্বর)'
+                    : selectedMethod === 'rocket'
+                    ? '০১৯XXXXXXXXX (১২ ডিজিটের রকেট নম্বর)'
+                    : selectedMethod === 'upay'
+                    ? '০১৬XXXXXXXX (১১ ডিজিটের উপায় নম্বর)'
+                    : selectedMethod === 'binance'
+                    ? 'Binance Pay ID (যেমন: 29847192) বা USDT Address'
+                    : selectedMethod === 'upi'
+                    ? 'username@oksbi বা username@okhdfcbank'
+                    : selectedMethod === 'gpay'
+                    ? 'গুগল পে মোবাইল নম্বর বা GPay ID'
+                    : selectedMethod === 'paytm'
+                    ? 'পেটিএম নম্বর বা @paytm UPI'
+                    : selectedMethod === 'bank'
+                    ? 'হিসাব নং: ২০৫০... | ব্যাংক: ইসলামী ব্যাংক | ব্রাঞ্চ: মতিঝিল'
+                    : '017xxxxxxxx'
                 }
               />
             </div>
@@ -800,9 +1153,13 @@ export default function ProfileTab({ profile, updateProfile, addLog, taskLogs, l
             {/* Amount Field */}
             <div className="space-y-1">
               <div className="flex justify-between items-center">
-                <label className="text-xs font-bold text-slate-500 flex items-center gap-1">
-                  <Icons.Coins className="w-3.5 h-3.5 text-emerald-500" />
-                  {lang === 'bn' ? 'ট্রান্সফার পরিমাণ (টাকা):' : 'Transfer Amount (BDT):'}
+                <label className="text-[11px] font-bold text-slate-700 flex items-center gap-1.5">
+                  <Icons.Coins className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>
+                    {hubAction === 'withdraw'
+                      ? (lang === 'bn' ? 'উত্তোলনের পরিমাণ (টাকা):' : 'Withdrawal Amount (BDT):')
+                      : (lang === 'bn' ? 'ট্রান্সফারের পরিমাণ (টাকা):' : 'Transfer Amount (BDT):')}
+                  </span>
                 </label>
                 <button
                   type="button"
@@ -812,13 +1169,13 @@ export default function ProfileTab({ profile, updateProfile, addLog, taskLogs, l
                     setTransferError(null);
                   }}
                   disabled={transferring || profile.balance <= 0}
-                  className="text-[10px] font-extrabold text-emerald-600 hover:text-emerald-700 hover:underline cursor-pointer"
+                  className="text-[10px] font-bold text-emerald-600 hover:text-emerald-700 hover:underline cursor-pointer"
                 >
-                  {lang === 'bn' ? 'সবটুকু পাঠান' : 'Send All'}
+                  {lang === 'bn' ? 'সব ব্যালেন্স পাঠান' : 'Send All Balance'}
                 </button>
               </div>
               <div className="relative">
-                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm">৳</span>
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm">৳</span>
                 <input
                   type="number"
                   value={transferAmount}
@@ -828,19 +1185,19 @@ export default function ProfileTab({ profile, updateProfile, addLog, taskLogs, l
                     setTransferError(null);
                   }}
                   disabled={transferring}
-                  className="w-full clay-input bg-white border border-slate-200 rounded-xl p-3 pl-8 text-sm font-bold text-slate-700 outline-none focus:border-emerald-500 font-mono"
+                  className="w-full clay-input bg-white border border-slate-200/90 rounded-xl px-3 py-2 sm:py-2.5 pl-7 text-xs sm:text-sm font-semibold text-slate-800 outline-none focus:border-emerald-500 font-mono shadow-2xs"
                   placeholder="0.00"
                 />
               </div>
             </div>
           </div>
 
-          {/* Quick Amount Selector Chips */}
-          <div className="flex items-center gap-1.5 flex-wrap">
-            <span className="text-[10px] font-bold text-slate-400 mr-1">
-              {lang === 'bn' ? 'কুইক অ্যামাউন্ট:' : 'Quick Select:'}
+          {/* Quick Amount Selector Chips - Slim & Compact */}
+          <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
+            <span className="text-[10px] font-bold text-slate-400 mr-0.5">
+              {lang === 'bn' ? 'কুইক সিলেক্ট:' : 'Quick Select:'}
             </span>
-            {[500, 1000, 2000, 5000].map((amt) => (
+            {[100, 200, 500, 1000, 2000, 5000].map((amt) => (
               <button
                 key={amt}
                 type="button"
@@ -849,16 +1206,16 @@ export default function ProfileTab({ profile, updateProfile, addLog, taskLogs, l
                   setTransferSuccess(false);
                   setTransferError(null);
                 }}
-                className="text-[10px] font-bold font-mono px-2.5 py-1 bg-white hover:bg-emerald-50 text-slate-700 hover:text-emerald-700 rounded-lg border border-slate-200 transition-all cursor-pointer"
+                className="text-[10px] font-bold font-mono px-2 py-0.5 bg-white hover:bg-emerald-50 text-slate-700 hover:text-emerald-700 rounded-md border border-slate-200 transition-all cursor-pointer shadow-2xs active:scale-95"
               >
-                +৳{toBnNum(amt)}
+                +৳{amt}
               </button>
             ))}
           </div>
 
           {/* Messages & Actions */}
           {transferError && (
-            <div className="p-3 bg-rose-50 border border-rose-100 rounded-xl flex items-center gap-2 text-rose-700 text-xs font-bold animate-shake">
+            <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl flex items-center gap-2 text-rose-700 text-xs font-bold animate-shake">
               <Icons.AlertCircle className="w-4 h-4 shrink-0 text-rose-500" />
               <span>{transferError}</span>
             </div>
@@ -869,15 +1226,19 @@ export default function ProfileTab({ profile, updateProfile, addLog, taskLogs, l
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 text-emerald-800 font-extrabold text-xs">
                   <Icons.CheckCircle className="w-4 h-4 text-emerald-600" />
-                  <span>{lang === 'bn' ? 'ব্যালেন্স ট্রান্সফার সফল হয়েছে!' : 'Transfer Completed Successfully!'}</span>
+                  <span>
+                    {hubAction === 'withdraw'
+                      ? (lang === 'bn' ? 'উইথড্র রিকোয়েস্ট সফল হয়েছে! ৫-১৫ মিনিটে টাকা পৌঁছাবে।' : 'Withdrawal Request Submitted! Arriving in 5-15 mins.')
+                      : (lang === 'bn' ? 'ব্যালেন্স ট্রান্সফার সফল হয়েছে!' : 'Transfer Completed Successfully!')}
+                  </span>
                 </div>
                 <span className="text-xs font-black text-emerald-700 font-mono">
-                  -৳{toBnNum(latestTrxData.amountBDT.toLocaleString('en-US'))}
+                  -৳{latestTrxData.amountBDT.toLocaleString('en-US')}
                 </span>
               </div>
               <div className="flex items-center justify-between text-[11px] bg-white p-2.5 rounded-xl border border-emerald-100">
                 <div className="font-mono text-slate-600">
-                  <span className="font-bold text-slate-400">TRX:</span> {latestTrxData.trxId}
+                  <span className="font-bold text-slate-400">TRX ID:</span> {latestTrxData.trxId}
                 </div>
                 <button
                   type="button"
@@ -903,13 +1264,17 @@ export default function ProfileTab({ profile, updateProfile, addLog, taskLogs, l
           <div className="flex items-center justify-between pt-1">
             <span className="text-[11px] font-bold text-slate-500 flex items-center gap-1">
               <Icons.ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-              {lang === 'bn' ? '০% ট্রানজেকশন ফি (ইনস্ট্যান্ট সেটেলমেন্ট)' : '0% Fee Instant Settlement'}
+              <span>{lang === 'bn' ? '০% ট্রানজেকশন ফি (ইনস্ট্যান্ট সেটেলমেন্ট)' : '0% Fee Instant Settlement'}</span>
             </span>
 
             <button
               onClick={handleBalanceTransfer}
               disabled={transferring || !transferTarget || !transferAmount}
-              className="min-w-[160px] bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-extrabold px-6 py-3 rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none text-xs flex items-center justify-center gap-1.5 shadow-sm hover:shadow cursor-pointer"
+              className={`min-w-[150px] text-white font-extrabold px-5 py-2.5 rounded-xl transition-all hover:scale-[1.01] active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none text-xs flex items-center justify-center gap-1.5 shadow-sm hover:shadow cursor-pointer ${
+                hubAction === 'withdraw'
+                  ? 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700'
+                  : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700'
+              }`}
             >
               {transferring ? (
                 <>
@@ -918,8 +1283,17 @@ export default function ProfileTab({ profile, updateProfile, addLog, taskLogs, l
                 </>
               ) : (
                 <>
-                  <Icons.ArrowRightLeft className="w-4 h-4" />
-                  <span>{lang === 'bn' ? 'কনফার্ম ও ট্রান্সফার করুন' : 'Confirm & Transfer'}</span>
+                  {hubAction === 'withdraw' ? (
+                    <>
+                      <Icons.Download className="w-4 h-4" />
+                      <span>{lang === 'bn' ? 'উইথড্র কনফার্ম করুন' : 'Confirm Withdrawal'}</span>
+                    </>
+                  ) : (
+                    <>
+                      <Icons.ArrowRightLeft className="w-4 h-4" />
+                      <span>{lang === 'bn' ? 'ব্যালেন্স ট্রান্সফার করুন' : 'Confirm & Transfer'}</span>
+                    </>
+                  )}
                 </>
               )}
             </button>
@@ -948,6 +1322,7 @@ export default function ProfileTab({ profile, updateProfile, addLog, taskLogs, l
               { id: 'bkash', label: 'বিকাশ' },
               { id: 'nagad', label: 'নগদ' },
               { id: 'rocket', label: 'রকেট' },
+              { id: 'upay', label: 'উপায়' },
               { id: 'p2p', label: 'P2P' }
             ].map((tab) => (
               <button
@@ -1153,6 +1528,59 @@ export default function ProfileTab({ profile, updateProfile, addLog, taskLogs, l
           </div>
         )}
       </div>
+
+      {/* Official Community Channels (Facebook, WhatsApp, Telegram, YouTube) */}
+      <div className="bg-white rounded-2xl border border-slate-200/90 p-4 shadow-sm flex flex-col items-center justify-center">
+        <SocialLinksBar
+          title={lang === 'bn' ? 'অফিসিয়াল কমিউনিটি ও সাপোর্ট চ্যানেল' : 'Official Community & Support Channels'}
+          variant="light"
+        />
+      </div>
+
+      {/* App Installation Guide Modal */}
+      {showAppInstallModal && (
+        <div className="fixed inset-0 z-[120] bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-4 animate-fade-in select-none">
+          <div className="bg-white rounded-[1.25rem] max-w-sm w-full p-5 shadow-2xl border border-slate-200 space-y-4 animate-scale-up text-center">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center mx-auto shadow-md">
+              <Icons.Smartphone className="w-7 h-7" />
+            </div>
+
+            <div className="space-y-1">
+              <h3 className="font-extrabold text-base text-slate-900 leading-tight">
+                {lang === 'bn' ? 'অ্যাপ ইনস্টল নির্দেশিকা' : 'Install App on Your Device'}
+              </h3>
+              <p className="text-xs text-slate-600 leading-relaxed">
+                {lang === 'bn'
+                  ? 'পুরো অ্যাপ্লিকেশনটি আপনার মোবাইল স্ক্রিনে লাইটওয়েট অ্যাপ আকারে যুক্ত করতে ব্রাউজারের ওপরের ডানদিকের মেনু (⋮ বা Share) থেকে "Add to Home screen" বা "Install App" অপশনে ট্যাপ করুন।'
+                  : 'To add Unity Earning directly to your home screen, tap the browser menu (⋮ or Share) and select "Add to Home screen" or "Install App".'}
+              </p>
+            </div>
+
+            <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 text-[11.5px] text-slate-700 text-left space-y-1.5 font-medium">
+              <div className="flex items-center gap-2">
+                <span className="w-5 h-5 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-xs shrink-0">1</span>
+                <span>{lang === 'bn' ? 'ব্রাউজারের মেনু বোতামে (⋮) ক্লিক করুন' : 'Tap browser menu (⋮)'}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-5 h-5 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-xs shrink-0">2</span>
+                <span>{lang === 'bn' ? '"Add to Home screen" সিলেক্ট করুন' : 'Select "Add to Home screen"'}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-5 h-5 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-xs shrink-0">3</span>
+                <span>{lang === 'bn' ? 'হোম স্ক্রিন থেকে ১-ক্লিকে ওপেন করুন' : 'Launch anytime with 1 tap'}</span>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setShowAppInstallModal(false)}
+              className="w-full py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-md transition-all active:scale-95 cursor-pointer"
+            >
+              {lang === 'bn' ? 'বুঝেছি (Close)' : 'Got it (Close)'}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

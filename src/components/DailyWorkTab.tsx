@@ -2,8 +2,12 @@ import React, { useState } from 'react';
 import * as Icons from 'lucide-react';
 import LikeEarningFeed from './LikeEarningFeed';
 import LuckySpinFeed from './LuckySpinFeed';
+import QuizTab from './QuizTab';
+import MicroTab from './MicroTab';
+import ShopTab from './ShopTab';
 import { UserProfile, TaskLog } from '../types';
 import { DAILY_PROJECTS, DailyProject } from '../data/dailyProjects';
+import { PROJECT_3D_ICONS } from './Project3DIcons';
 
 interface DailyWorkTabProps {
   lang: 'bn' | 'en';
@@ -50,9 +54,77 @@ export default function DailyWorkTab({ lang, profile, updateProfile, addLog }: D
     );
   }
 
+  // If Quiz is selected, launch QuizTab
+  if (activeSubTaskId === 'dw-quiz') {
+    return (
+      <div className="space-y-3 animate-fade-in">
+        <button
+          onClick={() => setActiveSubTaskId(null)}
+          className="px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-slate-700 text-xs font-bold flex items-center gap-2 shadow-xs hover:bg-slate-50 transition-colors cursor-pointer"
+        >
+          <Icons.ArrowLeft className="w-4 h-4 text-slate-600" />
+          <span>{lang === 'bn' ? '← প্রজেক্ট তালিকায় ফিরে যান' : '← Back to Projects'}</span>
+        </button>
+        <QuizTab
+          profile={profile}
+          updateProfile={updateProfile}
+          addLog={addLog}
+          lang={lang}
+        />
+      </div>
+    );
+  }
+
+  // If Micro Job is selected, launch MicroTab
+  if (activeSubTaskId === 'dw-micro-job') {
+    return (
+      <div className="space-y-3 animate-fade-in">
+        <button
+          onClick={() => setActiveSubTaskId(null)}
+          className="px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-slate-700 text-xs font-bold flex items-center gap-2 shadow-xs hover:bg-slate-50 transition-colors cursor-pointer"
+        >
+          <Icons.ArrowLeft className="w-4 h-4 text-slate-600" />
+          <span>{lang === 'bn' ? '← প্রজেক্ট তালিকায় ফিরে যান' : '← Back to Projects'}</span>
+        </button>
+        <MicroTab
+          profile={profile}
+          updateProfile={updateProfile}
+          addLog={addLog}
+          lang={lang}
+        />
+      </div>
+    );
+  }
+
+  // If Shop is selected, launch ShopTab
+  if (activeSubTaskId === 'dw-shop') {
+    return (
+      <div className="space-y-3 animate-fade-in">
+        <button
+          onClick={() => setActiveSubTaskId(null)}
+          className="px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-slate-700 text-xs font-bold flex items-center gap-2 shadow-xs hover:bg-slate-50 transition-colors cursor-pointer"
+        >
+          <Icons.ArrowLeft className="w-4 h-4 text-slate-600" />
+          <span>{lang === 'bn' ? '← প্রজেক্ট তালিকায় ফিরে যান' : '← Back to Projects'}</span>
+        </button>
+        <ShopTab
+          profile={profile}
+          updateProfile={updateProfile}
+          lang={lang}
+        />
+      </div>
+    );
+  }
+
   // Handle project click
   const handleProjectClick = (project: DailyProject) => {
-    if (project.id === 'dw-like-earning' || project.id === 'dw-lucky-spin') {
+    if (
+      project.id === 'dw-like-earning' ||
+      project.id === 'dw-lucky-spin' ||
+      project.id === 'dw-quiz' ||
+      project.id === 'dw-micro-job' ||
+      project.id === 'dw-shop'
+    ) {
       setActiveSubTaskId(project.id);
       return;
     }
@@ -177,29 +249,29 @@ export default function DailyWorkTab({ lang, profile, updateProfile, addLog }: D
 
   return (
     <div className="space-y-4 sm:space-y-5 pb-20 animate-fade-in" id="daily-work-container">
-      {/* --- PREMIUM APP-STYLE PROJECT HERO CONTAINER --- */}
-      <div className="bg-gradient-to-br from-blue-600 via-indigo-600 to-violet-700 rounded-[1.25rem] p-4 sm:p-5 shadow-lg border border-blue-400/40 relative overflow-hidden">
+      {/* --- PREMIUM APP-STYLE PROJECT HERO CONTAINER (Soft Light Blue Theme) --- */}
+      <div className="bg-gradient-to-br from-sky-500 via-blue-500 to-indigo-600 text-white rounded-[1.25rem] p-4 sm:p-5 shadow-lg border border-sky-300/40 relative overflow-hidden">
         {/* Ambient Glows */}
-        <div className="absolute top-0 right-0 w-72 h-72 bg-white/10 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
-        <div className="absolute bottom-0 left-0 w-60 h-60 bg-blue-950/40 rounded-full blur-3xl pointer-events-none -ml-16 -mb-16" />
+        <div className="absolute top-0 right-0 w-80 h-80 bg-white/15 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
+        <div className="absolute bottom-0 left-0 w-60 h-60 bg-sky-950/20 rounded-full blur-3xl pointer-events-none -ml-16 -mb-16" />
 
         {/* Header Title & Counter */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 relative z-10 border-b border-white/15 pb-3.5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 relative z-10 border-b border-white/20 pb-3.5">
           <div className="flex items-center gap-3">
-            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-white border border-white/30 shadow-sm shrink-0">
+            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-white/20 backdrop-blur-md text-white flex items-center justify-center border border-white/30 shadow-xs shrink-0">
               <Icons.Layers className="w-6 h-6 text-white drop-shadow-xs" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-base sm:text-xl font-bold text-white tracking-tight leading-snug drop-shadow-xs">
+                <h2 className="text-base sm:text-xl font-extrabold text-white tracking-tight leading-snug drop-shadow-xs">
                   {lang === 'bn' ? 'আমাদের প্রজেক্ট সমূহ' : 'Our Projects'}
                 </h2>
                 <span className="flex items-center gap-1 bg-amber-400 text-slate-950 text-[10px] font-black uppercase px-2 py-0.5 rounded-full shadow-xs leading-none">
-                  <Icons.Sparkles className="w-3 h-3 text-amber-950" />
+                  <Icons.Sparkles className="w-3 h-3 text-slate-950" />
                   LIVE
                 </span>
               </div>
-              <p className="text-blue-100 text-xs sm:text-sm mt-0.5 font-medium leading-relaxed">
+              <p className="text-sky-100 text-xs sm:text-sm mt-0.5 font-medium leading-relaxed">
                 {lang === 'bn' ? 'পছন্দের প্রজেক্ট সিলেক্ট করে কাজ শুরু করুন' : 'Select a project to start working'}
               </p>
             </div>
@@ -232,27 +304,28 @@ export default function DailyWorkTab({ lang, profile, updateProfile, addLog }: D
                 onClick={() => setFilterCategory(cat.id as any)}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer select-none leading-none ${
                   isActive
-                    ? 'bg-white text-blue-900 shadow-sm border border-white'
-                    : 'bg-white/15 text-white hover:bg-white/25 border border-white/20'
+                    ? 'bg-white text-blue-900 shadow-md border border-white'
+                    : 'bg-white/20 text-white hover:bg-white/30 border border-white/25'
                 }`}
                 type="button"
               >
-                <CatIcon className={`w-3.5 h-3.5 ${isActive ? 'text-blue-600' : 'text-blue-200'}`} />
+                <CatIcon className={`w-3.5 h-3.5 ${isActive ? 'text-blue-600' : 'text-sky-100'}`} />
                 <span>{lang === 'bn' ? cat.labelBn : cat.labelEn}</span>
               </button>
             );
           })}
         </div>
 
-        {/* --- BALANCED RESPONSIVE GRID (Mobile: 3 cols, Tablet: 4 cols, Desktop: 5 cols) --- */}
+        {/* --- PERFECTLY SYMMETRICAL SQUARE GRID (1:1 Aspect-Square Uniform Neumorphism) --- */}
         <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2.5 sm:gap-3 relative z-10">
           {filteredProjects.map((item) => {
             const IconComponent = (Icons as any)[item.icon] || Icons.Layers;
+            const Project3DIcon = PROJECT_3D_ICONS[item.id];
             return (
               <div
                 key={item.id}
                 onClick={() => handleProjectClick(item)}
-                className="group relative bg-white hover:bg-slate-50/95 rounded-[1.25rem] p-2.5 sm:p-3 flex flex-col items-center justify-between text-center cursor-pointer transition-all duration-200 hover:-translate-y-1 hover:shadow-lg active:scale-95 border border-slate-200/90 hover:border-blue-400 shadow-[0_2px_8px_rgba(15,23,42,0.06)] min-h-[114px] sm:min-h-[124px]"
+                className="group relative aspect-square w-full bg-white/95 hover:bg-white rounded-[1.25rem] p-2 sm:p-2.5 flex flex-col items-center justify-center text-center cursor-pointer transition-all duration-200 hover:-translate-y-0.5 border border-white/80 shadow-[0_4px_12px_rgba(15,23,42,0.14)] hover:shadow-[0_8px_20px_rgba(15,23,42,0.22)] hover:border-white backdrop-blur-xs gap-1 sm:gap-1.5 overflow-hidden"
                 role="button"
                 tabIndex={0}
                 onKeyDown={(e) => {
@@ -265,7 +338,7 @@ export default function DailyWorkTab({ lang, profile, updateProfile, addLog }: D
                 {/* Floating Micro Badge */}
                 {item.badge && (
                   <span
-                    className={`absolute -top-1.5 -right-1 text-[8.5px] sm:text-[9px] font-bold px-1.5 py-0.5 rounded-full shadow-xs leading-none tracking-tight border border-white z-20 ${
+                    className={`absolute top-1.5 right-1.5 text-[7.5px] sm:text-[8px] font-extrabold px-1.5 py-0.2 rounded-full shadow-2xs leading-none tracking-tight border border-white z-20 ${
                       item.badgeColor || 'bg-rose-600 text-white'
                     }`}
                   >
@@ -273,29 +346,24 @@ export default function DailyWorkTab({ lang, profile, updateProfile, addLog }: D
                   </span>
                 )}
 
-                {/* 3D App-Style Squircle Icon Box */}
-                <div
-                  className={`w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-br ${item.gradient} text-white flex items-center justify-center shrink-0 shadow-sm ${item.shadow} border border-white/30 relative overflow-hidden transition-transform duration-300 group-hover:scale-105`}
-                >
-                  {/* Glossy Sheen Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-b from-white/35 via-white/5 to-transparent pointer-events-none" />
-                  
-                  {/* Crisp High-Contrast Icon */}
-                  <IconComponent className="w-5 h-5 sm:w-6 sm:h-6 text-white stroke-[2.2px] relative z-10 drop-shadow-xs" />
+                {/* 3D Professional Illustrated Icon */}
+                <div className="w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center shrink-0 relative transition-transform duration-300 group-hover:scale-110 my-auto">
+                  {Project3DIcon ? (
+                    <Project3DIcon className="w-full h-full object-contain filter drop-shadow-xs" />
+                  ) : (
+                    <div
+                      className={`w-9 h-9 sm:w-11 sm:h-11 rounded-2xl bg-gradient-to-br ${item.gradient} text-white flex items-center justify-center shrink-0 shadow-[0_3px_8px_rgba(15,23,42,0.2)] border border-white/40`}
+                    >
+                      <IconComponent className="w-4.5 h-4.5 sm:w-5 h-5 text-white stroke-[2.2px] drop-shadow-xs" />
+                    </div>
+                  )}
                 </div>
 
-                {/* Title */}
-                <div className="w-full mt-1.5">
-                  <h3 className="text-slate-800 text-[11px] sm:text-xs font-bold text-center leading-tight line-clamp-1 group-hover:text-blue-600 transition-colors">
+                {/* Project Title */}
+                <div className="w-full px-1 mb-auto">
+                  <h3 className="text-slate-900 text-[10px] sm:text-[11px] font-extrabold text-center leading-tight line-clamp-2 group-hover:text-blue-600 transition-colors tracking-tight">
                     {lang === 'bn' ? item.nameBn : item.nameEn}
                   </h3>
-                  
-                  {/* Reward / Commission Badge */}
-                  <div className="mt-1 flex items-center justify-center">
-                    <span className="text-[9px] sm:text-[9.5px] text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded-md font-semibold border border-emerald-200/60 leading-none truncate max-w-full">
-                      {lang === 'bn' ? item.rewardBn : item.rewardEn}
-                    </span>
-                  </div>
                 </div>
               </div>
             );
@@ -310,10 +378,14 @@ export default function DailyWorkTab({ lang, profile, updateProfile, addLog }: D
             {/* Modal Header */}
             <div className={`p-4 bg-gradient-to-r ${selectedProject.gradient} text-white flex items-center justify-between relative shadow-md shrink-0`}>
               <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30 text-white shadow-sm shrink-0">
-                  {React.createElement(
-                    (Icons as any)[selectedProject.icon] || Icons.Layers,
-                    { className: 'w-6 h-6 stroke-[2.2px]' }
+                <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30 text-white shadow-sm shrink-0 p-1">
+                  {PROJECT_3D_ICONS[selectedProject.id] ? (
+                    React.createElement(PROJECT_3D_ICONS[selectedProject.id], { className: 'w-full h-full object-contain' })
+                  ) : (
+                    React.createElement(
+                      (Icons as any)[selectedProject.icon] || Icons.Layers,
+                      { className: 'w-6 h-6 stroke-[2.2px]' }
+                    )
                   )}
                 </div>
                 <div>
@@ -503,37 +575,88 @@ export default function DailyWorkTab({ lang, profile, updateProfile, addLog }: D
 
               {selectedProject.id === 'dw-data-entry' && (
                 <div className="bg-white rounded-xl p-4 border border-blue-200 shadow-2xs space-y-3">
-                  <h4 className="text-xs font-bold text-blue-900 flex items-center gap-1.5">
-                    <Icons.FileSpreadsheet className="w-4 h-4 text-blue-600" />
-                    <span>{lang === 'bn' ? 'লাইভ ডাটা এন্ট্রি ফর্ম' : 'Live Data Entry Sheet'}</span>
+                  <h4 className="text-xs font-bold text-blue-900 flex items-center justify-between">
+                    <span className="flex items-center gap-1.5">
+                      <Icons.FileSpreadsheet className="w-4 h-4 text-blue-600" />
+                      <span>{lang === 'bn' ? 'ডাটা এন্ট্রি ওয়ার্কশীট' : 'Data Entry Worksheet'}</span>
+                    </span>
+                    <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                      +৳১৫.০০
+                    </span>
                   </h4>
 
                   {!dataEntrySubmitted ? (
-                    <form onSubmit={handleDataEntrySubmit} className="space-y-2.5">
-                      <input
-                        type="text"
-                        placeholder={lang === 'bn' ? 'গ্রাহকের নাম (যেমন: আরিফ হাসান)' : 'Customer Name'}
-                        value={dataEntryInput.name}
-                        onChange={(e) => setDataEntryInput({ ...dataEntryInput, name: e.target.value })}
-                        required
-                        className="w-full border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-800 outline-none focus:border-blue-500 bg-slate-50"
-                      />
-                      <input
-                        type="tel"
-                        placeholder={lang === 'bn' ? 'মোবাইল নম্বর (যেমন: 017XXXXXXXX)' : 'Mobile Number'}
-                        value={dataEntryInput.phone}
-                        onChange={(e) => setDataEntryInput({ ...dataEntryInput, phone: e.target.value })}
-                        required
-                        className="w-full border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-800 outline-none focus:border-blue-500 bg-slate-50"
-                      />
-                      <button
-                        type="submit"
-                        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-xl text-xs shadow-md transition-all active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer"
-                      >
-                        <Icons.Check className="w-4 h-4" />
-                        <span>{lang === 'bn' ? 'ডাটা সাবমিট করুন (+৳১৫.০০)' : 'Submit Data Entry (+৳15.00)'}</span>
-                      </button>
-                    </form>
+                    <div className="space-y-3">
+                      {/* Top Data Source Box: 'উপরে ডাটা থাকবে নিতে হবে' */}
+                      <div className="bg-slate-900 text-white rounded-xl p-3 border border-slate-800 space-y-2">
+                        <div className="flex items-center justify-between border-b border-slate-800 pb-1.5">
+                          <span className="text-[10px] font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1">
+                            <span>📋</span>
+                            <span>{lang === 'bn' ? '১. ক্লায়েন্ট ডাটা রেকর্ড (উপরে)' : '1. Client Data Record (Top)'}</span>
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => setDataEntryInput({ name: 'আরিফ হাসান', phone: '01712984321' })}
+                            className="text-[10px] bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-2 py-0.5 rounded cursor-pointer transition-all active:scale-95"
+                          >
+                            {lang === 'bn' ? 'ডাটা কপি করুন' : 'Copy Data'}
+                          </button>
+                        </div>
+                        <div className="grid grid-cols-2 gap-2 text-xs">
+                          <div>
+                            <span className="text-[9px] text-slate-400 block font-semibold">{lang === 'bn' ? 'গ্রাহকের নাম:' : 'Client Name:'}</span>
+                            <span className="text-slate-100 font-bold">আরিফ হাসান</span>
+                          </div>
+                          <div>
+                            <span className="text-[9px] text-slate-400 block font-semibold">{lang === 'bn' ? 'মোবাইল নম্বর:' : 'Phone Number:'}</span>
+                            <span className="text-indigo-300 font-mono font-bold">01712984321</span>
+                          </div>
+                          <div>
+                            <span className="text-[9px] text-slate-400 block font-semibold">{lang === 'bn' ? 'ইউআইডি কোড:' : 'UID Code:'}</span>
+                            <span className="text-amber-300 font-mono font-bold">DE-8924</span>
+                          </div>
+                          <div>
+                            <span className="text-[9px] text-slate-400 block font-semibold">{lang === 'bn' ? 'কমিশন রেট:' : 'Commission:'}</span>
+                            <span className="text-emerald-400 font-mono font-bold">৳১৫.০০</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Bottom Form: 'নিচে ফরম ফিলাপ/এন্ট্রি হবে' */}
+                      <form onSubmit={handleDataEntrySubmit} className="space-y-2.5">
+                        <div className="flex items-center justify-between">
+                          <label className="text-[11px] font-bold text-slate-700">
+                            {lang === 'bn' ? '২. নিচের ফর্মে হুবহু এন্ট্রি দিন:' : '2. Enter Details Below:'}
+                          </label>
+                          <span className="text-[10px] text-slate-400 font-medium">
+                            {lang === 'bn' ? '১০০% সঠিক হতে হবে' : 'Must match accurately'}
+                          </span>
+                        </div>
+                        <input
+                          type="text"
+                          placeholder={lang === 'bn' ? 'গ্রাহকের নাম (যেমন: আরিফ হাসান)' : 'Customer Name'}
+                          value={dataEntryInput.name}
+                          onChange={(e) => setDataEntryInput({ ...dataEntryInput, name: e.target.value })}
+                          required
+                          className="w-full border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-800 outline-none focus:border-blue-500 bg-slate-50"
+                        />
+                        <input
+                          type="tel"
+                          placeholder={lang === 'bn' ? 'মোবাইল নম্বর (যেমন: 01712984321)' : 'Mobile Number'}
+                          value={dataEntryInput.phone}
+                          onChange={(e) => setDataEntryInput({ ...dataEntryInput, phone: e.target.value })}
+                          required
+                          className="w-full border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-800 outline-none focus:border-blue-500 bg-slate-50"
+                        />
+                        <button
+                          type="submit"
+                          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-xl text-xs shadow-md transition-all active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer"
+                        >
+                          <Icons.Check className="w-4 h-4" />
+                          <span>{lang === 'bn' ? 'ডাটা সাবমিট করুন (+৳১৫.০০)' : 'Submit Data Entry (+৳15.00)'}</span>
+                        </button>
+                      </form>
+                    </div>
                   ) : (
                     <div className="bg-emerald-50 border border-emerald-200 p-3 rounded-xl text-center text-xs font-bold text-emerald-800 flex items-center justify-center gap-2">
                       <Icons.CheckCircle2 className="w-4 h-4 text-emerald-600" />

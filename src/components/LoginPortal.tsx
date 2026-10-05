@@ -45,11 +45,7 @@ export default function LoginPortal({ lang, onLoginSuccess }: LoginPortalProps) 
         onLoginSuccess();
       }, 500);
     } else {
-      setErrorMsg(
-        lang === 'bn'
-          ? 'ভুল পিন কোড! সঠিক পিন কোড হলো 4012'
-          : 'Incorrect PIN! Correct PIN is 4012'
-      );
+      setErrorMsg('Incorrect PIN! Please try again.');
       // Auto reset pin after short delay on error
       setTimeout(() => {
         setPin('');
@@ -75,8 +71,13 @@ export default function LoginPortal({ lang, onLoginSuccess }: LoginPortalProps) 
       <div className="w-full max-w-sm sm:max-w-md relative z-10 my-auto">
         {/* Brand Identity Section */}
         <div className="text-center mb-6 space-y-2">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-600 via-blue-700 to-indigo-700 text-white shadow-md shadow-blue-600/20 mb-1 border border-blue-500/30">
-            <Icons.ShieldCheck className="w-7 h-7 text-white" />
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white text-slate-900 shadow-md shadow-blue-600/10 mb-1 border border-slate-200 p-1">
+            <img
+              src="/unity_earning_logo.jpg"
+              alt="Unity Earning Logo"
+              className="w-full h-full object-contain rounded-xl"
+              referrerPolicy="no-referrer"
+            />
           </div>
           
           <div className="space-y-0.5">

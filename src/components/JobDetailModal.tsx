@@ -21,6 +21,14 @@ interface JobDetailModalProps {
   addLog: (log: { jobId: string; jobTitleBn: string; jobTitleEn: string; reward: number }) => void;
 }
 
+const toEnNumber = (str: string): string => {
+  const bnToEnMap: Record<string, string> = {
+    '০': '0', '১': '1', '২': '2', '৩': '3', '৪': '4',
+    '৫': '5', '৬': '6', '৭': '7', '৮': '8', '৯': '9'
+  };
+  return str.replace(/[০-৯]/g, (d) => bnToEnMap[d] || d);
+};
+
 export default function JobDetailModal({
   job,
   onClose,
@@ -36,6 +44,11 @@ export default function JobDetailModal({
   const [editingSubmitLink, setEditingSubmitLink] = useState('');
   const [successEarnings, setSuccessEarnings] = useState(0);
   const [activeSubTaskId, setActiveSubTaskId] = useState<string | null>(null);
+  const [showEmailHistoryModal, setShowEmailHistoryModal] = useState<boolean>(false);
+  const [showOfferHistoryModal, setShowOfferHistoryModal] = useState<boolean>(false);
+  const [showTypingHistoryModal, setShowTypingHistoryModal] = useState<boolean>(false);
+  const [showFormFillupHistoryModal, setShowFormFillupHistoryModal] = useState<boolean>(false);
+  const [showDataEntryHistoryModal, setShowDataEntryHistoryModal] = useState<boolean>(false);
   const [activeWorkers, setActiveWorkers] = useState(() => Math.floor(Math.random() * 85) + 265);
 
   // Live active worker count dynamic fluctuation
@@ -1299,28 +1312,28 @@ export default function JobDetailModal({
   return (
     <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 md:p-6 overflow-y-auto animate-fade-in">
       <div className="bg-white w-full h-full md:h-auto md:max-w-7xl md:rounded-[1.25rem] shadow-2xl flex flex-col md:max-h-[92vh] overflow-hidden border border-slate-100 animate-slide-up" id="job-detail-container">
-        {/* Modal Header */}
-        <div className="bg-slate-900 text-white px-3 sm:px-5 py-2.5 flex items-center justify-between border-b border-slate-800 relative shadow-md gap-2 shrink-0 min-h-[48px]">
+        {/* Modal Header - Slim & Executive */}
+        <div className="bg-slate-900 text-white px-3 sm:px-4 py-2 sm:py-2.5 flex items-center justify-between border-b border-slate-800 relative shadow-md gap-2 shrink-0 min-h-[42px]">
           {activeSubTaskId ? (
             /* Minimal header when inside a task */
-            <div className="flex items-center justify-between gap-2 flex-1 min-w-0 py-0.5">
+            <div className="flex items-center justify-between gap-2 flex-1 min-w-0">
               <div className="flex items-center gap-2 shrink-0">
                 <button
                   onClick={() => setActiveSubTaskId(null)}
-                  className="flex items-center gap-1 text-xs font-bold text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 px-2.5 py-1.5 rounded-lg border border-slate-700 transition-all active:scale-95 shrink-0 whitespace-nowrap"
+                  className="flex items-center gap-1 text-[11px] sm:text-xs font-bold text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 px-2.5 py-1 rounded-lg border border-slate-700 transition-all active:scale-95 shrink-0 whitespace-nowrap"
                 >
                   <Icons.ArrowLeft className="w-3.5 h-3.5" />
                   <span>{lang === 'bn' ? 'ফিরে যান' : 'Back'}</span>
                 </button>
 
-                <span className="flex items-center gap-1 bg-rose-500/20 text-rose-400 border border-rose-500/30 px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] uppercase font-black tracking-wider animate-pulse whitespace-nowrap">
+                <span className="flex items-center gap-1 bg-rose-500/20 text-rose-400 border border-rose-500/30 px-2 py-0.5 rounded text-[9px] sm:text-[10px] uppercase font-black tracking-wider animate-pulse whitespace-nowrap">
                   <span className="w-1.5 h-1.5 bg-rose-500 rounded-full"></span>
                   LIVE
                 </span>
               </div>
 
-              <span className="flex items-center gap-1.5 font-black text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 rounded-lg text-xs sm:text-sm whitespace-nowrap">
-                <Icons.Banknote className="w-4 h-4 text-emerald-400 shrink-0" />
+              <span className="flex items-center gap-1.5 font-black text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-lg text-xs whitespace-nowrap">
+                <Icons.Banknote className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                 <span>
                   {lang === 'bn'
                     ? (activeSubTask ? `পাবেন: ${activeSubTask.rewardBn}` : `পাবেন: ${job.rewardBn}`)
@@ -1329,28 +1342,40 @@ export default function JobDetailModal({
               </span>
             </div>
           ) : (
-            /* Standard job header when browsing tasks */
-            <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
-              <div className={`w-9 h-9 sm:w-11 sm:h-11 rounded-2xl bg-gradient-to-br ${jobTheme.gradient} text-white flex items-center justify-center shrink-0 shadow-md ${jobTheme.shadow} border ${jobTheme.border} relative overflow-hidden`}>
+            /* Standard job header when browsing tasks - Slim & Crisp */
+            <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+              <div className={`w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br ${jobTheme.gradient} text-white flex items-center justify-center shrink-0 shadow-sm ${jobTheme.shadow} border ${jobTheme.border} relative overflow-hidden`}>
                 <div className="absolute inset-0 bg-gradient-to-b from-white/30 via-white/5 to-transparent pointer-events-none" />
-                <IconComponent className="w-5 h-5 sm:w-6 sm:h-6 text-white drop-shadow-sm relative z-10 stroke-[2.2px]" />
+                <IconComponent className="w-4.5 h-4.5 text-white drop-shadow-sm relative z-10 stroke-[2.2px]" />
               </div>
               <div className="min-w-0">
-                <h2 className="font-bold text-sm sm:text-base md:text-lg leading-tight flex items-center gap-2 truncate">
-                  <span className="truncate">{lang === 'bn' ? job.titleBn : job.titleEn}</span>
-                  <span className="flex items-center gap-1 bg-rose-500/20 text-rose-400 border border-rose-500/30 px-2 py-0.5 rounded text-[10px] uppercase font-black tracking-wider animate-pulse shrink-0">
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  <h2 className="font-extrabold text-xs sm:text-sm md:text-base leading-none text-white tracking-tight truncate">
+                    {job.titleBn}
+                  </h2>
+                  <span className="flex items-center gap-1 bg-rose-500/20 text-rose-400 border border-rose-500/30 px-1.5 py-0.2 rounded text-[8.5px] uppercase font-black tracking-wider animate-pulse shrink-0">
                     <span className="w-1.5 h-1.5 bg-rose-500 rounded-full"></span>
                     LIVE
                   </span>
-                </h2>
-                <div className="flex items-center gap-3 mt-0.5 text-[11px] md:text-xs text-slate-300 font-medium truncate">
-                  <span className="flex items-center gap-1 font-mono text-emerald-400 shrink-0">
-                    <Icons.Banknote className="w-3.5 h-3.5" /> 
-                    {lang === 'bn' ? job.rewardBn : job.rewardEn}
+                </div>
+                
+                {/* Commission & Estimated Time - Single line badge without extra suffixes */}
+                <div className="flex items-center gap-1.5 mt-0.5 whitespace-nowrap text-[10.5px]">
+                  <span className="flex items-center gap-1 font-mono font-black text-emerald-400 bg-emerald-500/15 border border-emerald-500/30 px-1.5 py-0.2 rounded shrink-0 leading-tight whitespace-nowrap">
+                    <Icons.BadgeDollarSign className="w-3 h-3 text-emerald-400 shrink-0" /> 
+                    <span>
+                      {(() => {
+                        const raw = (job.rewardBn || job.rewardEn || '').replace(/প্রতি অর্ডার|প্রতি কাজ|প্রতি ডাটা|প্রতি ইমেইল|প্রতি রিভিউ|প্রতি ছবি|প্রতি অফার|প্রতি প্যাক|প্রতি পিস|প্রতি সেট|প্রতি লিড|প্রতি পেজ|per piece|per project|per account|per submission|per dataset|per campaign|per review|per pack|per photo|per order|per item|per lead|per task/gi, '').trim();
+                        const enDigits = toEnNumber(raw);
+                        const formatted = enDigits.startsWith('৳') || enDigits.startsWith('$') ? enDigits : `৳${enDigits}`;
+                        return `Pay: ${formatted}`;
+                      })()}
+                    </span>
                   </span>
-                  <span className="flex items-center gap-1 text-blue-300 shrink-0">
-                    <Icons.Clock className="w-3.5 h-3.5" /> 
-                    {lang === 'bn' ? job.estimatedTimeBn : job.estimatedTimeEn}
+
+                  <span className="flex items-center gap-1 font-mono font-bold text-sky-300 bg-sky-500/15 border border-sky-500/30 px-1.5 py-0.2 rounded shrink-0 leading-tight">
+                    <Icons.Clock className="w-2.5 h-2.5 text-sky-400 shrink-0" /> 
+                    <span>{job.estimatedTimeEn}</span>
                   </span>
                 </div>
               </div>
@@ -1358,20 +1383,20 @@ export default function JobDetailModal({
           )}
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center transition-all active:scale-95 z-10 relative shrink-0 ml-1"
+            className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-slate-800 hover:bg-rose-600 text-slate-300 hover:text-white flex items-center justify-center transition-all active:scale-95 z-10 relative shrink-0 ml-1 cursor-pointer border border-slate-700/80 shadow-xs"
             aria-label="Close modal"
           >
-            <Icons.X className="w-4 h-4" />
+            <Icons.X className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
           </button>
         </div>
 
-        {/* Secondary Sub-Header Live Workers Bar */}
-        <div className="bg-slate-800/95 text-slate-200 px-3 sm:px-5 py-2 flex items-center justify-between border-b border-slate-700/70 text-xs shrink-0 font-medium shadow-inner">
+        {/* Secondary Sub-Header Live Workers Bar - Slim */}
+        <div className="bg-slate-800/95 text-slate-200 px-3 sm:px-4 py-1.5 flex items-center justify-between border-b border-slate-700/70 text-[11px] shrink-0 font-medium shadow-inner">
           <div className="flex items-center gap-1.5 text-sky-300 font-bold">
-            <Icons.Users className="w-3.5 h-3.5 text-sky-400 shrink-0" />
+            <Icons.Users className="w-3 h-3 text-sky-400 shrink-0" />
             <span>{lang === 'bn' ? `বর্তমানে ${activeWorkers} জন কাজ করছেন` : `Currently ${activeWorkers} members working`}</span>
           </div>
-          <span className="text-[10px] bg-slate-900/80 text-emerald-400 font-mono font-bold px-2.5 py-0.5 rounded-full border border-slate-700/60 flex items-center gap-1">
+          <span className="text-[9.5px] bg-slate-900/80 text-emerald-400 font-mono font-bold px-2 py-0.2 rounded-full border border-slate-700/60 flex items-center gap-1">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
             {lang === 'bn' ? 'লাইভ সিঙ্ক' : 'LIVE SYNC'}
           </span>
@@ -1463,50 +1488,604 @@ export default function JobDetailModal({
                 ) : (
                 // Related Tasks Directory
                 <div className="space-y-4">
+                  {/* Top Category Info & Dedicated History Trigger Header (Outside 'Start Contract') */}
                   <div className="bg-slate-900 text-white p-4 sm:p-5 rounded-[1.25rem] relative overflow-hidden border border-slate-800 shadow-md">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none" />
-                    <span className="text-[10px] bg-emerald-500 text-slate-900 font-bold px-2.5 py-0.5 rounded uppercase tracking-wider mb-2 inline-block leading-tight">
-                      {lang === 'bn' ? 'কাজের তালিকা' : 'ACTIVE CONTRACTS'}
-                    </span>
-                    <h3 className="font-bold text-sm md:text-base mb-1 leading-snug tracking-tight">
+                    <div className="absolute top-0 right-0 w-36 h-36 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none" />
+                    
+                    <div className="flex items-center justify-between gap-2 mb-2 flex-wrap relative z-10">
+                      <span className="text-[10px] bg-emerald-500 text-slate-900 font-bold px-2.5 py-0.5 rounded uppercase tracking-wider inline-block leading-tight">
+                        {lang === 'bn' ? 'কাজের তালিকা' : 'ACTIVE CONTRACTS'}
+                      </span>
+
+                      {(job.id === 'email-marketing' || job.id === 'product-selling-work' || job.id === 'typing-job' || job.id === 'form-fillup-work' || job.id === 'data-entry-work') && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (job.id === 'email-marketing') setShowEmailHistoryModal(true);
+                            if (job.id === 'product-selling-work') setShowOfferHistoryModal(true);
+                            if (job.id === 'typing-job') setShowTypingHistoryModal(true);
+                            if (job.id === 'form-fillup-work') setShowFormFillupHistoryModal(true);
+                            if (job.id === 'data-entry-work') setShowDataEntryHistoryModal(true);
+                          }}
+                          className="bg-amber-400 hover:bg-amber-500 text-slate-950 font-black px-3.5 py-1.5 rounded-xl text-xs flex items-center gap-1.5 shadow-sm transition-all active:scale-95 cursor-pointer"
+                        >
+                          <Icons.History className="w-4 h-4 text-slate-950" />
+                          <span>{lang === 'bn' ? 'হিস্টরি' : 'History'}</span>
+                        </button>
+                      )}
+                    </div>
+
+                    <h3 className="font-bold text-sm md:text-base mb-1 leading-snug tracking-tight relative z-10">
                       {lang === 'bn' ? `${job.titleBn} ক্যাটাগরি` : `${job.titleEn} Category`}
                     </h3>
-                    <p className="text-slate-300 text-xs leading-relaxed font-medium">
+                    <p className="text-slate-300 text-xs leading-relaxed font-medium relative z-10">
                       {lang === 'bn' 
                         ? 'নিচে এই ক্যাটাগরির সমস্ত সরাসরি কাজ ও প্রজেক্টের তালিকা দেওয়া হলো। যেকোনো একটি কাজ বেছে নিয়ে শুরু করুন।'
                         : 'Find active project contracts under this category below. Select a project to enter its workflow.'}
                     </p>
                   </div>
 
-                  <div className="space-y-3">
+                  {/* --- OFFER SELLING HISTORY MODAL (Enterprise Telecom Drive Ledger) --- */}
+                  {showOfferHistoryModal && (
+                    <div className="fixed inset-0 z-[60] bg-slate-950/75 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 animate-fade-in">
+                      <div className="bg-white rounded-2xl sm:rounded-3xl max-w-sm sm:max-w-lg w-full shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[85vh] animate-scale-up">
+                        {/* Header */}
+                        <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-indigo-950 text-white p-4 flex items-center justify-between border-b border-slate-800">
+                          <div className="flex items-center gap-2.5">
+                            <div className="w-8 h-8 rounded-xl bg-amber-400 text-slate-950 flex items-center justify-center font-bold">
+                              <Icons.History className="w-4 h-4" />
+                            </div>
+                            <div>
+                              <h3 className="font-black text-sm sm:text-base text-white leading-tight">
+                                {lang === 'bn' ? 'অফার সেলিং ড্রাইভ হিস্টরি' : 'Offer Selling Drive History'}
+                              </h3>
+                              <span className="text-[10px] text-amber-300 font-mono font-bold">
+                                {lang === 'bn' ? '১২টি ভেরিফাইড সেল • অটো লাইভ আপডেট' : '12 Verified Sales • Live Auto-Update'}
+                              </span>
+                            </div>
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={() => setShowOfferHistoryModal(false)}
+                            className="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center transition-all cursor-pointer"
+                          >
+                            <Icons.X className="w-4 h-4" />
+                          </button>
+                        </div>
+
+                        {/* Stats Bar */}
+                        <div className="p-3 bg-gradient-to-r from-amber-500/15 via-yellow-500/10 to-emerald-500/10 border-b border-amber-200/80 flex items-center justify-between">
+                          <div>
+                            <span className="text-[10px] text-amber-950 font-bold block uppercase tracking-wider">
+                              {lang === 'bn' ? 'মোট উপার্জিত প্রফিট' : 'Total Net Profit'}
+                            </span>
+                            <span className="text-base font-black text-slate-900 font-mono">
+                              ১২টি ড্রাইভ প্যাক • ৳৪১০.০০ লাভ
+                            </span>
+                          </div>
+                          <span className="bg-emerald-600 text-white text-[10px] font-black px-2.5 py-1 rounded-full shadow-2xs">
+                            100% Success
+                          </span>
+                        </div>
+
+                        {/* 12 Sales History List with Real Profit Rates (30, 40, 20, 50, etc.) */}
+                        <div className="p-3 sm:p-4 overflow-y-auto space-y-2 text-xs">
+                          {[
+                            { op: 'GP', name: 'জিপি ৫০ জিবি সুপার ড্রাইভ (৩০ দিন)', phone: '01712-***890', profit: '৳40', time: '12:40 PM', isToday: true },
+                            { op: 'BL', name: 'বাংলালিংক ৬৫ জিবি ধামাকা ইন্টারনেট', phone: '01934-***122', profit: '৳30', time: '11:15 AM', isToday: true },
+                            { op: 'Robi', name: 'রবি ৪০ জিবি + ৮০০ মিনিট কম্বো মেগা', phone: '01821-***451', profit: '৳40', time: '10:05 AM', isToday: true },
+                            { op: 'Airtel', name: 'এয়ারটেল ৫০ জিবি আনলিমিটেড স্ট্রিমিং', phone: '01678-***902', profit: '৳30', time: '09:20 AM', isToday: true },
+                            { op: 'Teletalk', name: 'টেলিটক ৩৫ জিবি বর্ণমালা স্পেশাল', phone: '01552-***664', profit: '৳20', time: '08:50 AM', isToday: true },
+                            { op: 'GP', name: 'জিপি ১০০০ মিনিট আনলিমিটেড টকটাইম', phone: '01799-***331', profit: '৳30', time: '06:15 PM (গতকাল)', isToday: false },
+                            { op: 'BL', name: 'বাংলালিংক ৮০০ মিনিট ভয়েস ড্রাইভ', phone: '01911-***879', profit: '৳20', time: '05:30 PM (গতকাল)', isToday: false },
+                            { op: 'Robi', name: 'রবি ৫০ জিবি মেগা ড্রাইভ প্যাক', phone: '01833-***112', profit: '৳50', time: '04:10 PM (গতকাল)', isToday: false },
+                            { op: 'Airtel', name: 'এয়ারটেল ৩০ জিবি সুপার ড্রাইভ', phone: '01612-***770', profit: '৳25', time: '03:00 PM (গতকাল)', isToday: false },
+                            { op: 'GP', name: 'জিপি ৪০ জিবি + ৮০০ মিনিট কম্বো', phone: '01744-***562', profit: '৳40', time: '01:45 PM (গতকাল)', isToday: false },
+                            { op: 'Teletalk', name: 'টেলিটক ৪৫ জিবি ব্রডব্যান্ড ডাটা', phone: '01511-***998', profit: '৳20', time: '11:30 AM (গতকাল)', isToday: false },
+                            { op: 'BL', name: 'বাংলালিংক ৪০ জিবি মেগা কম্বো প্যাক', phone: '01988-***443', profit: '৳35', time: '09:10 AM (গতকাল)', isToday: false },
+                          ].map((sale, i) => (
+                            <div key={i} className="bg-slate-50 border border-slate-200/90 rounded-xl p-2.5 space-y-1.5 shadow-2xs">
+                              <div className="flex items-center justify-between gap-2">
+                                <div className="flex items-center gap-1.5 min-w-0">
+                                  <span className={`w-6 h-6 rounded-lg text-white font-black text-[9px] flex items-center justify-center shrink-0 ${
+                                    sale.op === 'GP' ? 'bg-blue-600' :
+                                    sale.op === 'BL' ? 'bg-orange-500' :
+                                    sale.op === 'Robi' ? 'bg-red-600' :
+                                    sale.op === 'Airtel' ? 'bg-rose-600' : 'bg-teal-600'
+                                  }`}>
+                                    {sale.op}
+                                  </span>
+                                  <h4 className="font-extrabold text-slate-900 text-xs truncate">
+                                    {sale.name}
+                                  </h4>
+                                </div>
+                                <span className="font-mono font-black text-emerald-800 text-xs sm:text-sm bg-emerald-100/90 px-2 py-0.5 rounded-md shrink-0">
+                                  +{sale.profit} লাভ
+                                </span>
+                              </div>
+
+                              <div className="flex items-center justify-between border-t border-slate-200/70 pt-1.5 pl-7 text-[10.5px] text-slate-600">
+                                <span className="font-mono">
+                                  📱 {sale.phone} • {sale.time}
+                                </span>
+                                <span className="text-emerald-700 bg-emerald-50 px-2 py-0.2 rounded font-bold border border-emerald-200 text-[9.5px]">
+                                  ✅ কমপ্লিট দিস ওয়ার্ক
+                                </span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Footer */}
+                        <div className="p-3 bg-slate-50 border-t border-slate-200 flex justify-end">
+                          <button
+                            type="button"
+                            onClick={() => setShowOfferHistoryModal(false)}
+                            className="bg-slate-900 text-white font-bold text-xs px-4 py-2 rounded-xl cursor-pointer active:scale-95"
+                          >
+                            {lang === 'bn' ? 'বন্ধ করুন' : 'Close'}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* --- EMAIL SELLING HISTORY MODAL (Without Top Summary Card) --- */}
+                  {showEmailHistoryModal && (
+                    <div className="fixed inset-0 z-[60] bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 animate-fade-in">
+                      <div className="bg-white rounded-2xl sm:rounded-3xl max-w-sm sm:max-w-md w-full shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[85vh] animate-scale-up">
+                        {/* Modal Header */}
+                        <div className="bg-slate-900 text-white p-3.5 sm:p-4 flex items-center justify-between border-b border-slate-800">
+                          <div className="flex items-center gap-2">
+                            <div className="w-7 h-7 rounded-lg bg-red-600 text-white flex items-center justify-center shadow-xs">
+                              <Icons.History className="w-4 h-4" />
+                            </div>
+                            <div>
+                              <h3 className="font-extrabold text-xs sm:text-sm text-white leading-tight">
+                                {lang === 'bn' ? 'ইমেইল সেলস হিস্টরি (Gmail Account Buy-Sell)' : 'Email Sales History Ledger'}
+                              </h3>
+                              <span className="text-[10px] text-emerald-400 font-mono">
+                                {lang === 'bn' ? 'আজকের তারিখ সহ ১৩টি সেলস রেকর্ড' : 'Today\'s Live Sales History (13 Records)'}
+                              </span>
+                            </div>
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={() => setShowEmailHistoryModal(false)}
+                            className="w-7 h-7 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center transition-all cursor-pointer"
+                          >
+                            <Icons.X className="w-4 h-4" />
+                          </button>
+                        </div>
+
+                        {/* History Items List (13 items matching screenshot) */}
+                        <div className="p-3 sm:p-4 overflow-y-auto space-y-2.5 bg-slate-50/60">
+                          {(() => {
+                            const todayStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+                            const items = [
+                              { id: '1', title: 'Gmail Account Buy-Sell', subtitle: 'Complete this work', amount: '18.00', available: '4 available', date: todayStr },
+                              { id: '2', title: 'Gmail Account Buy-Sell', subtitle: 'Complete this work', amount: '20.00', available: '7 available', date: todayStr },
+                              { id: '3', title: 'Gmail Account Buy-Sell', subtitle: 'Complete this work', amount: '21.00', available: '5 available', date: todayStr },
+                              { id: '4', title: 'Gmail Account Buy-Sell', subtitle: 'Complete this work', amount: '22.00', available: '3 available', date: todayStr },
+                              { id: '5', title: 'Gmail Account Buy-Sell', subtitle: 'Complete this work', amount: '18.00', available: '8 available', date: todayStr },
+                              { id: '6', title: 'Gmail Account Buy-Sell', subtitle: 'Complete this work', amount: '20.00', available: '6 available', date: todayStr },
+                              { id: '7', title: 'Gmail Account Buy-Sell', subtitle: 'Complete this work', amount: '21.00', available: '9 available', date: todayStr },
+                              { id: '8', title: 'Gmail Account Buy-Sell', subtitle: 'Complete this work', amount: '22.00', available: '2 available', date: todayStr },
+                              { id: '9', title: 'Gmail Account Buy-Sell', subtitle: 'Complete this work', amount: '18.00', available: '5 available', date: todayStr },
+                              { id: '10', title: 'Gmail Account Buy-Sell', subtitle: 'Complete this work', amount: '20.00', available: '10 available', date: todayStr },
+                              { id: '11', title: 'Gmail Account Buy-Sell', subtitle: 'Complete this work', amount: '21.00', available: '4 available', date: todayStr },
+                              { id: '12', title: 'Gmail Account Buy-Sell', subtitle: 'Complete this work', amount: '22.00', available: '6 available', date: todayStr },
+                              { id: '13', title: 'Gmail Account Buy-Sell', subtitle: 'Complete this work', amount: '20.00', available: '3 available', date: todayStr },
+                            ];
+
+                            return items.map((item) => (
+                              <div
+                                key={item.id}
+                                className="bg-white rounded-2xl p-3 sm:p-3.5 border border-slate-200/90 shadow-2xs hover:shadow-sm transition-all flex items-center justify-between gap-3"
+                              >
+                                <div className="flex items-center gap-3 min-w-0">
+                                  {/* Red 3D Glossy Sphere "Sell!" Icon */}
+                                  <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-red-500 via-red-600 to-red-800 text-white font-black text-xs sm:text-[13px] flex items-center justify-center shadow-[inset_0_2px_4px_rgba(255,255,255,0.6),0_4px_8px_rgba(220,38,38,0.4)] border border-red-400 relative overflow-hidden shrink-0">
+                                    <div className="absolute inset-0 bg-gradient-to-b from-white/40 via-transparent to-black/30 pointer-events-none rounded-full" />
+                                    <span className="drop-shadow-md relative z-10 tracking-tight">Sell!</span>
+                                  </div>
+
+                                  {/* Info */}
+                                  <div className="min-w-0">
+                                    <h4 className="font-extrabold text-slate-900 text-xs sm:text-sm tracking-tight truncate leading-snug">
+                                      {item.title}
+                                    </h4>
+                                    <p className="text-[11px] text-slate-500 font-medium leading-tight mt-0.5">
+                                      {item.subtitle}
+                                    </p>
+                                    
+                                    {/* Bottom Info: Available & Today's Date */}
+                                    <div className="flex items-center gap-2 mt-1.5 text-[10px] font-semibold text-slate-600 flex-wrap">
+                                      <span className="flex items-center gap-1 text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200/60 font-bold">
+                                        <Icons.Users className="w-3 h-3 text-emerald-600" />
+                                        <span>{item.available}</span>
+                                      </span>
+                                      <span className="text-slate-500 font-mono">
+                                        📅 {item.date}
+                                      </span>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                {/* Right Side: Amount & Unlocked Badge */}
+                                <div className="flex flex-col items-end gap-1.5 shrink-0">
+                                  <span className="text-xs sm:text-sm font-black text-emerald-700 bg-emerald-50/90 border border-emerald-200 px-2.5 py-1 rounded-lg font-mono tabular-nums">
+                                    ৳ {item.amount}
+                                  </span>
+                                  <span className="text-[10px] text-emerald-700 font-bold bg-emerald-50/90 border border-emerald-200/80 px-2 py-0.5 rounded-md flex items-center gap-1">
+                                    <Icons.Unlock className="w-2.5 h-2.5 text-emerald-600" />
+                                    <span>Unlocked</span>
+                                  </span>
+                                </div>
+                              </div>
+                            ));
+                          })()}
+                        </div>
+
+                        {/* Footer */}
+                        <div className="p-3 bg-slate-50 border-t border-slate-200 flex justify-end">
+                          <button
+                            type="button"
+                            onClick={() => setShowEmailHistoryModal(false)}
+                            className="bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs px-5 py-2 rounded-xl transition-all active:scale-95 cursor-pointer shadow-sm"
+                          >
+                            {lang === 'bn' ? 'বন্ধ করুন' : 'Close'}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* --- TYPING JOB HISTORY MODAL --- */}
+                  {showTypingHistoryModal && (
+                    <div className="fixed inset-0 z-[60] bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 animate-fade-in">
+                      <div className="bg-white rounded-2xl sm:rounded-3xl max-w-sm sm:max-w-md w-full shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[85vh] animate-scale-up">
+                        {/* Modal Header */}
+                        <div className="bg-slate-900 text-white p-3.5 sm:p-4 flex items-center justify-between border-b border-slate-800">
+                          <div className="flex items-center gap-2">
+                            <div className="w-7 h-7 rounded-lg bg-blue-600 text-white flex items-center justify-center shadow-xs">
+                              <Icons.History className="w-4 h-4" />
+                            </div>
+                            <div>
+                              <h3 className="font-extrabold text-xs sm:text-sm text-white leading-tight">
+                                {lang === 'bn' ? 'টাইপিং জব ওয়ার্ক হিস্টরি' : 'Typing Work Sales History'}
+                              </h3>
+                              <span className="text-[10px] text-blue-400 font-mono">
+                                {lang === 'bn' ? 'আজকের তারিখ সহ ৫টি কাজের রেকর্ড' : '5 Completed Typing Work Records'}
+                              </span>
+                            </div>
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={() => setShowTypingHistoryModal(false)}
+                            className="w-7 h-7 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center transition-all cursor-pointer"
+                          >
+                            <Icons.X className="w-4 h-4" />
+                          </button>
+                        </div>
+
+                        {/* History Items List (5 items with 180, 230 taka) */}
+                        <div className="p-3 sm:p-4 overflow-y-auto space-y-2.5 bg-slate-50/60">
+                          {(() => {
+                            const todayStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+                            const items = [
+                              { id: '1', title: 'Property Deed Registry Typing', subtitle: 'Complete this work', amount: '180.00', available: '5 available', date: todayStr },
+                              { id: '2', title: 'Corporate Directory Transcription', subtitle: 'Complete this work', amount: '230.00', available: '3 available', date: todayStr },
+                              { id: '3', title: 'E-commerce SKU Data Typing', subtitle: 'Complete this work', amount: '180.00', available: '6 available', date: todayStr },
+                              { id: '4', title: 'Legal Court Transcripts Typing', subtitle: 'Complete this work', amount: '230.00', available: '2 available', date: todayStr },
+                              { id: '5', title: 'Medical Prescription Typing', subtitle: 'Complete this work', amount: '180.00', available: '4 available', date: todayStr },
+                            ];
+
+                            return items.map((item) => (
+                              <div
+                                key={item.id}
+                                className="bg-white rounded-2xl p-3 sm:p-3.5 border border-slate-200/90 shadow-2xs hover:shadow-sm transition-all flex items-center justify-between gap-3"
+                              >
+                                <div className="flex items-center gap-3 min-w-0">
+                                  {/* Blue 3D Glossy Sphere "Type!" Icon */}
+                                  <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-800 text-white font-black text-xs sm:text-[13px] flex items-center justify-center shadow-[inset_0_2px_4px_rgba(255,255,255,0.6),0_4px_8px_rgba(37,99,235,0.4)] border border-blue-400 relative overflow-hidden shrink-0">
+                                    <div className="absolute inset-0 bg-gradient-to-b from-white/40 via-transparent to-black/30 pointer-events-none rounded-full" />
+                                    <span className="drop-shadow-md relative z-10 tracking-tight">Type!</span>
+                                  </div>
+
+                                  {/* Info */}
+                                  <div className="min-w-0">
+                                    <h4 className="font-extrabold text-slate-900 text-xs sm:text-sm tracking-tight truncate leading-snug">
+                                      {item.title}
+                                    </h4>
+                                    <p className="text-[11px] text-slate-500 font-medium leading-tight mt-0.5">
+                                      {item.subtitle}
+                                    </p>
+                                    
+                                    {/* Bottom Info: Available & Today's Date */}
+                                    <div className="flex items-center gap-2 mt-1.5 text-[10px] font-semibold text-slate-600 flex-wrap">
+                                      <span className="flex items-center gap-1 text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-200/60 font-bold">
+                                        <Icons.Users className="w-3 h-3 text-blue-600" />
+                                        <span>{item.available}</span>
+                                      </span>
+                                      <span className="text-slate-500 font-mono">
+                                        📅 {item.date}
+                                      </span>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                {/* Right Side: Amount & Unlocked Badge */}
+                                <div className="flex flex-col items-end gap-1.5 shrink-0">
+                                  <span className="text-xs sm:text-sm font-black text-emerald-700 bg-emerald-50/90 border border-emerald-200 px-2.5 py-1 rounded-lg font-mono tabular-nums">
+                                    ৳ {item.amount}
+                                  </span>
+                                  <span className="text-[10px] text-emerald-700 font-bold bg-emerald-50/90 border border-emerald-200/80 px-2 py-0.5 rounded-md flex items-center gap-1">
+                                    <Icons.Unlock className="w-2.5 h-2.5 text-emerald-600" />
+                                    <span>Unlocked</span>
+                                  </span>
+                                </div>
+                              </div>
+                            ));
+                          })()}
+                        </div>
+
+                        {/* Footer */}
+                        <div className="p-3 bg-slate-50 border-t border-slate-200 flex justify-end">
+                          <button
+                            type="button"
+                            onClick={() => setShowTypingHistoryModal(false)}
+                            className="bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs px-5 py-2 rounded-xl transition-all active:scale-95 cursor-pointer shadow-sm"
+                          >
+                            {lang === 'bn' ? 'বন্ধ করুন' : 'Close'}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* --- FORM FILLUP HISTORY MODAL --- */}
+                  {showFormFillupHistoryModal && (
+                    <div className="fixed inset-0 z-[60] bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 animate-fade-in">
+                      <div className="bg-white rounded-2xl sm:rounded-3xl max-w-sm sm:max-w-md w-full shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[85vh] animate-scale-up">
+                        {/* Modal Header */}
+                        <div className="bg-slate-900 text-white p-3.5 sm:p-4 flex items-center justify-between border-b border-slate-800">
+                          <div className="flex items-center gap-2">
+                            <div className="w-7 h-7 rounded-lg bg-emerald-600 text-white flex items-center justify-center shadow-xs">
+                              <Icons.History className="w-4 h-4" />
+                            </div>
+                            <div>
+                              <h3 className="font-extrabold text-xs sm:text-sm text-white leading-tight">
+                                {lang === 'bn' ? 'ফর্ম ফিলআপ ওয়ার্ক হিস্টরি' : 'Form Fill-up Work Sales History'}
+                              </h3>
+                              <span className="text-[10px] text-emerald-400 font-mono">
+                                {lang === 'bn' ? 'আজকের তারিখ সহ ৬টি সফল ফর্ম হিস্টরি' : '6 Completed Form Fill-up Records'}
+                              </span>
+                            </div>
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={() => setShowFormFillupHistoryModal(false)}
+                            className="w-7 h-7 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center transition-all cursor-pointer"
+                          >
+                            <Icons.X className="w-4 h-4" />
+                          </button>
+                        </div>
+
+                        {/* History Items List (6 items) */}
+                        <div className="p-3 sm:p-4 overflow-y-auto space-y-2.5 bg-slate-50/60">
+                          {(() => {
+                            const todayStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+                            const items = [
+                              { id: '1', title: 'CRM Customer Profile Onboarding', subtitle: 'Complete this work', amount: '150.00', available: '5 available', date: todayStr },
+                              { id: '2', title: 'International Trade Summit Entry', subtitle: 'Complete this work', amount: '180.00', available: '8 available', date: todayStr },
+                              { id: '3', title: 'Enterprise Supplier Verification', subtitle: 'Complete this work', amount: '200.00', available: '4 available', date: todayStr },
+                              { id: '4', title: 'Global Recruitment Application', subtitle: 'Complete this work', amount: '220.00', available: '6 available', date: todayStr },
+                              { id: '5', title: 'Smart Resident Portal Feedback', subtitle: 'Complete this work', amount: '250.00', available: '3 available', date: todayStr },
+                              { id: '6', title: 'Fintech Beta Tester Application', subtitle: 'Complete this work', amount: '200.00', available: '7 available', date: todayStr },
+                            ];
+
+                            return items.map((item) => (
+                              <div
+                                key={item.id}
+                                className="bg-white rounded-2xl p-3 sm:p-3.5 border border-slate-200/90 shadow-2xs hover:shadow-sm transition-all flex items-center justify-between gap-3"
+                              >
+                                <div className="flex items-center gap-3 min-w-0">
+                                  {/* Emerald 3D Glossy Sphere "Form!" Icon */}
+                                  <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-emerald-500 via-teal-600 to-emerald-800 text-white font-black text-xs sm:text-[13px] flex items-center justify-center shadow-[inset_0_2px_4px_rgba(255,255,255,0.6),0_4px_8px_rgba(5,150,105,0.4)] border border-emerald-400 relative overflow-hidden shrink-0">
+                                    <div className="absolute inset-0 bg-gradient-to-b from-white/40 via-transparent to-black/30 pointer-events-none rounded-full" />
+                                    <span className="drop-shadow-md relative z-10 tracking-tight">Form!</span>
+                                  </div>
+
+                                  {/* Info */}
+                                  <div className="min-w-0">
+                                    <h4 className="font-extrabold text-slate-900 text-xs sm:text-sm tracking-tight truncate leading-snug">
+                                      {item.title}
+                                    </h4>
+                                    <p className="text-[11px] text-slate-500 font-medium leading-tight mt-0.5">
+                                      {item.subtitle}
+                                    </p>
+                                    
+                                    {/* Bottom Info: Available & Today's Date */}
+                                    <div className="flex items-center gap-2 mt-1.5 text-[10px] font-semibold text-slate-600 flex-wrap">
+                                      <span className="flex items-center gap-1 text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200/60 font-bold">
+                                        <Icons.Users className="w-3 h-3 text-emerald-600" />
+                                        <span>{item.available}</span>
+                                      </span>
+                                      <span className="text-slate-500 font-mono">
+                                        📅 {item.date}
+                                      </span>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                {/* Right Side: Amount & Unlocked Badge */}
+                                <div className="flex flex-col items-end gap-1.5 shrink-0">
+                                  <span className="text-xs sm:text-sm font-black text-emerald-700 bg-emerald-50/90 border border-emerald-200 px-2.5 py-1 rounded-lg font-mono tabular-nums">
+                                    ৳ {item.amount}
+                                  </span>
+                                  <span className="text-[10px] text-emerald-700 font-bold bg-emerald-50/90 border border-emerald-200/80 px-2 py-0.5 rounded-md flex items-center gap-1">
+                                    <Icons.Unlock className="w-2.5 h-2.5 text-emerald-600" />
+                                    <span>Unlocked</span>
+                                  </span>
+                                </div>
+                              </div>
+                            ));
+                          })()}
+                        </div>
+
+                        {/* Footer */}
+                        <div className="p-3 bg-slate-50 border-t border-slate-200 flex justify-end">
+                          <button
+                            type="button"
+                            onClick={() => setShowFormFillupHistoryModal(false)}
+                            className="bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs px-5 py-2 rounded-xl transition-all active:scale-95 cursor-pointer shadow-sm"
+                          >
+                            {lang === 'bn' ? 'বন্ধ করুন' : 'Close'}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* --- DATA ENTRY HISTORY MODAL --- */}
+                  {showDataEntryHistoryModal && (
+                    <div className="fixed inset-0 z-[60] bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 animate-fade-in">
+                      <div className="bg-white rounded-2xl sm:rounded-3xl max-w-sm sm:max-w-md w-full shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[85vh] animate-scale-up">
+                        {/* Modal Header */}
+                        <div className="bg-slate-900 text-white p-3.5 sm:p-4 flex items-center justify-between border-b border-slate-800">
+                          <div className="flex items-center gap-2">
+                            <div className="w-7 h-7 rounded-lg bg-cyan-600 text-white flex items-center justify-center shadow-xs">
+                              <Icons.History className="w-4 h-4" />
+                            </div>
+                            <div>
+                              <h3 className="font-extrabold text-xs sm:text-sm text-white leading-tight">
+                                {lang === 'bn' ? 'ডাটা এন্ট্রি ওয়ার্ক হিস্টরি' : 'Data Entry Work Sales History'}
+                              </h3>
+                              <span className="text-[10px] text-cyan-400 font-mono">
+                                {lang === 'bn' ? 'আজকের তারিখ সহ ৬টি সফল ডাটা হিস্টরি' : '6 Completed Data Entry Records'}
+                              </span>
+                            </div>
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={() => setShowDataEntryHistoryModal(false)}
+                            className="w-7 h-7 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center transition-all cursor-pointer"
+                          >
+                            <Icons.X className="w-4 h-4" />
+                          </button>
+                        </div>
+
+                        {/* History Items List (6 items) */}
+                        <div className="p-3 sm:p-4 overflow-y-auto space-y-2.5 bg-slate-50/60">
+                          {(() => {
+                            const todayStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+                            const items = [
+                              { id: '1', title: 'Industrial Hardware Inventory Log', subtitle: 'Complete this work', amount: '180.00', available: '6 available', date: todayStr },
+                              { id: '2', title: 'Supplier Invoicing Ledger Filing', subtitle: 'Complete this work', amount: '220.00', available: '4 available', date: todayStr },
+                              { id: '3', title: 'E-Commerce Budget Spreadsheet', subtitle: 'Complete this work', amount: '250.00', available: '5 available', date: todayStr },
+                              { id: '4', title: 'Global Logistics Shipment Registry', subtitle: 'Complete this work', amount: '280.00', available: '3 available', date: todayStr },
+                              { id: '5', title: 'Pharma Supply Chain Quality Log', subtitle: 'Complete this work', amount: '300.00', available: '7 available', date: todayStr },
+                              { id: '6', title: 'Real Estate Tenant Database Entry', subtitle: 'Complete this work', amount: '250.00', available: '2 available', date: todayStr },
+                            ];
+
+                            return items.map((item) => (
+                              <div
+                                key={item.id}
+                                className="bg-white rounded-2xl p-3 sm:p-3.5 border border-slate-200/90 shadow-2xs hover:shadow-sm transition-all flex items-center justify-between gap-3"
+                              >
+                                <div className="flex items-center gap-3 min-w-0">
+                                  {/* Cyan 3D Glossy Sphere "Data!" Icon */}
+                                  <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-cyan-500 via-sky-600 to-blue-800 text-white font-black text-xs sm:text-[13px] flex items-center justify-center shadow-[inset_0_2px_4px_rgba(255,255,255,0.6),0_4px_8px_rgba(6,182,212,0.4)] border border-cyan-400 relative overflow-hidden shrink-0">
+                                    <div className="absolute inset-0 bg-gradient-to-b from-white/40 via-transparent to-black/30 pointer-events-none rounded-full" />
+                                    <span className="drop-shadow-md relative z-10 tracking-tight">Data!</span>
+                                  </div>
+
+                                  {/* Info */}
+                                  <div className="min-w-0">
+                                    <h4 className="font-extrabold text-slate-900 text-xs sm:text-sm tracking-tight truncate leading-snug">
+                                      {item.title}
+                                    </h4>
+                                    <p className="text-[11px] text-slate-500 font-medium leading-tight mt-0.5">
+                                      {item.subtitle}
+                                    </p>
+                                    
+                                    {/* Bottom Info: Available & Today's Date */}
+                                    <div className="flex items-center gap-2 mt-1.5 text-[10px] font-semibold text-slate-600 flex-wrap">
+                                      <span className="flex items-center gap-1 text-cyan-700 bg-cyan-50 px-2 py-0.5 rounded-md border border-cyan-200/60 font-bold">
+                                        <Icons.Users className="w-3 h-3 text-cyan-600" />
+                                        <span>{item.available}</span>
+                                      </span>
+                                      <span className="text-slate-500 font-mono">
+                                        📅 {item.date}
+                                      </span>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                {/* Right Side: Amount & Unlocked Badge */}
+                                <div className="flex flex-col items-end gap-1.5 shrink-0">
+                                  <span className="text-xs sm:text-sm font-black text-emerald-700 bg-emerald-50/90 border border-emerald-200 px-2.5 py-1 rounded-lg font-mono tabular-nums">
+                                    ৳ {item.amount}
+                                  </span>
+                                  <span className="text-[10px] text-emerald-700 font-bold bg-emerald-50/90 border border-emerald-200/80 px-2 py-0.5 rounded-md flex items-center gap-1">
+                                    <Icons.Unlock className="w-2.5 h-2.5 text-emerald-600" />
+                                    <span>Unlocked</span>
+                                  </span>
+                                </div>
+                              </div>
+                            ));
+                          })()}
+                        </div>
+
+                        {/* Footer */}
+                        <div className="p-3 bg-slate-50 border-t border-slate-200 flex justify-end">
+                          <button
+                            type="button"
+                            onClick={() => setShowDataEntryHistoryModal(false)}
+                            className="bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs px-5 py-2 rounded-xl transition-all active:scale-95 cursor-pointer shadow-sm"
+                          >
+                            {lang === 'bn' ? 'বন্ধ করুন' : 'Close'}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="space-y-4 sm:space-y-4.5">
                     {subTasks.map((sub) => (
                       <div 
                         key={sub.id} 
-                        className="bg-white p-5 rounded-2xl border border-slate-100 hover:border-slate-200 hover:shadow-md transition-all flex flex-col md:flex-row md:items-center justify-between gap-4"
+                        className="bg-slate-100/90 py-3.5 px-3.5 sm:px-4 rounded-2xl border border-slate-200/90 shadow-[4px_4px_12px_rgba(148,163,184,0.22),-4px_-4px_12px_rgba(255,255,255,0.6)] hover:shadow-[6px_6px_16px_rgba(148,163,184,0.32),-6px_-6px_16px_rgba(255,255,255,0.8)] hover:border-blue-300 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 my-2.5 sm:my-3"
                       >
-                        <div className="space-y-1 flex-1">
+                        <div className="space-y-0.5 flex-1 min-w-0">
                           <div className="flex items-center gap-2 flex-wrap">
-                            <h4 className="font-bold text-sm text-slate-800">
+                            <h4 className="font-extrabold text-xs sm:text-sm text-slate-900 leading-tight">
                               {lang === 'bn' ? sub.titleBn : sub.titleEn}
                             </h4>
-                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${
-                              sub.difficultyEn === 'Easy' ? 'bg-emerald-50 text-emerald-600' :
-                              sub.difficultyEn === 'Medium' ? 'bg-amber-50 text-amber-600' : 'bg-rose-50 text-rose-600'
+                            <span className={`text-[9.5px] font-extrabold px-2 py-0.2 rounded-md ${
+                              sub.difficultyEn === 'Easy' ? 'bg-emerald-100 text-emerald-800' :
+                              sub.difficultyEn === 'Medium' ? 'bg-amber-100 text-amber-800' : 'bg-rose-100 text-rose-800'
                             }`}>
                               {lang === 'bn' ? sub.difficultyBn : sub.difficultyEn}
                             </span>
                           </div>
-                          <p className="text-slate-400 text-xs">
+                          <p className="text-slate-500 text-[11px] font-medium">
                             {lang === 'bn' ? 'স্ট্যাটাস: সক্রিয় কাজ' : 'Status: Active Contract'}
                           </p>
                         </div>
 
-                        <div className="flex items-center justify-between md:justify-end gap-5 border-t md:border-t-0 pt-3 md:pt-0">
-                          <div className="text-left md:text-right">
-                            <span className="text-[10px] text-slate-400 block font-bold uppercase tracking-wider">
+                        <div className="flex items-center justify-between sm:justify-end gap-3 border-t sm:border-t-0 pt-2 sm:pt-0">
+                          <div className="text-left sm:text-right">
+                            <span className="text-[9.5px] text-slate-400 block font-bold uppercase tracking-wider leading-none">
                               {lang === 'bn' ? 'কমিশন' : 'PAYOUT'}
                             </span>
-                            <span className="text-sm font-black text-emerald-600 font-mono">
+                            <span className="text-xs sm:text-sm font-black text-emerald-700 font-mono">
                               {lang === 'bn' ? sub.rewardBn : sub.rewardEn}
                             </span>
                           </div>
@@ -1521,7 +2100,7 @@ export default function JobDetailModal({
                               const dataset = productCodeEntryData[sub.id] || productCodeEntryData['code-1'] || [];
                               setCodeCompletedSteps(new Array(dataset.length || 4).fill(false));
                             }}
-                            className="bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition-all active:scale-95 flex items-center gap-1.5 cursor-pointer"
+                            className="bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs px-3.5 py-2 rounded-xl transition-all active:scale-95 flex items-center gap-1.5 cursor-pointer shadow-2xs"
                           >
                             {lang === 'bn' ? 'কাজ শুরু করুন' : 'Start Contract'}
                             <Icons.ArrowRight className="w-3.5 h-3.5" />
@@ -1657,20 +2236,26 @@ export default function JobDetailModal({
                   {job.id === 'email-marketing' && (
                     <div className="space-y-4">
                       {/* Notice Banner */}
-                      <div className="bg-emerald-50 border border-emerald-200 p-4 rounded-xl flex items-start gap-3">
-                        <div className="p-1.5 bg-emerald-100 rounded-lg text-emerald-700">
-                          <Icons.Coins className="w-5 h-5" />
+                      <div className="bg-emerald-50 border border-emerald-200 p-3.5 sm:p-4 rounded-2xl flex items-center justify-between gap-3 shadow-2xs">
+                        <div className="flex items-start gap-3">
+                          <div className="p-2 bg-emerald-100 rounded-xl text-emerald-700 shrink-0">
+                            <Icons.Coins className="w-5 h-5" />
+                          </div>
+                          <div>
+                            <h4 className="text-xs sm:text-sm font-extrabold text-emerald-900 leading-tight">
+                              {lang === 'bn' ? 'একটি ইমেইল সেল করলে ২০ টাকা করে পাবেন!' : 'Earn ৳20 for every email account sold!'}
+                            </h4>
+                            <p className="text-[11px] text-emerald-700 mt-0.5 leading-relaxed">
+                              {lang === 'bn' 
+                                ? 'সচল ইমেইল ও পাসওয়ার্ড সাবমিট করুন, সাথে সাথে নগদ কমিশন অ্যাকাউন্টে যোগ হবে।'
+                                : 'Submit active email credentials to claim instant cash payouts.'}
+                            </p>
+                          </div>
                         </div>
-                        <div>
-                          <h4 className="text-sm font-extrabold text-emerald-800 leading-snug">
-                            {lang === 'bn' ? 'একটি ইমেইল সেল করলে ২০ টাকা করে পাবেন!' : 'Earn ৳20 for every email account sold!'}
-                          </h4>
-                          <p className="text-xs text-emerald-600 mt-0.5 leading-relaxed">
-                            {lang === 'bn' 
-                              ? 'নিচে সচল ইমেইল এবং পাসওয়ার্ড সাবমিট করুন। আমাদের সিস্টেম স্বয়ংক্রিয়ভাবে লগইন চেক করে সাথে সাথে আপনার ওয়ালেটে কমিশন যোগ করে দিবে।'
-                              : 'Enter a valid working email and password below. Our automated validation engine checks credentials instantly to credit your wallet.'}
-                          </p>
-                        </div>
+
+                        <span className="text-[11px] font-mono font-black text-emerald-800 bg-emerald-100/80 px-2.5 py-1 rounded-xl shrink-0">
+                          ৳20.00 / Email
+                        </span>
                       </div>
 
                       {/* Input fields */}
@@ -2070,7 +2655,7 @@ export default function JobDetailModal({
                             </div>
                             <div>
                               <h4 className="text-xs sm:text-sm font-bold text-slate-900">
-                                {lang === 'bn' ? 'স্মার্ট ডিজিটাল ডাটা এন্ট্রি ফরম' : 'Data Entry Control Panel'}
+                                {lang === 'bn' ? 'অনলাইন অ্যাপ্লিকেশন ফর্ম ফিল আপ' : 'Online Application Form Fill-Up'}
                               </h4>
                               <p className="text-[10px] text-slate-400">
                                 {lang === 'bn' ? 'নিখুঁতভাবে তথ্য পূরণ করুন' : 'Ensure 100% Accuracy in Entry'}
@@ -2552,179 +3137,6 @@ export default function JobDetailModal({
                               </>
                             )}
                           </button>
-                        </div>
-                      </div>
-
-                      {/* Embedded Micro Jobs under Form Fillup as requested */}
-                      <div className="mt-8 border-t border-dashed border-slate-200 pt-6 space-y-4">
-                        <div className="bg-slate-900 text-white rounded-2xl p-4 flex items-center justify-between shadow-sm">
-                          <div className="flex items-center gap-2">
-                            <div className="w-8 h-8 rounded-lg bg-amber-500 flex items-center justify-center font-black text-slate-950 text-xs animate-bounce">
-                              ⚡
-                            </div>
-                            <div>
-                              <h4 className="font-bold text-xs">
-                                {lang === 'bn' ? 'স্পন্সরড কুইক মাইক্রো জবস' : 'Sponsored Quick Micro Jobs'}
-                              </h4>
-                              <p className="text-[10px] text-slate-300">
-                                {lang === 'bn' ? 'ইনস্ট্যান্ট ২, ৫, ৬ বা ১০ টাকা ব্যালেন্সে যুক্ত হবে' : 'Earn ৳2, ৳5, ৳6, ৳10 instantly!'}
-                              </p>
-                            </div>
-                          </div>
-                          <span className="text-[10px] bg-slate-800 text-amber-400 font-bold px-2.5 py-1 rounded-full border border-slate-700">
-                            {lang === 'bn' ? '১০০টি কাজ উপলব্ধ' : '100 Active Tasks'}
-                          </span>
-                        </div>
-
-                        {/* Search and Filters inside Modal */}
-                        <div className="grid grid-cols-1 gap-2.5 bg-slate-50 p-3 rounded-2xl border border-slate-200">
-                          <div className="relative">
-                            <Icons.Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-                            <input
-                              type="text"
-                              value={modalSearch}
-                              onChange={(e) => setModalSearch(e.target.value)}
-                              placeholder={lang === 'bn' ? 'সোশ্যাল মিডিয়া কাজ খুঁজুন...' : 'Search social tasks...'}
-                              className="w-full bg-white border border-slate-200 rounded-xl pl-8.5 pr-3 py-2 text-[11px] text-slate-700 focus:border-amber-400 outline-none"
-                            />
-                          </div>
-
-                          <div className="flex gap-1 overflow-x-auto pb-0.5 no-scrollbar">
-                            {['All', 'Facebook', 'YouTube', 'Telegram', 'WhatsApp', 'TikTok'].map((mPlatform) => (
-                              <button
-                                key={mPlatform}
-                                type="button"
-                                onClick={() => {
-                                  setModalPlatform(mPlatform);
-                                  setModalVisibleCount(5);
-                                }}
-                                className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all whitespace-nowrap cursor-pointer ${
-                                  modalPlatform === mPlatform
-                                    ? 'bg-[#0f172a] text-white'
-                                    : 'bg-white text-slate-500 border border-slate-200'
-                                }`}
-                              >
-                                {lang === 'bn'
-                                  ? mPlatform === 'All' ? 'সব টাস্ক' : mPlatform === 'Send' ? 'টেলিগ্রাম' : mPlatform
-                                  : mPlatform}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-
-                        {/* List of Tasks */}
-                        <div className="space-y-2.5">
-                          {modalMicroTasks
-                            .filter((t) => {
-                              const matchesSearch =
-                                t.titleBn.toLowerCase().includes(modalSearch.toLowerCase()) ||
-                                t.titleEn.toLowerCase().includes(modalSearch.toLowerCase());
-                              const matchesPlatform = modalPlatform === 'All' || t.platform === modalPlatform;
-                              return matchesSearch && matchesPlatform;
-                            })
-                            .slice(0, modalVisibleCount)
-                            .map((task) => {
-                              const TaskIcon = (Icons as any)[task.iconName] || Icons.Zap;
-                              const isRunning = activeMicroId === task.id;
-                              const progressPercent = Math.round((task.completedCount / task.maxTarget) * 100);
-
-                              return (
-                                <div
-                                  key={task.id}
-                                  className={`bg-white rounded-xl border p-3 flex flex-col transition-all duration-200 ${
-                                    task.completed ? 'border-emerald-200 bg-emerald-50/5' : 'border-slate-200'
-                                  }`}
-                                >
-                                  <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-2.5 min-w-0">
-                                      <div className={`w-8.5 h-8.5 rounded-lg ${task.bgColor} ${task.iconColor} flex items-center justify-center flex-shrink-0`}>
-                                        <TaskIcon className="w-4 h-4" />
-                                      </div>
-                                      <div className="min-w-0">
-                                        <h5 className="font-bold text-slate-800 text-[11px] md:text-xs truncate">
-                                          {lang === 'bn' ? task.titleBn : task.titleEn}
-                                        </h5>
-                                        <div className="flex items-center gap-1.5 mt-0.5 text-[9px] text-slate-400 font-bold">
-                                          <span className="text-emerald-600 font-extrabold font-mono">
-                                            +৳{modalToBnNum((task.reward * 100).toFixed(0))}
-                                          </span>
-                                          <span>•</span>
-                                          <span>{lang === 'bn' ? `${modalToBnNum(task.timeSec)} সেকেন্ড` : `${task.timeSec}s`}</span>
-                                        </div>
-                                      </div>
-                                    </div>
-
-                                    <div className="flex-shrink-0 ml-1.5">
-                                      {task.completed ? (
-                                        <span className="bg-emerald-100 text-emerald-800 text-[9px] px-2 py-1 rounded-lg font-black flex items-center gap-0.5">
-                                          ✓ {lang === 'bn' ? 'সম্পন্ন' : 'Claimed'}
-                                        </span>
-                                      ) : isRunning ? (
-                                        <span className="text-[9px] font-extrabold text-amber-500 bg-amber-50 px-2 py-1 rounded-lg animate-pulse">
-                                          {lang === 'bn' ? 'চলছে...' : 'Running...'}
-                                        </span>
-                                      ) : (
-                                        <button
-                                          type="button"
-                                          onClick={() => startModalMicroTask(task)}
-                                          disabled={activeMicroId !== null}
-                                          className="bg-[#0f172a] text-white font-bold px-3 py-1 rounded-lg text-[10px] hover:bg-slate-800 transition-all active:scale-95 disabled:opacity-40 cursor-pointer"
-                                        >
-                                          {lang === 'bn' ? 'ক্লেম' : 'Claim'}
-                                        </button>
-                                      )}
-                                    </div>
-                                  </div>
-
-                                  {isRunning && (
-                                    <div className="mt-2.5 space-y-1">
-                                      <div className="flex justify-between text-[9px] text-slate-400 font-bold">
-                                        <span>{lang === 'bn' ? 'লিঙ্ক ভেরিফাই করা হচ্ছে...' : 'Validating redirection...'}</span>
-                                        <span>{Math.round(microProgress)}%</span>
-                                      </div>
-                                      <div className="w-full h-1 bg-slate-100 rounded-full overflow-hidden">
-                                        <div
-                                          className="h-full bg-amber-500 rounded-full transition-all duration-100"
-                                          style={{ width: `${microProgress}%` }}
-                                        />
-                                      </div>
-                                    </div>
-                                  )}
-
-                                  {/* Progress bar ratio for community engagement */}
-                                  <div className="mt-2 pt-2 border-t border-slate-100 flex items-center justify-between text-[8px] text-slate-400">
-                                    <span className="font-semibold">{lang === 'bn' ? 'এনগেজমেন্ট রেশিও:' : 'Ratio:'}</span>
-                                    <span className="font-mono font-bold">
-                                      {modalToBnNum(task.completedCount)} / {modalToBnNum(task.maxTarget)} ({modalToBnNum(progressPercent)}%)
-                                    </span>
-                                  </div>
-                                  <div className="w-full h-1 bg-slate-100 rounded-full overflow-hidden mt-1">
-                                    <div
-                                      className="h-full bg-slate-300 rounded-full"
-                                      style={{ width: `${progressPercent}%` }}
-                                    />
-                                  </div>
-                                </div>
-                              );
-                            })}
-
-                          {/* Show more button in modal micro tasks */}
-                          {modalMicroTasks.filter((t) => {
-                            const matchesSearch =
-                              t.titleBn.toLowerCase().includes(modalSearch.toLowerCase()) ||
-                              t.titleEn.toLowerCase().includes(modalSearch.toLowerCase());
-                            const matchesPlatform = modalPlatform === 'All' || t.platform === modalPlatform;
-                            return matchesSearch && matchesPlatform;
-                          }).length > modalVisibleCount && (
-                            <button
-                              type="button"
-                              onClick={() => setModalVisibleCount((prev) => prev + 5)}
-                              className="w-full bg-slate-50 hover:bg-slate-100 text-slate-600 font-bold py-2 rounded-xl text-[10px] border border-slate-200 transition-all flex items-center justify-center gap-1 cursor-pointer"
-                            >
-                              <Icons.ChevronDown className="w-3.5 h-3.5" />
-                              <span>{lang === 'bn' ? 'আরো সোশ্যাল টাস্ক লোড করুন' : 'Load More Social Tasks'}</span>
-                            </button>
-                          )}
                         </div>
                       </div>
                     </div>

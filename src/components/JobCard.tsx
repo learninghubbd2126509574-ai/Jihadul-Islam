@@ -1,6 +1,7 @@
 import React from 'react';
 import * as Icons from 'lucide-react';
 import { Job } from '../types';
+import { JOB_3D_ICONS } from './Job3DIcons';
 
 export interface JobTheme {
   iconName: string;
@@ -132,6 +133,14 @@ export const JOB_THEMES: Record<string, JobTheme> = {
   },
 };
 
+const toEnNumber = (str: string): string => {
+  const bnToEnMap: Record<string, string> = {
+    '০': '0', '১': '1', '২': '2', '৩': '3', '৪': '4',
+    '৫': '5', '৬': '6', '৭': '7', '৮': '8', '৯': '9'
+  };
+  return str.replace(/[০-৯]/g, (d) => bnToEnMap[d] || d);
+};
+
 export function getJobTheme(jobId: string, defaultIcon?: string): JobTheme {
   if (JOB_THEMES[jobId]) {
     return JOB_THEMES[jobId];
@@ -154,6 +163,7 @@ interface JobCardProps {
 
 export default function JobCard({ job, onClick, lang }: JobCardProps) {
   const theme = getJobTheme(job.id, job.iconName);
+  const Job3DIcon = JOB_3D_ICONS[job.id];
   
   // Resolve icon component dynamically from lucide-react names
   const IconComponent = (Icons as any)[theme.iconName] || (Icons as any)[job.iconName] || Icons.Briefcase;
@@ -161,7 +171,7 @@ export default function JobCard({ job, onClick, lang }: JobCardProps) {
   return (
     <div
       onClick={onClick}
-      className="bg-white hover:bg-slate-50/80 p-3.5 sm:p-4 rounded-[1.25rem] border border-slate-200/80 hover:border-blue-400/80 shadow-[0_1px_3px_rgba(15,23,42,0.04)] hover:shadow-md flex items-center justify-between cursor-pointer transition-all duration-200 group active:scale-[0.99]"
+      className="bg-white hover:bg-slate-50/90 py-3 px-3.5 sm:py-3.5 sm:px-4 rounded-[1.25rem] border border-slate-200/90 shadow-[0_4px_16px_rgba(15,23,42,0.06)] hover:shadow-[0_6px_20px_rgba(15,23,42,0.1)] flex items-center justify-between cursor-pointer transition-all duration-200 group active:scale-[0.99] my-2.5 sm:my-3"
       id={`job-card-${job.id}`}
       role="button"
       tabIndex={0}
@@ -173,41 +183,46 @@ export default function JobCard({ job, onClick, lang }: JobCardProps) {
       }}
     >
       <div className="flex items-center gap-3 sm:gap-3.5 flex-1 min-w-0">
-        {/* Professional, Colorful App-Style Icon Box */}
-        <div 
-          className={`w-12 h-12 sm:w-[52px] sm:h-[52px] rounded-2xl bg-gradient-to-br ${theme.gradient} text-white flex items-center justify-center shrink-0 shadow-md ${theme.shadow} border ${theme.border} transition-all duration-300 group-hover:scale-105 group-hover:shadow-lg relative overflow-hidden`}
-        >
-          {/* Subtle glossy sheen reflection for 3D app depth */}
-          <div className="absolute inset-0 bg-gradient-to-b from-white/30 via-white/5 to-transparent pointer-events-none" />
-          
-          {/* Inner ambient light glow on top right */}
-          <div className="absolute -top-2 -right-2 w-7 h-7 bg-white/35 rounded-full blur-xs pointer-events-none" />
-          
-          {/* Crisp, High-Contrast White Icon */}
-          <IconComponent className="w-5 h-5 sm:w-6 sm:h-6 text-white drop-shadow-sm relative z-10 stroke-[2.2px] transition-transform duration-300 group-hover:scale-110" />
+        {/* Circular 3D Neumorphic Icon Badge */}
+        <div className="w-12 h-12 sm:w-13 sm:h-13 flex items-center justify-center shrink-0 relative transition-transform duration-300 group-hover:scale-105">
+          {Job3DIcon ? (
+            <Job3DIcon className="w-full h-full object-contain drop-shadow-md" />
+          ) : (
+            <div 
+              className={`w-11 h-11 rounded-full bg-gradient-to-br ${theme.gradient} text-white flex items-center justify-center shadow-md border-2 border-white/50 relative overflow-hidden`}
+            >
+              <div className="absolute inset-0 bg-gradient-to-b from-white/30 via-white/5 to-transparent pointer-events-none" />
+              <IconComponent className="w-5 h-5 text-white drop-shadow-xs relative z-10 stroke-[2.2px]" />
+            </div>
+          )}
         </div>
 
         {/* Info */}
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-1">
-            <h3 className="font-bold text-sm sm:text-base leading-snug text-slate-900 tracking-tight truncate group-hover:text-blue-600 transition-colors">
+          <div className="flex items-center gap-2 mb-0.5">
+            {/* Job Title */}
+            <h3 className="font-extrabold text-sm sm:text-base leading-tight text-slate-900 tracking-tight truncate group-hover:text-blue-600 transition-colors">
               {lang === 'bn' ? job.titleBn : job.titleEn}
             </h3>
           </div>
           
-          {/* COMMISSION PAYMENT BADGE */}
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-[11px] sm:text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200/80 px-2.5 py-1 rounded-lg inline-flex items-center gap-1.5 font-mono tabular-nums leading-none">
-              <Icons.Banknote className="w-3.5 h-3.5 text-emerald-600" />
-              <span>{lang === 'bn' ? `কমিশন: ${job.rewardBn}` : `Commission: ${job.rewardEn}`}</span>
+          {/* Pay Pill matching screenshot */}
+          <div className="flex items-center gap-1.5 whitespace-nowrap overflow-hidden mt-1">
+            <span className="text-xs sm:text-[13px] font-bold text-slate-800 bg-slate-50/80 border border-slate-200 px-2.5 py-0.5 rounded-full inline-flex items-center gap-1.5 leading-tight shadow-2xs">
+              <span className="w-4 h-4 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[10px] font-black shrink-0 shadow-2xs">
+                $
+              </span>
+              <span className="text-slate-700 font-bold">
+                Pay : <span className="font-extrabold text-slate-900">{job.rewardBn || job.rewardEn}</span>
+              </span>
             </span>
           </div>
         </div>
       </div>
 
-      {/* Right chevron */}
-      <div className="w-8 h-8 rounded-lg bg-slate-100 text-slate-400 group-hover:bg-blue-600 group-hover:text-white flex items-center justify-center transition-all duration-200 shrink-0 ml-2.5">
-        <Icons.ChevronRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5" />
+      {/* Right Circular Dark Teal Chevron */}
+      <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#0d4a52] group-hover:bg-[#09353b] text-white flex items-center justify-center shadow-sm transition-all duration-200 shrink-0 ml-2.5 group-hover:scale-105 active:scale-95">
+        <Icons.ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-200 group-hover:translate-x-0.5 stroke-[2.5]" />
       </div>
     </div>
   );
